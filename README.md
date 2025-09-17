@@ -20,7 +20,7 @@ A GTA Vice City inspired web app for cannabis connoisseurs to collect stamps, tr
 - **Styling**: Tailwind CSS with custom neon theme
 - **Database**: Neon PostgreSQL
 - **ORM**: Prisma
-- **Authentication**: NextAuth.js with email magic links
+- **Authentication**: Neon Stack Auth with direct database integration
 - **Email**: Nodemailer
 - **QR Codes**: qrcode library
 - **Icons**: Lucide React
@@ -48,21 +48,25 @@ cp env.example .env.local
 Update `.env.local` with your actual values:
 
 ```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/dankpass"
+# Database - Pooled connection for applications (recommended for serverless)
+DATABASE_URL="postgresql://username:password@ep-your-project-pooler.region.aws.neon.tech/dbname?sslmode=require&channel_binding=require&connect_timeout=15&connection_limit=20&pool_timeout=15"
 
-# NextAuth
+# Database - Direct connection for Prisma Migrate and CLI operations
+DIRECT_URL="postgresql://username:password@ep-your-project.region.aws.neon.tech/dbname?sslmode=require&channel_binding=require"
+
+# Neon Stack Auth environment variables
+NEXT_PUBLIC_STACK_PROJECT_ID=YOUR_NEON_AUTH_PROJECT_ID
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=YOUR_NEON_AUTH_PUBLISHABLE_KEY
+STACK_SECRET_SERVER_KEY=YOUR_NEON_AUTH_SECRET_KEY
+
+# Other environment variables
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your-secret-key-here"
-
-# Email Configuration
 EMAIL_SERVER_HOST="smtp.gmail.com"
 EMAIL_SERVER_PORT=587
 EMAIL_SERVER_USER="your-email@gmail.com"
 EMAIL_SERVER_PASSWORD="your-app-password"
 EMAIL_FROM="noreply@dankndevour.com"
-
-# Asset Base URL
 ASSET_BASE_URL="https://dankndevour.com"
 ```
 
@@ -126,11 +130,22 @@ The project includes Neon MCP configuration for database management:
 - **Capabilities**: SQL execution, schema management
 - **Scripts**: Database operations via npm scripts
 
+## Optimized Database Connection
+
+This project uses Neon's optimized connection setup for better performance:
+
+- **Pooled Connection**: `DATABASE_URL` uses connection pooling (`-pooler` endpoint) for applications
+- **Direct Connection**: `DIRECT_URL` uses direct connection for Prisma Migrate and CLI operations
+- **Connection Parameters**: Optimized timeout and pool settings for serverless environments
+- **Benefits**: Better performance, reduced connection overhead, and improved scalability
+
+For more details, see the [Neon Prisma documentation](https://neon.com/docs/guides/prisma#use-connection-pooling-with-prisma).
+
 ## Authentication Flow
 
-1. User enters email on sign-in page
-2. NextAuth sends magic link via email
-3. User clicks link to authenticate
+1. User visits sign-in page (`/handler/sign-in`)
+2. Neon Stack Auth handles authentication
+3. User data syncs directly to Neon database
 4. Redirected to passport dashboard
 
 ## Admin Panel Features
