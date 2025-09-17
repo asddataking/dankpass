@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Orbitron, Exo_2 } from "next/font/google";
 import "./globals.css";
 import { StackProvider, StackTheme } from "@stackframe/stack";
-import { stackServerApp } from "../../stack";
+import { stackServerApp } from "@/stack";
 
 const orbitron = Orbitron({
   variable: "--font-orbitron",
