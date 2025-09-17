@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  passports   Passport[]
+  scans       Scan[]
+  notes       Note[]
+  memberships Membership[]
+
+  @@map("users")
+}
+
+model Passport {
+  id        String          @id @default(cuid())
+  userId    String
+  title     String          @default("DankPass")
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries   PassportEntry[]
+
+  @@map("passports")
+}
+
+enum EntryType {
+  STRAIN
+  ACTIVITY
+  LODGING
+}
+
+model PassportEntry {
+  id         String    @id @default(cuid())
+  passportId String
+  entryType  EntryType
+  strainId   String?
+  activityId String?
+  lodgingId  String?
+  createdAt  DateTime  @default(now())
+  passport   Passport  @relation(fields: [passportId], references: [id], onDelete: Cascade)
+  strain     Strain?   @relation(fields: [strainId], references: [id])
+  activity   Activity? @relation(fields: [activityId], references: [id])
+  lodging    Lodging?  @relation(fields: [lodgingId], references: [id])
+
+  @@map("passport_entries")
+}
+
+model Strain {
+  id       String          @id @default(cuid())
+  name     String
+  lineage  String?
+  terpenes String?
+  notes    String?
+  entries  PassportEntry[]
+
+  @@map("strains")
+}
+
+model Activity {
+  id      String          @id @default(cuid())
+  name    String
+  location String?
+  details String?
+  entries PassportEntry[]
+
+  @@map("activities")
+}
+
+model Lodging {
+  id      String          @id @default(cuid())
+  name    String
+  location String?
+  details String?
+  entries PassportEntry[]
+
+  @@map("lodging")
+}
+
+model Scan {
+  id        String   @id @default(cuid())
+  userId    String
+  qrCode    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("scans")
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  strainId  String?
+  activityId String?
+  lodgingId String?
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notes")
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  userId    String
+  tier      String   // Free, Premium, Connoisseur
+  startedAt DateTime @default(now())
+  expiresAt DateTime?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("memberships")
+}

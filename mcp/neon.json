@@ -1,0 +1,23 @@
+{
+  "name": "neon",
+  "description": "Neon Postgres MCP server for DankPass",
+  "version": "1.0.0",
+  "capabilities": {
+    "sql": {
+      "run": true,
+      "schema": {
+        "apply": true,
+        "diff": true
+      }
+    }
+  },
+  "connection": {
+    "type": "postgres",
+    "url": "${DATABASE_URL}"
+  },
+  "scripts": {
+    "schema:apply": "npx prisma db push",
+    "schema:diff": "npx prisma db diff",
+    "sql": "npx prisma studio"
+  }
+}
