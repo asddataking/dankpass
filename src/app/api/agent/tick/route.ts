@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { extractTextFromImage, normalizeVendorName } from '@/lib/ocr'
+import { extractTextFromImage } from '@/lib/ocr'
 import { classifyReceipt } from '@/lib/classify'
 import { awardPoints, checkComboEligibility, awardComboBonus } from '@/lib/points'
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         const ocrResult = await extractTextFromImage(buffer)
         
         // Classify receipt
-        const classification = await classifyReceipt(ocrResult.vendor, ocrResult.total)
+        const classification = await classifyReceipt(ocrResult.vendor)
 
         // Update receipt with extracted data
         await supabaseAdmin

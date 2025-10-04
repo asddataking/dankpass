@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Upload, Star, Gift, Users, Zap, ArrowRight } from 'lucide-react'
+import { Upload, Star, Gift, Zap, ArrowRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 export default async function HomePage() {

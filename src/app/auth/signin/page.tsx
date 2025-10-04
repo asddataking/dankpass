@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Mail, ArrowRight } from 'lucide-react'
 import { signInWithEmail } from '@/lib/auth'
 
@@ -9,7 +9,6 @@ export default function SignInPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -91,16 +90,16 @@ export default function SignInPage() {
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-400">
-              We'll send you a magic link to sign in. No password required!
+              We&apos;ll send you a magic link to sign in. No password required!
             </p>
           </div>
         </div>
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <a href="/" className="text-gray-400 hover:text-white transition-colors">
+          <Link href="/" className="text-gray-400 hover:text-white transition-colors">
             ← Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

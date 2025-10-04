@@ -1,6 +1,6 @@
 'use client'
 
-import { Star, Zap, Gift, TrendingUp } from 'lucide-react'
+import { Star, Zap, Gift } from 'lucide-react'
 import { getTierFromPoints } from '@/lib/points'
 
 interface DankPassCardProps {

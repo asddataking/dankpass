@@ -7,7 +7,7 @@ export interface ClassificationResult {
   confidence: number
 }
 
-export async function classifyReceipt(vendor: string, total: number): Promise<ClassificationResult> {
+export async function classifyReceipt(vendor: string): Promise<ClassificationResult> {
   const normalizedVendor = normalizeVendorName(vendor)
   
   // First, try to match against known partners

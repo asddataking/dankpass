@@ -3,7 +3,7 @@ import { getCurrentUser } from '@/lib/auth'
 import { getUserPoints, getUserPointsBreakdown } from '@/lib/points'
 import { supabase } from '@/lib/supabase'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await getCurrentUser()
     if (!user) {

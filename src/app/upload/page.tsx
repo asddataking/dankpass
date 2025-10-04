@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Upload, Camera, FileImage, AlertCircle } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 
@@ -69,15 +70,15 @@ export default function UploadPage() {
             <span className="text-xl font-bold">DankPass</span>
           </div>
           <div className="flex items-center space-x-4">
-            <a href="/" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
+            <Link href="/" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
               Home
-            </a>
-            <a href="/me" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
+            </Link>
+            <Link href="/me" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
               My Pass
-            </a>
-            <a href="/rewards" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
+            </Link>
+            <Link href="/rewards" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
               Rewards
-            </a>
+            </Link>
           </div>
         </div>
       </nav>

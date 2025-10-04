@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Star, Zap, Gift, CheckCircle, AlertCircle } from 'lucide-react'
 
 interface RewardsClientProps {
@@ -96,15 +97,15 @@ export default function RewardsClient({ initialPoints }: RewardsClientProps) {
             <span className="text-xl font-bold">DankPass</span>
           </div>
           <div className="flex items-center space-x-4">
-            <a href="/" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
+            <Link href="/" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
               Home
-            </a>
-            <a href="/upload" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
+            </Link>
+            <Link href="/upload" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
               Upload
-            </a>
-            <a href="/me" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
+            </Link>
+            <Link href="/me" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
               My Pass
-            </a>
+            </Link>
           </div>
         </div>
       </nav>

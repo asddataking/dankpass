@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { generatePerceptualHash, checkDuplicateHash, checkDailyUploadLimit } from '@/lib/pHash'
-import { extractTextFromImage, normalizeVendorName } from '@/lib/ocr'
+import { extractTextFromImage } from '@/lib/ocr'
 import { classifyReceipt } from '@/lib/classify'
 import { awardPoints, checkComboEligibility, awardComboBonus } from '@/lib/points'
 
@@ -102,7 +102,7 @@ async function processReceiptAsync(receiptId: string, imageBuffer: Buffer) {
     const ocrResult = await extractTextFromImage(imageBuffer)
     
     // Classify receipt
-    const classification = await classifyReceipt(ocrResult.vendor, ocrResult.total)
+    const classification = await classifyReceipt(ocrResult.vendor)
     
     // Get user ID from receipt
     const { data: receipt } = await supabaseAdmin

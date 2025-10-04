@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, XCircle, Clock, Eye, Users, Gift, Activity } from 'lucide-react'
+import { Clock, Eye, Users, Gift } from 'lucide-react'
 
 interface AdminDashboardProps {
   pendingReceipts: Array<{
@@ -41,7 +41,7 @@ interface AdminDashboardProps {
     id: string
     receipt_id: string
     event_type: string
-    details: any
+    details: Record<string, unknown>
     created_at: string
   }>
 }

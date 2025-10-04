@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { getCurrentUser } from '@/lib/auth'
 import { isAdminEmail } from '@/lib/rbac'
 import { supabaseAdmin } from '@/lib/supabase'
@@ -59,12 +60,12 @@ export default async function AdminPage() {
             <span className="text-xl font-bold">DankPass Admin</span>
           </div>
           <div className="flex items-center space-x-4">
-            <a href="/" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
+            <Link href="/" className="px-4 py-2 border border-gray-600 rounded-lg hover:border-green-500 transition-colors">
               Home
-            </a>
-            <a href="/admin" className="px-4 py-2 bg-gray-800 rounded-lg">
+            </Link>
+            <Link href="/admin" className="px-4 py-2 bg-gray-800 rounded-lg">
               Admin
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
