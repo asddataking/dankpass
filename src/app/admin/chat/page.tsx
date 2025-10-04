@@ -6,20 +6,20 @@ import { useUser } from "@stackframe/stack";
 import { useEffect } from "react";
 
 export default function AdminChat() {
-  const { isLoaded, isSignedIn } = useUser();
+  const user = useUser();
   
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, value, setValue, handleSubmit, isLoading } = useChat({
     api: "/api/admin/chat"
   });
 
   // DANKPASS: Redirect if not authenticated
   useEffect(() => {
-    if (isLoaded && !isSignedIn) {
+    if (!user) {
       redirect('/auth/signin');
     }
-  }, [isLoaded, isSignedIn]);
+  }, [user]);
 
-  if (!isLoaded) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
@@ -28,10 +28,6 @@ export default function AdminChat() {
         </div>
       </div>
     );
-  }
-
-  if (!isSignedIn) {
-    return null;
   }
 
   return (
@@ -99,13 +95,13 @@ export default function AdminChat() {
           <form onSubmit={handleSubmit} className="flex gap-4">
             <input 
               className="flex-1 border border-gray-600 rounded-2xl px-4 py-3 bg-gray-900 text-white placeholder-gray-400 focus:border-green-500 focus:outline-none" 
-              value={input} 
-              onChange={handleInputChange} 
+              value={value} 
+              onChange={(e) => setValue(e.target.value)} 
               placeholder="Ask your AI assistant about DankPass management..." 
               disabled={isLoading}
             />
             <button 
-              disabled={isLoading || !input.trim()} 
+              disabled={isLoading || !value.trim()} 
               className="px-6 py-3 rounded-2xl bg-gradient-to-r from-green-500 to-purple-500 text-white font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             >
               {isLoading ? 'Sending...' : 'Send'}
@@ -115,7 +111,7 @@ export default function AdminChat() {
           {/* Quick Actions */}
           <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
             <button
-              onClick={() => handleInputChange({ target: { value: "Show me recent receipt processing stats" } } as React.ChangeEvent<HTMLInputElement>)}
+              onClick={() => setValue("Show me recent receipt processing stats")}
               className="p-4 border border-gray-600 rounded-xl hover:border-green-500 transition-colors text-left"
             >
               <div className="text-sm font-semibold">📊 Analytics</div>
@@ -123,7 +119,7 @@ export default function AdminChat() {
             </button>
             
             <button
-              onClick={() => handleInputChange({ target: { value: "Help me troubleshoot a user issue" } } as React.ChangeEvent<HTMLInputElement>)}
+              onClick={() => setValue("Help me troubleshoot a user issue")}
               className="p-4 border border-gray-600 rounded-xl hover:border-green-500 transition-colors text-left"
             >
               <div className="text-sm font-semibold">🔧 Support</div>
@@ -131,7 +127,7 @@ export default function AdminChat() {
             </button>
             
             <button
-              onClick={() => handleInputChange({ target: { value: "Show me pending receipts that need review" } } as React.ChangeEvent<HTMLInputElement>)}
+              onClick={() => setValue("Show me pending receipts that need review")}
               className="p-4 border border-gray-600 rounded-xl hover:border-green-500 transition-colors text-left"
             >
               <div className="text-sm font-semibold">📋 Review</div>
@@ -139,7 +135,7 @@ export default function AdminChat() {
             </button>
             
             <button
-              onClick={() => handleInputChange({ target: { value: "What are the current system health metrics?" } } as React.ChangeEvent<HTMLInputElement>)}
+              onClick={() => setValue("What are the current system health metrics?")}
               className="p-4 border border-gray-600 rounded-xl hover:border-green-500 transition-colors text-left"
             >
               <div className="text-sm font-semibold">💚 Health</div>
