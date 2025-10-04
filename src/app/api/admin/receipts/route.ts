@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
-import { isAdminEmail } from '@/lib/rbac'
-import { supabaseAdmin } from '@/lib/supabase'
-import { awardPoints } from '@/lib/points'
+import { requireAdmin } from '@/lib/neon-auth'
+import { updateReceipt, getReceiptById, addPoints } from '@/lib/neon-db'
+import { calculatePointsFromReceipt } from '@/lib/points'
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-    if (!user || !isAdminEmail(user.email || '')) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
-    }
+    // Require admin access using adapter
+    await requireAdmin()
 
     const { receiptId, action, reason } = await request.json()
 
@@ -18,53 +15,35 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'approve') {
-      // Get receipt details
-      const { data: receipt, error: receiptError } = await supabaseAdmin
-        .from('receipts')
-        .select('user_id, kind')
-        .eq('id', receiptId)
-        .single()
-
-      if (receiptError || !receipt) {
+      // Get receipt details using adapter
+      const receipt = await getReceiptById(receiptId)
+      if (!receipt) {
         return NextResponse.json({ error: 'Receipt not found' }, { status: 404 })
       }
 
-      // Update receipt status
-      const { error: updateError } = await supabaseAdmin
-        .from('receipts')
-        .update({
-          status: 'approved',
-          approved_at: new Date().toISOString()
-        })
-        .eq('id', receiptId)
+      // Update receipt status using adapter
+      const updateSuccess = await updateReceipt(receiptId, {
+        status: 'approved',
+        approvedAt: new Date()
+      })
 
-      if (updateError) {
-        console.error('Error updating receipt:', updateError)
+      if (!updateSuccess) {
         return NextResponse.json({ error: 'Failed to update receipt' }, { status: 500 })
       }
 
-      // Award points
-      const basePoints = receipt.kind === 'dispensary' ? 10 : 8
-      await awardPoints({
-        userId: receipt.user_id,
-        delta: basePoints,
-        reason: 'receipt',
-        refId: receiptId
-      })
+      // Award points using adapter
+      const basePoints = calculatePointsFromReceipt(receipt.kind as 'dispensary' | 'restaurant' | 'unknown')
+      await addPoints(receipt.userId, basePoints, 'receipt', receiptId)
 
       return NextResponse.json({ success: true, pointsAwarded: basePoints })
 
     } else if (action === 'deny') {
-      const { error: updateError } = await supabaseAdmin
-        .from('receipts')
-        .update({
-          status: 'denied',
-          deny_reason: reason || 'Manually denied by admin'
-        })
-        .eq('id', receiptId)
+      const updateSuccess = await updateReceipt(receiptId, {
+        status: 'denied',
+        denyReason: reason || 'Manually denied by admin'
+      })
 
-      if (updateError) {
-        console.error('Error updating receipt:', updateError)
+      if (!updateSuccess) {
         return NextResponse.json({ error: 'Failed to update receipt' }, { status: 500 })
       }
 
@@ -75,6 +54,10 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Admin access required')) {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    }
+    
     console.error('Admin receipt action error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

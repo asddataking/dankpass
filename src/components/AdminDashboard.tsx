@@ -208,7 +208,7 @@ export default function AdminDashboard({
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setSelectedTab(tab.id as any)}
+            onClick={() => setSelectedTab(tab.id as 'receipts' | 'redemptions' | 'partners' | 'events')}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
               selectedTab === tab.id
                 ? 'bg-gray-800 text-white'

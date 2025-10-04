@@ -1,5 +1,7 @@
-import { supabaseAdmin } from './supabase'
+// DANKPASS: Updated to use AI Gateway instead of direct provider calls
+import { getAllPartners } from './neon-db'
 import { normalizeVendorName } from './ocr'
+import { classifyReceiptWithAI } from './ai'
 
 export interface ClassificationResult {
   kind: 'dispensary' | 'restaurant' | 'unknown'
@@ -10,7 +12,7 @@ export interface ClassificationResult {
 export async function classifyReceipt(vendor: string): Promise<ClassificationResult> {
   const normalizedVendor = normalizeVendorName(vendor)
   
-  // First, try to match against known partners
+  // DANKPASS: First, try to match against known partners
   const partnerMatch = await matchPartner(normalizedVendor)
   if (partnerMatch) {
     return {
@@ -20,43 +22,52 @@ export async function classifyReceipt(vendor: string): Promise<ClassificationRes
     }
   }
 
-  // Fallback to keyword-based classification
-  const keywordClassification = classifyByKeywords(normalizedVendor)
-  
-  return {
-    kind: keywordClassification.kind,
-    confidence: keywordClassification.confidence
+  // DANKPASS: Use AI Gateway for classification
+  try {
+    const aiResult = await classifyReceiptWithAI(normalizedVendor, normalizedVendor)
+    return {
+      kind: aiResult.kind,
+      confidence: aiResult.confidence
+    }
+  } catch (error) {
+    console.error('DANKPASS: AI classification failed, falling back to keywords:', error)
+    
+    // DANKPASS: Fallback to keyword-based classification
+    const keywordClassification = classifyByKeywords(normalizedVendor)
+    
+    return {
+      kind: keywordClassification.kind,
+      confidence: keywordClassification.confidence
+    }
   }
 }
 
 async function matchPartner(vendorName: string): Promise<{ id: string; kind: 'dispensary' | 'restaurant' } | null> {
-  const { data: partners, error } = await supabaseAdmin
-    .from('partners')
-    .select('id, name, kind, match_keywords')
+  try {
+    const partners = await getAllPartners()
 
-  if (error) {
+    for (const partner of partners) {
+      // Check if vendor name matches partner name or keywords
+      const partnerName = normalizeVendorName(partner.name)
+      const keywords = partner.matchKeywords || []
+      
+      if (vendorName.includes(partnerName) || partnerName.includes(vendorName)) {
+        return { id: partner.id, kind: partner.kind as 'dispensary' | 'restaurant' }
+      }
+      
+      for (const keyword of keywords) {
+        const normalizedKeyword = normalizeVendorName(keyword)
+        if (vendorName.includes(normalizedKeyword) || normalizedKeyword.includes(vendorName)) {
+          return { id: partner.id, kind: partner.kind as 'dispensary' | 'restaurant' }
+        }
+      }
+    }
+
+    return null
+  } catch (error) {
     console.error('Error fetching partners:', error)
     return null
   }
-
-  for (const partner of partners) {
-    // Check if vendor name matches partner name or keywords
-    const partnerName = normalizeVendorName(partner.name)
-    const keywords = partner.match_keywords || []
-    
-    if (vendorName.includes(partnerName) || partnerName.includes(vendorName)) {
-      return { id: partner.id, kind: partner.kind }
-    }
-    
-    for (const keyword of keywords) {
-      const normalizedKeyword = normalizeVendorName(keyword)
-      if (vendorName.includes(normalizedKeyword) || normalizedKeyword.includes(vendorName)) {
-        return { id: partner.id, kind: partner.kind }
-      }
-    }
-  }
-
-  return null
 }
 
 function classifyByKeywords(vendorName: string): { kind: 'dispensary' | 'restaurant' | 'unknown'; confidence: number } {
@@ -87,26 +98,4 @@ function classifyByKeywords(vendorName: string): { kind: 'dispensary' | 'restaur
   } else {
     return { kind: 'unknown', confidence: 0.1 }
   }
-}
-
-export async function getActiveCampaigns(partnerId?: string) {
-  const query = supabaseAdmin
-    .from('campaigns')
-    .select('*')
-    .eq('is_active', true)
-    .lte('starts_at', new Date().toISOString())
-    .gte('ends_at', new Date().toISOString())
-
-  if (partnerId) {
-    query.eq('partner_id', partnerId)
-  }
-
-  const { data, error } = await query
-
-  if (error) {
-    console.error('Error fetching campaigns:', error)
-    return []
-  }
-
-  return data
 }

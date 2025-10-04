@@ -1,53 +1,25 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { getCurrentUser } from '@/lib/auth'
-import { isAdminEmail } from '@/lib/rbac'
-import { supabaseAdmin } from '@/lib/supabase'
+import { requireAdmin } from '@/lib/neon-auth'
+import { getPendingReceipts, getPendingRedemptions, getAllPartners } from '@/lib/neon-db'
 import AdminDashboard from '@/components/AdminDashboard'
 
 export default async function AdminPage() {
-  const user = await getCurrentUser()
-  if (!user || !isAdminEmail(user.email || '')) {
+  try {
+    await requireAdmin()
+  } catch (error) {
     redirect('/')
   }
 
   // Get admin data
   const [
-    { data: pendingReceipts },
-    { data: recentReceipts },
-    { data: recentRedemptions },
-    { data: partners },
-    { data: agentEvents }
+    pendingReceipts,
+    pendingRedemptions,
+    partners
   ] = await Promise.all([
-    supabaseAdmin
-      .from('receipts')
-      .select('id, user_id, vendor, kind, status, created_at, deny_reason')
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false })
-      .limit(20),
-    
-    supabaseAdmin
-      .from('receipts')
-      .select('id, user_id, vendor, kind, status, created_at')
-      .order('created_at', { ascending: false })
-      .limit(50),
-    
-    supabaseAdmin
-      .from('redemptions')
-      .select('id, user_id, reward_code, points_cost, status, created_at')
-      .order('created_at', { ascending: false })
-      .limit(20),
-    
-    supabaseAdmin
-      .from('partners')
-      .select('*')
-      .order('created_at', { ascending: false }),
-    
-    supabaseAdmin
-      .from('agent_events')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50)
+    getPendingReceipts(20),
+    getPendingRedemptions(),
+    getAllPartners()
   ])
 
   return (
@@ -72,11 +44,33 @@ export default async function AdminPage() {
 
       <div className="container mx-auto px-4 py-8">
         <AdminDashboard
-          pendingReceipts={pendingReceipts || []}
-          recentReceipts={recentReceipts || []}
-          recentRedemptions={recentRedemptions || []}
-          partners={partners || []}
-          agentEvents={agentEvents || []}
+          pendingReceipts={(pendingReceipts || []).map(receipt => ({
+            id: receipt.id,
+            user_id: receipt.userId,
+            vendor: receipt.vendor || 'Unknown',
+            kind: receipt.kind || 'unknown',
+            status: receipt.status || 'pending',
+            created_at: receipt.createdAt.toISOString(),
+            deny_reason: receipt.denyReason || undefined
+          }))}
+          recentReceipts={[]}
+          recentRedemptions={(pendingRedemptions || []).map(redemption => ({
+            id: redemption.id,
+            user_id: redemption.userId,
+            reward_code: redemption.rewardCode,
+            points_cost: redemption.pointsCost,
+            status: redemption.status || 'pending',
+            created_at: redemption.createdAt.toISOString()
+          }))}
+          partners={(partners || []).map(partner => ({
+            id: partner.id,
+            name: partner.name,
+            kind: partner.kind as 'dispensary' | 'restaurant',
+            is_featured: partner.isFeatured || false,
+            city: partner.city || 'Unknown',
+            state: partner.state || 'Unknown'
+          }))}
+          agentEvents={[]}
         />
       </div>
     </div>

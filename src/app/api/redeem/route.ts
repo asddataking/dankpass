@@ -1,29 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
-import { getUserPoints } from '@/lib/points'
-import { supabaseAdmin } from '@/lib/supabase'
+import { getUserPointsTotal, addPoints, createRedemption } from '@/lib/neon-db'
+import { getUserPointsFromCache, setUserPointsCache } from '@/lib/upstash-redis'
+import { getCurrentUser } from '@/lib/neon-auth'
 
+// Reward costs - moved from edgeConfig
 const REWARD_COSTS = {
   SHOUTOUT: 50,
   BONUS_CLIP: 75,
   STICKERS: 150
 } as const
 
+function isValidRewardCode(code: string): code is keyof typeof REWARD_COSTS {
+  return code in REWARD_COSTS
+}
+
+async function getRewardCost(rewardCode: keyof typeof REWARD_COSTS): Promise<number> {
+  return REWARD_COSTS[rewardCode]
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-    if (!user) {
+    const stackUser = await getCurrentUser()
+    if (!stackUser) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
+    const userId = stackUser.id
     const { reward_code } = await request.json()
     
-    if (!reward_code || !(reward_code in REWARD_COSTS)) {
+    if (!reward_code || !isValidRewardCode(reward_code)) {
       return NextResponse.json({ error: 'Invalid reward code' }, { status: 400 })
     }
 
-    const pointsCost = REWARD_COSTS[reward_code as keyof typeof REWARD_COSTS]
-    const userPoints = await getUserPoints(user.id)
+    const pointsCost = await getRewardCost(reward_code)
+    
+    // Check user's current points
+    let userPoints = await getUserPointsFromCache(userId)
+    if (userPoints === null) {
+      userPoints = await getUserPointsTotal(userId)
+      await setUserPointsCache(userId, userPoints)
+    }
 
     if (userPoints < pointsCost) {
       return NextResponse.json({ 
@@ -31,36 +47,20 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Deduct points
-    const { error: pointsError } = await supabaseAdmin
-      .from('points_ledger')
-      .insert({
-        user_id: user.id,
-        delta: -pointsCost,
-        reason: 'redeem'
-      })
-
-    if (pointsError) {
-      console.error('Points deduction error:', pointsError)
-      return NextResponse.json({ error: 'Failed to deduct points' }, { status: 500 })
-    }
-
     // Create redemption record
-    const { data: redemption, error: redemptionError } = await supabaseAdmin
-      .from('redemptions')
-      .insert({
-        user_id: user.id,
-        reward_code,
-        points_cost: pointsCost,
-        status: 'pending'
-      })
-      .select()
-      .single()
-
-    if (redemptionError) {
-      console.error('Redemption creation error:', redemptionError)
+    const redemption = await createRedemption(userId, reward_code, pointsCost)
+    if (!redemption) {
       return NextResponse.json({ error: 'Failed to create redemption record' }, { status: 500 })
     }
+
+    // Deduct points
+    await addPoints(userId, -pointsCost, 'redeem', redemption.id)
+
+    // Update cache
+    await setUserPointsCache(userId, userPoints - pointsCost)
+
+    // Get user email for Discord notification
+    const email = 'user@example.com' // TODO: Get email from Stack Auth when available
 
     // Notify Discord webhook if configured
     if (process.env.DISCORD_WEBHOOK_URL) {
@@ -71,11 +71,11 @@ export async function POST(request: NextRequest) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            content: `🎉 New redemption: ${reward_code} (${pointsCost} points) by user ${user.email}`,
+            content: `🎉 New redemption: ${reward_code} (${pointsCost} points) by user ${email}`,
             embeds: [{
               title: 'DankPass Redemption',
               fields: [
-                { name: 'User', value: user.email, inline: true },
+                { name: 'User', value: email || 'Unknown', inline: true },
                 { name: 'Reward', value: reward_code, inline: true },
                 { name: 'Points', value: pointsCost.toString(), inline: true }
               ],

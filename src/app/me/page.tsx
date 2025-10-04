@@ -1,35 +1,19 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { getCurrentUser, getCurrentProfile } from '@/lib/auth'
-import { getUserPoints, getUserPointsBreakdown } from '@/lib/points'
-import { supabase } from '@/lib/supabase'
+import { getOrCreateUser } from '@/lib/neon-auth'
+import { getUserPointsTotal, getUserPointsBreakdown, getUserReceipts, getUserRedemptions } from '@/lib/neon-db'
 import DankPassCard from '@/components/DankPassCard'
 
 export default async function MePage() {
-  const user = await getCurrentUser()
+  const user = await getOrCreateUser()
   if (!user) {
     redirect('/auth/signin')
   }
 
-  const profile = await getCurrentProfile()
-  const points = await getUserPoints(user.id)
+  const points = await getUserPointsTotal(user.id)
   const pointsBreakdown = await getUserPointsBreakdown(user.id)
-
-  // Get recent receipts
-  const { data: recentReceipts } = await supabase
-    .from('receipts')
-    .select('id, vendor, kind, status, created_at')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(5)
-
-  // Get recent redemptions
-  const { data: recentRedemptions } = await supabase
-    .from('redemptions')
-    .select('reward_code, points_cost, status, created_at')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(5)
+  const recentReceipts = await getUserReceipts(user.id, 5)
+  const recentRedemptions = await getUserRedemptions(user.id, 5)
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -60,9 +44,9 @@ export default async function MePage() {
           <div className="lg:col-span-2">
             <DankPassCard
               points={points}
-              displayName={profile?.display_name}
-              city={profile?.city}
-              isPlus={profile?.is_plus}
+              displayName={user.display_name || user.email}
+              city={undefined}
+              isPlus={user.is_plus}
               recentReceipts={recentReceipts || []}
             />
           </div>

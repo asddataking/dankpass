@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
-import { isAdminEmail } from '@/lib/rbac'
-import { supabaseAdmin } from '@/lib/supabase'
+import { requireAdmin } from '@/lib/neon-auth'
+import { updateRedemptionStatus } from '@/lib/neon-db'
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-    if (!user || !isAdminEmail(user.email || '')) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
-    }
+    // Require admin access using adapter
+    await requireAdmin()
 
     const { redemptionId, action } = await request.json()
 
@@ -17,31 +14,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'fulfill') {
-      const { error: updateError } = await supabaseAdmin
-        .from('redemptions')
-        .update({
-          status: 'fulfilled',
-          fulfilled_at: new Date().toISOString()
-        })
-        .eq('id', redemptionId)
+      const updateSuccess = await updateRedemptionStatus(redemptionId, 'fulfilled')
 
-      if (updateError) {
-        console.error('Error updating redemption:', updateError)
+      if (!updateSuccess) {
         return NextResponse.json({ error: 'Failed to update redemption' }, { status: 500 })
       }
 
       return NextResponse.json({ success: true })
 
     } else if (action === 'cancel') {
-      const { error: updateError } = await supabaseAdmin
-        .from('redemptions')
-        .update({
-          status: 'cancelled'
-        })
-        .eq('id', redemptionId)
+      const updateSuccess = await updateRedemptionStatus(redemptionId, 'cancelled')
 
-      if (updateError) {
-        console.error('Error updating redemption:', updateError)
+      if (!updateSuccess) {
         return NextResponse.json({ error: 'Failed to update redemption' }, { status: 500 })
       }
 
@@ -52,6 +36,10 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Admin access required')) {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    }
+    
     console.error('Admin redemption action error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

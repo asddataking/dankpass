@@ -1,14 +1,10 @@
 import Link from 'next/link'
 import { Upload, Star, Gift, Zap, ArrowRight } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { getFeaturedPartners } from '@/lib/neon-db'
 
 export default async function HomePage() {
   // Fetch featured partners
-  const { data: featuredPartners } = await supabase
-    .from('partners')
-    .select('*')
-    .eq('is_featured', true)
-    .limit(3)
+  const featuredPartners = await getFeaturedPartners()
 
   return (
     <div className="min-h-screen bg-black text-white">

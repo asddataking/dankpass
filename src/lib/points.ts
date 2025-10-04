@@ -1,108 +1,158 @@
-import { supabaseAdmin } from './supabase'
-
-export interface PointsAward {
-  userId: string
-  delta: number
-  reason: 'receipt' | 'combo' | 'bonus' | 'redeem' | 'admin'
-  refId?: string
+// Utility functions for points and tiers
+export interface Tier {
+  name: string
+  color: string
+  minPoints: number
+  maxPoints?: number
+  benefits: string[]
 }
 
-export async function awardPoints(award: PointsAward) {
-  const { data, error } = await supabaseAdmin
-    .from('points_ledger')
-    .insert({
-      user_id: award.userId,
-      delta: award.delta,
-      reason: award.reason,
-      ref_id: award.refId
-    })
-    .select()
-    .single()
-
-  if (error) {
-    console.error('Error awarding points:', error)
-    throw error
-  }
-
-  return data
-}
-
-export async function getUserPoints(userId: string): Promise<number> {
-  const { data, error } = await supabaseAdmin
-    .from('points_ledger')
-    .select('delta')
-    .eq('user_id', userId)
-
-  if (error) {
-    console.error('Error fetching user points:', error)
-    return 0
-  }
-
-  return data.reduce((sum, entry) => sum + entry.delta, 0)
-}
-
-export async function getUserPointsBreakdown(userId: string) {
-  const { data, error } = await supabaseAdmin
-    .from('points_ledger')
-    .select('delta, reason, created_at')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-
-  if (error) {
-    console.error('Error fetching points breakdown:', error)
-    return []
-  }
-
-  return data
-}
-
-export function getTierFromPoints(points: number): { name: string; color: string; minPoints: number } {
+export function getTierFromPoints(points: number): Tier {
   if (points >= 2000) {
-    return { name: 'Ambassador', color: 'bg-gradient-to-r from-purple-600 to-black', minPoints: 2000 }
+    return {
+      name: 'Ambassador',
+      color: 'bg-gradient-to-r from-purple-600 to-pink-600',
+      minPoints: 2000,
+      benefits: [
+        '2x points multiplier',
+        'Early access to new rewards',
+        'Exclusive Ambassador events',
+        'Priority customer support'
+      ]
+    }
   } else if (points >= 500) {
-    return { name: 'Mentor', color: 'bg-gradient-to-r from-yellow-500 to-orange-500', minPoints: 500 }
+    return {
+      name: 'Mentor',
+      color: 'bg-gradient-to-r from-blue-600 to-purple-600',
+      minPoints: 500,
+      maxPoints: 1999,
+      benefits: [
+        '1.5x points multiplier',
+        'Access to Mentor rewards',
+        'Monthly bonus points'
+      ]
+    }
   } else {
-    return { name: 'Supporter', color: 'bg-gradient-to-r from-green-500 to-emerald-500', minPoints: 0 }
+    return {
+      name: 'Supporter',
+      color: 'bg-gradient-to-r from-green-600 to-blue-600',
+      minPoints: 0,
+      maxPoints: 499,
+      benefits: [
+        'Standard points earning',
+        'Access to basic rewards',
+        'Community access'
+      ]
+    }
   }
 }
 
-export async function checkComboEligibility(userId: string, receiptKind: 'dispensary' | 'restaurant'): Promise<boolean> {
-  const otherKind = receiptKind === 'dispensary' ? 'restaurant' : 'dispensary'
+export function getNextTier(points: number): Tier | null {
+  const currentTier = getTierFromPoints(points)
   
-  // Check if user has an approved receipt of the other kind within 48 hours
-  const { data, error } = await supabaseAdmin
-    .from('receipts')
-    .select('id, created_at')
-    .eq('user_id', userId)
-    .eq('status', 'approved')
-    .eq('kind', otherKind)
-    .gte('created_at', new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString())
-    .limit(1)
-
-  if (error) {
-    console.error('Error checking combo eligibility:', error)
-    return false
+  if (currentTier.name === 'Ambassador') {
+    return null // Already at highest tier
   }
-
-  return data.length > 0
+  
+  if (currentTier.name === 'Supporter') {
+    return {
+      name: 'Mentor',
+      color: 'bg-gradient-to-r from-blue-600 to-purple-600',
+      minPoints: 500,
+      maxPoints: 1999,
+      benefits: [
+        '1.5x points multiplier',
+        'Access to Mentor rewards',
+        'Monthly bonus points'
+      ]
+    }
+  }
+  
+  if (currentTier.name === 'Mentor') {
+    return {
+      name: 'Ambassador',
+      color: 'bg-gradient-to-r from-purple-600 to-pink-600',
+      minPoints: 2000,
+      benefits: [
+        '2x points multiplier',
+        'Early access to new rewards',
+        'Exclusive Ambassador events',
+        'Priority customer support'
+      ]
+    }
+  }
+  
+  return null
 }
 
-export async function awardComboBonus(userId: string, receiptId: string) {
-  const { data, error } = await supabaseAdmin
-    .from('points_ledger')
-    .insert({
-      user_id: userId,
-      delta: 15,
-      reason: 'combo',
-      ref_id: receiptId
-    })
-    .select()
-    .single()
+export function getPointsToNextTier(points: number): number {
+  const nextTier = getNextTier(points)
+  if (!nextTier) return 0
+  
+  return nextTier.minPoints - points
+}
 
-  if (error) {
-    console.error('Error awarding combo bonus:', error)
-    throw error
+export function getTierProgress(points: number): number {
+  const currentTier = getTierFromPoints(points)
+  const nextTier = getNextTier(points)
+  
+  if (!nextTier) return 100 // At highest tier
+  
+  const tierRange = nextTier.minPoints - currentTier.minPoints
+  const progress = points - currentTier.minPoints
+  
+  return Math.min(100, Math.max(0, (progress / tierRange) * 100))
+}
+
+export function formatPoints(points: number): string {
+  if (points >= 1000000) {
+    return `${(points / 1000000).toFixed(1)}M`
+  } else if (points >= 1000) {
+    return `${(points / 1000).toFixed(1)}K`
+  } else {
+    return points.toString()
   }
+}
 
-  return data
+export function calculatePointsFromReceipt(
+  kind: 'dispensary' | 'restaurant' | 'unknown',
+  isPlus: boolean = false,
+  hasComboBonus: boolean = false
+): number {
+  let basePoints = 0
+  
+  switch (kind) {
+    case 'dispensary':
+      basePoints = 10
+      break
+    case 'restaurant':
+      basePoints = 8
+      break
+    default:
+      return 0
+  }
+  
+  // Apply Plus multiplier
+  if (isPlus) {
+    basePoints *= 2
+  }
+  
+  // Apply combo bonus
+  if (hasComboBonus) {
+    basePoints += 15
+  }
+  
+  return basePoints
+}
+
+export function getTierMultiplier(tier: Tier): number {
+  switch (tier.name) {
+    case 'Ambassador':
+      return 2.0
+    case 'Mentor':
+      return 1.5
+    case 'Supporter':
+    default:
+      return 1.0
+  }
 }

@@ -1,15 +1,15 @@
 import { redirect } from 'next/navigation'
-import { getCurrentUser } from '@/lib/auth'
-import { getUserPoints } from '@/lib/points'
+import { getOrCreateUser } from '@/lib/neon-auth'
+import { getUserPointsTotal } from '@/lib/neon-db'
 import RewardsClient from './RewardsClient'
 
 export default async function RewardsPage() {
-  const user = await getCurrentUser()
+  const user = await getOrCreateUser()
   if (!user) {
     redirect('/auth/signin')
   }
 
-  const points = await getUserPoints(user.id)
+  const points = await getUserPointsTotal(user.id)
 
   return <RewardsClient initialPoints={points} />
 }

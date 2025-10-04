@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
+import { getPendingReceipts, updateReceipt, addPoints, createAgentEvent } from '@/lib/neon-db'
 import { extractTextFromImage } from '@/lib/ocr'
 import { classifyReceipt } from '@/lib/classify'
-import { awardPoints, checkComboEligibility, awardComboBonus } from '@/lib/points'
+
+// Point values - moved from edgeConfig
+const POINT_VALUES = {
+  DISPENSARY: 100,
+  RESTAURANT: 50
+} as const
+
+async function getPointValue(kind: keyof typeof POINT_VALUES): Promise<number> {
+  return POINT_VALUES[kind]
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,18 +22,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Get pending receipts (limit to 10 per run)
-    const { data: pendingReceipts, error } = await supabaseAdmin
-      .from('receipts')
-      .select('id, user_id, storage_path')
-      .eq('status', 'pending')
-      .limit(10)
+    const pendingReceipts = await getPendingReceipts(10)
 
-    if (error) {
-      console.error('Error fetching pending receipts:', error)
-      return NextResponse.json({ error: 'Database error' }, { status: 500 })
-    }
-
-    if (!pendingReceipts || pendingReceipts.length === 0) {
+    if (pendingReceipts.length === 0) {
       return NextResponse.json({ message: 'No pending receipts to process' })
     }
 
@@ -32,84 +32,53 @@ export async function POST(request: NextRequest) {
 
     for (const receipt of pendingReceipts) {
       try {
-        // Download image from storage
-        const { data: imageData, error: downloadError } = await supabaseAdmin.storage
-          .from('receipts')
-          .download(receipt.storage_path)
-
-        if (downloadError) {
-          console.error('Download error:', downloadError)
-          await markReceiptAsDenied(receipt.id, 'Failed to download image')
-          results.push({ receiptId: receipt.id, status: 'error', error: 'Download failed' })
-          continue
+        // Download image from blob URL
+        const response = await fetch(receipt.blobUrl)
+        if (!response.ok) {
+          throw new Error(`Failed to download image: ${response.statusText}`)
         }
-
-        // Convert to buffer
-        const arrayBuffer = await imageData.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
+        
+        const imageBuffer = Buffer.from(await response.arrayBuffer())
 
         // Extract text from image
-        const ocrResult = await extractTextFromImage(buffer)
+        const ocrResult = await extractTextFromImage(imageBuffer)
         
         // Classify receipt
         const classification = await classifyReceipt(ocrResult.vendor)
 
         // Update receipt with extracted data
-        await supabaseAdmin
-          .from('receipts')
-          .update({
-            vendor: ocrResult.vendor,
-            total_amount_cents: Math.round(ocrResult.total * 100),
-            receipt_date: ocrResult.date,
-            kind: classification.kind,
-            matched_partner_id: classification.matchedPartnerId,
-            status: 'approved',
-            approved_at: new Date().toISOString()
-          })
-          .eq('id', receipt.id)
-
-        // Award points
-        const basePoints = classification.kind === 'dispensary' ? 10 : 8
-        await awardPoints({
-          userId: receipt.user_id,
-          delta: basePoints,
-          reason: 'receipt',
-          refId: receipt.id
+        await updateReceipt(receipt.id, {
+          vendor: ocrResult.vendor,
+          totalAmountCents: Math.round(ocrResult.total * 100),
+          receiptDate: ocrResult.date,
+          kind: classification.kind,
+          matchedPartnerId: classification.matchedPartnerId,
+          status: 'approved',
+          approvedAt: new Date()
         })
 
-        // Check for combo bonus
-        let comboAwarded = false
-        if (classification.kind !== 'unknown') {
-          const isComboEligible = await checkComboEligibility(receipt.user_id, classification.kind)
-          if (isComboEligible) {
-            await awardComboBonus(receipt.user_id, receipt.id)
-            comboAwarded = true
-          }
-        }
+        // Award points
+        const basePoints = classification.kind === 'dispensary' 
+          ? await getPointValue('DISPENSARY')
+          : await getPointValue('RESTAURANT')
+        
+        await addPoints(receipt.userId, basePoints, 'receipt', receipt.id)
 
         // Log agent event
-        await supabaseAdmin
-          .from('agent_events')
-          .insert({
-            receipt_id: receipt.id,
-            event_type: 'processed',
-            details: {
-              vendor: ocrResult.vendor,
-              total: ocrResult.total,
-              kind: classification.kind,
-              points_awarded: basePoints,
-              combo_awarded: comboAwarded,
-              confidence: classification.confidence
-            }
-          })
+        await createAgentEvent(receipt.id, 'processed', {
+          vendor: ocrResult.vendor,
+          total: ocrResult.total,
+          kind: classification.kind,
+          points_awarded: basePoints,
+          confidence: classification.confidence
+        })
 
         results.push({
           receiptId: receipt.id,
           status: 'success',
           vendor: ocrResult.vendor,
           kind: classification.kind,
-          pointsAwarded: basePoints,
-          comboAwarded
+          pointsAwarded: basePoints
         })
 
       } catch (error) {
@@ -137,22 +106,13 @@ export async function POST(request: NextRequest) {
 }
 
 async function markReceiptAsDenied(receiptId: string, reason: string) {
-  await supabaseAdmin
-    .from('receipts')
-    .update({
-      status: 'denied',
-      deny_reason: reason
-    })
-    .eq('id', receiptId)
+  await updateReceipt(receiptId, {
+    status: 'denied',
+    denyReason: reason
+  })
 
   // Log agent event
-  await supabaseAdmin
-    .from('agent_events')
-    .insert({
-      receipt_id: receiptId,
-      event_type: 'error',
-      details: {
-        error: reason
-      }
-    })
+  await createAgentEvent(receiptId, 'error', {
+    error: reason
+  })
 }

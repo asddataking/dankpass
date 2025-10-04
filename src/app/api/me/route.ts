@@ -1,55 +1,66 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
-import { getUserPoints, getUserPointsBreakdown } from '@/lib/points'
-import { supabase } from '@/lib/supabase'
+import { NextResponse } from 'next/server'
+import { getUserPointsTotal, getUserPointsBreakdown, getUserReceipts, getUserRedemptions } from '@/lib/neon-db'
+import { getUserPointsFromCache, setUserPointsCache } from '@/lib/upstash-redis'
+import { getCurrentUser } from '@/lib/neon-auth'
 
 export async function GET() {
   try {
-    const user = await getCurrentUser()
-    if (!user) {
+    const stackUser = await getCurrentUser()
+    if (!stackUser) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
-    // Get user profile
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
+    const userId = stackUser.id
+    
+    // Try to get points from cache first
+    let points = await getUserPointsFromCache(userId)
+    
+    // If not in cache, get from database and cache it
+    if (points === null) {
+      points = await getUserPointsTotal(userId)
+      await setUserPointsCache(userId, points)
+    }
 
-    // Get user points
-    const points = await getUserPoints(user.id)
-    const pointsBreakdown = await getUserPointsBreakdown(user.id)
+    // Get user data
+    const [pointsBreakdown, recentReceipts, recentRedemptions] = await Promise.all([
+      getUserPointsBreakdown(userId),
+      getUserReceipts(userId, 10),
+      getUserRedemptions(userId, 10)
+    ])
 
-    // Get recent receipts
-    const { data: recentReceipts } = await supabase
-      .from('receipts')
-      .select('id, vendor, kind, status, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(10)
-
-    // Get recent redemptions
-    const { data: recentRedemptions } = await supabase
-      .from('redemptions')
-      .select('reward_code, points_cost, status, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(10)
+    // Get user info from Neon Auth
+    const userProfile = {
+      id: stackUser.id,
+      email: 'user@example.com', // TODO: Get email from Stack Auth when available
+      display_name: 'User', // TODO: Get name from Stack Auth when available
+      avatar_url: null,
+      is_plus: false // TODO: Implement Plus subscription
+    }
 
     // Calculate stats
-    const approvedReceipts = recentReceipts?.filter(r => r.status === 'approved') || []
+    const approvedReceipts = recentReceipts.filter(r => r.status === 'approved')
     const dispensaryCount = approvedReceipts.filter(r => r.kind === 'dispensary').length
     const restaurantCount = approvedReceipts.filter(r => r.kind === 'restaurant').length
 
     return NextResponse.json({
-      profile,
+      profile: userProfile,
       points,
       pointsBreakdown,
-      recentReceipts,
-      recentRedemptions,
+      recentReceipts: recentReceipts.map(receipt => ({
+        id: receipt.id,
+        vendor: receipt.vendor,
+        kind: receipt.kind,
+        status: receipt.status,
+        created_at: receipt.createdAt
+      })),
+      recentRedemptions: recentRedemptions.map(redemption => ({
+        reward_code: redemption.rewardCode,
+        points_cost: redemption.pointsCost,
+        status: redemption.status,
+        created_at: redemption.createdAt
+      })),
       stats: {
-        totalReceipts: recentReceipts?.length || 0,
+        totalReceipts: recentReceipts.length,
         approvedReceipts: approvedReceipts.length,
         dispensaryCount,
         restaurantCount

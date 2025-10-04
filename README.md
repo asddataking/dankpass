@@ -1,6 +1,6 @@
 # DankPass - Weed + Food Loyalty Program
 
-A Next.js loyalty program that rewards users for uploading receipts from dispensaries and restaurants. Users earn points that can be redeemed for rewards like social shoutouts, bonus clips, and sticker packs.
+A Next.js loyalty program that rewards users for uploading receipts from dispensaries and restaurants. Users earn points that can be redeemed for rewards like social shoutouts, bonus clips, and sticker packs. Built with Vercel's native stack for optimal performance and scalability.
 
 ## Features
 
@@ -11,7 +11,7 @@ A Next.js loyalty program that rewards users for uploading receipts from dispens
 - 👑 **Tier System**: Supporter, Mentor, and Ambassador tiers based on points
 - 🔄 **Combo Bonus**: Extra 15 points for both types within 48 hours
 - 👨‍💼 **Admin Panel**: Approve/deny receipts and manage redemptions
-- 🔐 **Supabase Auth**: Magic link authentication
+- 🔐 **Clerk Authentication**: Magic link and Google OAuth authentication
 - 📱 **Mobile-First**: Responsive design with modern UI
 
 ## Tech Stack
@@ -19,9 +19,11 @@ A Next.js loyalty program that rewards users for uploading receipts from dispens
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **Storage**: Supabase Storage
+- **Database**: Vercel Postgres
+- **Authentication**: Clerk
+- **Storage**: Vercel Blob
+- **Caching**: Vercel KV (Redis)
+- **Configuration**: Vercel Edge Config
 - **OCR**: OpenAI Vision API or Tesseract.js
 - **Icons**: Lucide React
 - **Deployment**: Vercel
@@ -47,32 +49,29 @@ cp env.example .env.local
 Update `.env.local` with your actual values:
 
 ```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-clerk-publishable-key
+CLERK_SECRET_KEY=your-clerk-secret-key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/auth/signin
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/auth/signup
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/me
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/me
 
 # Admin Configuration
-ADMIN_EMAILS=dan@dankndevour.com,other@example.com
+ADMIN_EMAILS=your-email@example.com
 
 # Optional Integrations
-STRIPE_SECRET_KEY=your-stripe-secret-key
-STRIPE_PRICE_ID_PLUS=price_plus_subscription_id
 OPENAI_API_KEY=your-openai-api-key
 OCR_PROVIDER=openai
 DISCORD_WEBHOOK_URL=your-discord-webhook-url
-
-# App Configuration
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-here-change-this-in-production"
 ```
 
 ### 3. Database Setup
 
-1. Create a new Supabase project
-2. Run the SQL schema from `supabase-schema.sql` in your Supabase SQL editor
-3. Enable Row Level Security (RLS) policies
-4. Create the `receipts` storage bucket
+1. Create a Vercel Postgres database
+2. Run the SQL schema from `vercel-postgres-schema.sql` in your database
+3. Set up Vercel Blob for file storage
+4. Configure Vercel KV for caching (optional)
 
 ### 4. Start Development Server
 
@@ -120,14 +119,14 @@ src/
 
 ## Database Schema
 
-The app uses Supabase with the following main tables:
+The application uses Vercel Postgres with the following main tables:
 
-- **profiles**: User profile information
-- **partners**: Dispensary and restaurant partners
-- **receipts**: Uploaded receipt records
-- **points_ledger**: Points transactions
-- **redemptions**: Reward redemption records
-- **agent_events**: AI processing logs
+- `users` - User profiles and authentication
+- `partners` - Dispensary and restaurant partners
+- `receipts` - Uploaded receipts and processing status
+- `points_ledger` - Points transactions
+- `redemptions` - Reward redemptions
+- `agent_events` - AI agent processing logs
 
 ## AI Agent
 
@@ -164,20 +163,72 @@ The AI agent processes receipts automatically:
 
 ## Deployment
 
-The app is designed to be deployed on Vercel:
+The app is designed to be deployed on Vercel with Clerk authentication:
 
 1. Connect your GitHub repository to Vercel
-2. Set up environment variables in Vercel dashboard
-3. Deploy to production
-4. Configure custom domain (dankpass.dankndevour.com)
+2. Set up Clerk authentication
+3. Add Vercel Postgres, Blob, KV, and Edge Config services
+4. Set environment variables in Vercel dashboard
+5. Deploy to production
+6. Configure custom domain (dankpass.dankndevour.com)
 
 ## Security
 
-- Row Level Security (RLS) enabled on all tables
+- Clerk authentication with secure session management
 - Admin access controlled by email allowlist
 - File upload validation and size limits
 - Perceptual hash duplicate detection
 - Daily upload limits per user
+- Vercel KV rate limiting
+
+## AI Runtime
+
+DankPass uses Vercel AI Gateway for all AI operations, providing a unified interface for LLM and embedding calls. The system includes:
+
+### AI Gateway Configuration
+- **Model**: Anthropic Claude 3.5 Sonnet (configurable via Gateway dashboard)
+- **Embeddings**: OpenAI text-embedding-3-small
+- **Health Check**: `/api/health/ai` endpoint for monitoring
+
+### Background Jobs
+- **Primary**: Vercel Queues (when available)
+- **Fallback**: Upstash QStash for reliable job processing
+- **Job Types**:
+  - `receipt.process`: Process uploaded receipts
+  - `receipt.validate`: AI-powered fraud detection
+  - `points.award`: Award points to users
+  - `leaderboard.rebuild`: Update leaderboard cache
+
+### Scheduled Tasks (Vercel Cron)
+- **Daily Reconciliation**: 3 AM UTC - User activity checks
+- **Leaderboard Updates**: Every 6 hours - Refresh rankings
+- **Weekly Cleanup**: Sundays - Remove old data
+
+### Admin Chat
+- **Endpoint**: `/admin/chat`
+- **Features**: AI-powered admin assistant for managing the platform
+- **Streaming**: Real-time responses using Vercel AI SDK
+
+### Environment Variables
+```env
+# AI Gateway
+AI_GATEWAY_URL=https://gateway.ai.vercel.com/api/v1
+AI_GATEWAY_KEY=your-gateway-key
+AI_MODEL=anthropic/claude-3-5-sonnet
+AI_EMBEDDING_MODEL=openai/text-embedding-3-small
+
+# Background Jobs
+VERCEL_QUEUE_NAME=dankpass-jobs
+QSTASH_URL=https://qstash.upstash.io/v2/publish
+QSTASH_TOKEN=your-qstash-token
+JOB_CONSUMER_URL=https://your-app.vercel.app/api/jobs/consume
+```
+
+### Switching Models
+Models can be changed via the Vercel AI Gateway dashboard without code changes. Simply update the `AI_MODEL` environment variable and redeploy.
+
+### Job Queue Toggle
+Switch between Vercel Queues and QStash by setting/removing the `VERCEL_QUEUE_NAME` environment variable. The system automatically detects and uses the appropriate queue.
 
 ## Contributing
 

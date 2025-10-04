@@ -2,48 +2,23 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-import { createProfile } from '@/lib/auth'
+import { useUser } from '@stackframe/stack'
 
 export default function AuthCallbackPage() {
   const router = useRouter()
+  const { isLoaded, isSignedIn } = useUser()
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          console.error('Auth callback error:', error)
-          router.push('/auth/signin?error=auth_failed')
-          return
-        }
+    if (!isLoaded) return // Still loading
 
-        if (data.session?.user) {
-          // Check if profile exists, create if not
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('id')
-            .eq('id', data.session.user.id)
-            .single()
-
-          if (!profile) {
-            await createProfile(data.session.user.id, data.session.user.email?.split('@')[0])
-          }
-
-          // Redirect to dashboard
-          router.push('/me')
-        } else {
-          router.push('/auth/signin')
-        }
-      } catch (error) {
-        console.error('Auth callback error:', error)
-        router.push('/auth/signin?error=auth_failed')
-      }
+    if (isSignedIn) {
+      // User is authenticated, redirect to dashboard
+      router.push('/me')
+    } else {
+      // User is not authenticated, redirect to sign in
+      router.push('/auth/signin')
     }
-
-    handleAuthCallback()
-  }, [router])
+  }, [isLoaded, isSignedIn, router])
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center">

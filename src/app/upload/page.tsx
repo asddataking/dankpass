@@ -3,14 +3,17 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useUser } from '@stackframe/stack'
 import { Upload, Camera, FileImage, AlertCircle } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 
 export default function UploadPage() {
+  const { isLoaded, isSignedIn } = useUser()
+  const router = useRouter()
+  
   const [uploading, setUploading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const router = useRouter()
 
   const onDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
@@ -58,7 +61,26 @@ export default function UploadPage() {
     },
     maxFiles: 1,
     maxSize: 10 * 1024 * 1024, // 10MB
+    disabled: uploading
   })
+
+
+  // Redirect if not authenticated
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-purple-500 rounded-2xl mx-auto mb-4 animate-pulse"></div>
+          <h2 className="text-2xl font-bold mb-2">Loading...</h2>
+        </div>
+      </div>
+    )
+  }
+
+  if (!isSignedIn) {
+    router.push('/auth/signin')
+    return null
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">
