@@ -10,7 +10,7 @@ const redis = new Redis({
 export async function checkRateLimit(userId: string): Promise<{ allowed: boolean; count: number; limit: number }> {
   const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
   const key = `rate:${userId}:${today}`
-  const limit = 3 // Max 3 uploads per day
+  const limit = 5 // Max 5 uploads per day (configurable via Edge Config)
 
   try {
     const count = await redis.incr(key)
@@ -85,12 +85,15 @@ export async function updateLeaderboard(userId: string, points: number): Promise
 
 export async function getLeaderboard(limit: number = 10): Promise<Array<{ userId: string; points: number }>> {
   try {
-    const results = await redis.zrevrange('lb:points', 0, limit - 1, { withScores: true })
+    const results = await redis.zrange('lb:points', 0, limit - 1, { rev: true, withScores: true })
     
-    return results.map((result) => ({
-      userId: result.member as string,
-      points: result.score as number
-    }))
+    return results.map((result: unknown) => {
+      const typedResult = result as { member: string; score: number };
+      return {
+        userId: typedResult.member as string,
+        points: typedResult.score as number
+      };
+    })
   } catch (error) {
     console.error('Error getting leaderboard:', error)
     return []
@@ -115,13 +118,16 @@ export async function getLeaderboardAroundUser(userId: string, range: number = 5
     const start = Math.max(0, userRank - range)
     const end = userRank + range
     
-    const results = await redis.zrevrange('lb:points', start, end, { withScores: true })
+    const results = await redis.zrange('lb:points', start, end, { rev: true, withScores: true })
     
-    return results.map((result, index) => ({
-      userId: result.member as string,
-      points: result.score as number,
-      rank: start + index + 1
-    }))
+    return results.map((result: unknown, index) => {
+      const typedResult = result as { member: string; score: number };
+      return {
+        userId: typedResult.member as string,
+        points: typedResult.score as number,
+        rank: start + index + 1
+      };
+    })
   } catch (error) {
     console.error('Error getting leaderboard around user:', error)
     return []
@@ -208,7 +214,7 @@ export async function addToProcessingQueue(receiptId: string, priority: number =
 export async function getNextFromProcessingQueue(): Promise<string | null> {
   try {
     const result = await redis.zpopmax('queue:processing')
-    return result?.member as string || null
+    return (result as unknown as { member?: string })?.member as string || null
   } catch (error) {
     console.error('Error getting next from processing queue:', error)
     return null

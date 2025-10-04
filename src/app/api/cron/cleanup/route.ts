@@ -1,6 +1,7 @@
 // DANKPASS: Weekly cleanup cron job
 import { NextResponse } from "next/server";
 import { db } from "@/lib/neon-db";
+import { receipts, agentEvents } from "@/lib/schema";
 import { lt, and, eq } from "drizzle-orm";
 
 export const runtime = "nodejs";
@@ -19,11 +20,11 @@ export async function GET() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const deletedReceipts = await db.delete(db.receipts)
+    const deletedReceipts = await db.delete(receipts)
       .where(
         and(
-          eq(db.receipts.status, 'denied'),
-          lt(db.receipts.createdAt, thirtyDaysAgo)
+          eq(receipts.status, 'denied'),
+          lt(receipts.createdAt, thirtyDaysAgo)
         )
       );
 
@@ -31,8 +32,8 @@ export async function GET() {
     const ninetyDaysAgo = new Date();
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
-    const deletedEvents = await db.delete(db.agentEvents)
-      .where(lt(db.agentEvents.createdAt, ninetyDaysAgo));
+    const deletedEvents = await db.delete(agentEvents)
+      .where(lt(agentEvents.createdAt, ninetyDaysAgo));
 
     console.log(`DANKPASS: Cleanup cron completed - ${deletedReceipts.rowCount} receipts, ${deletedEvents.rowCount} events deleted`);
 

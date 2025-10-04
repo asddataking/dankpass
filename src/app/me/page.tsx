@@ -1,19 +1,94 @@
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { getOrCreateUser } from '@/lib/neon-auth'
+import { useUser } from '@stackframe/stack'
 import { getUserPointsTotal, getUserPointsBreakdown, getUserReceipts, getUserRedemptions } from '@/lib/neon-db'
 import DankPassCard from '@/components/DankPassCard'
 
-export default async function MePage() {
-  const user = await getOrCreateUser()
-  if (!user) {
-    redirect('/auth/signin')
+export default function MePage() {
+  const user = useUser()
+  const router = useRouter()
+  
+  const [points, setPoints] = useState(0)
+  const [pointsBreakdown, setPointsBreakdown] = useState<Array<{ reason: string; total: number }>>([])
+  const [recentReceipts, setRecentReceipts] = useState<Array<{ id: string; vendor: string; kind: 'dispensary' | 'restaurant' | 'unknown'; status: 'pending' | 'approved' | 'denied'; created_at: string; }>>([])
+  const [recentRedemptions, setRecentRedemptions] = useState<Array<{ id: string; rewardCode: string; pointsCost: number; status: 'pending' | 'fulfilled' | 'cancelled'; created_at: string; }>>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!user) {
+        router.push('/auth/signin')
+        return
+      }
+      
+      try {
+        const [totalPoints, breakdown, receipts, redemptions] = await Promise.all([
+          getUserPointsTotal(user.id),
+          getUserPointsBreakdown(user.id),
+          getUserReceipts(user.id, 5),
+          getUserRedemptions(user.id, 5),
+        ])
+
+        setPoints(totalPoints)
+        setPointsBreakdown(breakdown.map(entry => ({
+          reason: entry.reason,
+          total: entry.delta
+        })))
+        setRecentReceipts(receipts.map(receipt => ({
+          id: receipt.id,
+          vendor: receipt.vendor || 'Unknown',
+          kind: receipt.kind || 'unknown',
+          status: receipt.status || 'pending',
+          created_at: receipt.createdAt.toISOString()
+        })))
+        setRecentRedemptions(redemptions.map(redemption => ({
+          id: redemption.id,
+          rewardCode: redemption.rewardCode,
+          pointsCost: redemption.pointsCost,
+          status: redemption.status || 'pending',
+          created_at: redemption.createdAt.toISOString()
+        })))
+      } catch (err) {
+        console.error('Failed to fetch user data:', err)
+        setError('Failed to load user data. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [user, router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-purple-500 rounded-2xl mx-auto mb-4 animate-pulse"></div>
+          <h2 className="text-2xl font-bold mb-2">Loading your DankPass...</h2>
+          <p className="text-gray-400">Please wait while we fetch your data.</p>
+        </div>
+      </div>
+    )
   }
 
-  const points = await getUserPointsTotal(user.id)
-  const pointsBreakdown = await getUserPointsBreakdown(user.id)
-  const recentReceipts = await getUserReceipts(user.id, 5)
-  const recentRedemptions = await getUserRedemptions(user.id, 5)
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2 text-red-500">Error</h2>
+          <p className="text-gray-400">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null // Should redirect by now
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -44,10 +119,16 @@ export default async function MePage() {
           <div className="lg:col-span-2">
             <DankPassCard
               points={points}
-              displayName={user.display_name || user.email}
+              displayName={user.displayName || 'User'}
               city={undefined}
-              isPlus={user.is_plus}
-              recentReceipts={recentReceipts || []}
+              isPlus={false}
+              recentReceipts={(recentReceipts || []).map(receipt => ({
+                id: receipt.id,
+                vendor: receipt.vendor || 'Unknown',
+                kind: receipt.kind || 'unknown',
+                status: receipt.status || 'pending',
+                created_at: receipt.created_at
+              }))}
             />
           </div>
 
@@ -80,14 +161,14 @@ export default async function MePage() {
                   <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div className={`w-2 h-2 rounded-full ${
-                        entry.delta > 0 ? 'bg-green-500' : 'bg-red-500'
+                        entry.total > 0 ? 'bg-green-500' : 'bg-red-500'
                       }`}></div>
                       <span className="text-sm text-gray-300 capitalize">{entry.reason}</span>
                     </div>
                     <div className={`text-sm font-semibold ${
-                      entry.delta > 0 ? 'text-green-500' : 'text-red-500'
+                      entry.total > 0 ? 'text-green-500' : 'text-red-500'
                     }`}>
-                      {entry.delta > 0 ? '+' : ''}{entry.delta}
+                      {entry.total > 0 ? '+' : ''}{entry.total}
                     </div>
                   </div>
                 ))}
@@ -106,10 +187,10 @@ export default async function MePage() {
                           redemption.status === 'fulfilled' ? 'bg-green-500' :
                           redemption.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
                         }`}></div>
-                        <span className="text-sm text-gray-300">{redemption.reward_code}</span>
+                        <span className="text-sm text-gray-300">{redemption.rewardCode}</span>
                       </div>
                       <div className="text-sm text-gray-500">
-                        -{redemption.points_cost}
+                        -{redemption.pointsCost}
                       </div>
                     </div>
                   ))}

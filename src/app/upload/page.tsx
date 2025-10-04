@@ -8,7 +8,7 @@ import { Upload, Camera, FileImage, AlertCircle } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 
 export default function UploadPage() {
-  const { isLoaded, isSignedIn } = useUser()
+  const user = useUser()
   const router = useRouter()
   
   const [uploading, setUploading] = useState(false)
@@ -66,7 +66,7 @@ export default function UploadPage() {
 
 
   // Redirect if not authenticated
-  if (!isLoaded) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
@@ -75,11 +75,6 @@ export default function UploadPage() {
         </div>
       </div>
     )
-  }
-
-  if (!isSignedIn) {
-    router.push('/auth/signin')
-    return null
   }
 
   return (

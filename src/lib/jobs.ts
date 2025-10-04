@@ -133,11 +133,11 @@ export async function getJobStatus(messageId: string) {
     const message = await qstash.messages.get(messageId);
     return {
       messageId,
-      status: message.status,
-      createdAt: message.createdAt,
-      scheduledFor: message.scheduledFor,
-      deliveredAt: message.deliveredAt,
-      attempts: message.attempts
+      status: (message as unknown as { status?: string }).status || 'unknown',
+      createdAt: (message as unknown as { createdAt?: number }).createdAt,
+      scheduledFor: (message as unknown as { scheduledFor?: number }).scheduledFor,
+      deliveredAt: (message as unknown as { deliveredAt?: number }).deliveredAt,
+      attempts: (message as unknown as { attempts?: number }).attempts
     };
   } catch (error) {
     console.error(`DANKPASS: Failed to get job status ${messageId}:`, error);

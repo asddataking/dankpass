@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { uploadBlob, validateFile, generateReceiptFilename } from '@/lib/blob'
 import { createReceipt, checkDuplicateReceipt } from '@/lib/neon-db'
 import { checkRateLimit } from '@/lib/upstash-redis'
 import { generatePerceptualHash } from '@/lib/pHash'
@@ -22,10 +21,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Validate file
-    const validation = validateFile(file)
-    if (!validation.valid) {
-      return NextResponse.json({ error: validation.error }, { status: 400 })
+    // Validate file (basic validation)
+    if (!file.type.startsWith('image/')) {
+      return NextResponse.json({ error: 'Only image files are allowed' }, { status: 400 })
+    }
+    
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      return NextResponse.json({ error: 'File size must be less than 10MB' }, { status: 400 })
     }
 
     // Check rate limit
@@ -49,16 +51,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Duplicate receipt detected' }, { status: 400 })
     }
 
-    // Upload to Vercel Blob
-    const filename = generateReceiptFilename(userId, file.name)
-    const blobResult = await uploadBlob(filename, buffer, { access: 'private' })
-    
-    if (!blobResult) {
-      return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 })
-    }
+    // For now, we'll create a placeholder URL since we don't have blob storage configured
+    // In a production setup, you would upload to your preferred storage service
+    const blobUrl = `placeholder://receipts/${userId}/${Date.now()}-${file.name}`
 
     // Create receipt record
-    const receipt = await createReceipt(userId, blobResult.url, imageHash)
+    const receipt = await createReceipt(userId, blobUrl, imageHash)
     if (!receipt) {
       return NextResponse.json({ error: 'Failed to create receipt record' }, { status: 500 })
     }

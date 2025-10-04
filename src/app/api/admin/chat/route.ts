@@ -15,12 +15,7 @@ export async function POST(req: NextRequest) {
     const core = convertToCoreMessages(messages);
 
     const result = await streamText({
-      model: { 
-        provider: "vercel", 
-        id: AI.model, 
-        baseURL: AI.baseURL, 
-        apiKey: AI.apiKey 
-      },
+      model: AI.model,
       messages: core,
       system: `You are DankPass Admin Assistant, an AI helper for managing the DankPass loyalty platform. You can help with:
 
@@ -35,7 +30,7 @@ Always be helpful, professional, and accurate. If you don't know something, say 
       // tools: [...]
     });
 
-    return result.toAIStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('Admin chat error:', error);
     return new Response(

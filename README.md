@@ -1,29 +1,32 @@
 # DankPass - Weed + Food Loyalty Program
 
-A Next.js loyalty program that rewards users for uploading receipts from dispensaries and restaurants. Users earn points that can be redeemed for rewards like social shoutouts, bonus clips, and sticker packs. Built with Vercel's native stack for optimal performance and scalability.
+A Next.js loyalty program that rewards users for uploading receipts from dispensaries and restaurants. Users earn points that can be redeemed for rewards like social shoutouts, bonus clips, and sticker packs. Built with Neon, Upstash Redis, and Vercel Edge Config for optimal performance and scalability.
 
 ## Features
 
 - 🧾 **Receipt Upload**: Upload receipts from dispensaries and restaurants
-- 🤖 **AI Processing**: Automatic OCR and classification of receipts
-- 🎯 **Points System**: Earn points for dispensary (10) and restaurant (8) receipts
+- 🤖 **AI Processing**: Automatic OCR and classification of receipts via Vercel AI Gateway
+- 🎯 **Points System**: Earn points for dispensary and restaurant receipts (configurable via Edge Config)
 - 🎁 **Rewards Store**: Redeem points for shoutouts, bonus clips, and sticker packs
 - 👑 **Tier System**: Supporter, Mentor, and Ambassador tiers based on points
-- 🔄 **Combo Bonus**: Extra 15 points for both types within 48 hours
+- 🔄 **Combo Bonus**: Extra points for both types within 48 hours
 - 👨‍💼 **Admin Panel**: Approve/deny receipts and manage redemptions
-- 🔐 **Clerk Authentication**: Magic link and Google OAuth authentication
+- 🔐 **Neon Auth**: Modern authentication with Stack Auth
 - 📱 **Mobile-First**: Responsive design with modern UI
+- ⚡ **Background Jobs**: Async processing with Vercel Queues/QStash
+- 🕒 **Cron Jobs**: Scheduled tasks for reconciliation and cleanup
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Database**: Vercel Postgres
-- **Authentication**: Clerk
-- **Storage**: Vercel Blob
-- **Caching**: Vercel KV (Redis)
+- **Database**: Neon (PostgreSQL)
+- **Authentication**: Neon Auth (Stack Auth)
+- **Caching**: Upstash Redis
 - **Configuration**: Vercel Edge Config
+- **AI**: Vercel AI Gateway + AI SDK
+- **Background Jobs**: Vercel Queues + Upstash QStash
 - **OCR**: OpenAI Vision API or Tesseract.js
 - **Icons**: Lucide React
 - **Deployment**: Vercel
@@ -209,8 +212,32 @@ DankPass uses Vercel AI Gateway for all AI operations, providing a unified inter
 - **Features**: AI-powered admin assistant for managing the platform
 - **Streaming**: Real-time responses using Vercel AI SDK
 
+## Neon-Based Stack Configuration
+
+### Core Services
+- **Neon Database**: Primary PostgreSQL database with serverless scaling
+- **Upstash Redis**: High-performance caching and rate limiting
+- **Vercel Edge Config**: Global configuration and feature flags
+- **Neon Auth**: Modern authentication with Stack Auth
+
 ### Environment Variables
 ```env
+# Neon Database (Primary)
+DATABASE_URL=postgresql://user:password@host/database
+NEON_DATABASE_URL=postgresql://user:password@host/database
+
+# Neon Auth (Stack Auth)
+NEXT_PUBLIC_STACK_PROJECT_ID=your-neon-auth-project-id
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=your-neon-auth-publishable-key
+STACK_SECRET_SERVER_KEY=your-neon-auth-secret-key
+
+# Upstash Redis (Caching & Rate Limiting)
+UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your-redis-token
+
+# Vercel Edge Config (Feature Flags & Configuration)
+EDGE_CONFIG=your-edge-config-token
+
 # AI Gateway
 AI_GATEWAY_URL=https://gateway.ai.vercel.com/api/v1
 AI_GATEWAY_KEY=your-gateway-key

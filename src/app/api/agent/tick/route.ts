@@ -2,15 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPendingReceipts, updateReceipt, addPoints, createAgentEvent } from '@/lib/neon-db'
 import { extractTextFromImage } from '@/lib/ocr'
 import { classifyReceipt } from '@/lib/classify'
+import { getPointValues } from '@/lib/edge-config'
 
-// Point values - moved from edgeConfig
-const POINT_VALUES = {
-  DISPENSARY: 100,
-  RESTAURANT: 50
-} as const
-
-async function getPointValue(kind: keyof typeof POINT_VALUES): Promise<number> {
-  return POINT_VALUES[kind]
+// DANKPASS: Get point values from Edge Config
+async function getPointValue(kind: 'dispensary' | 'restaurant'): Promise<number> {
+  try {
+    const pointValues = await getPointValues()
+    return kind === 'dispensary' ? pointValues.dispensary : pointValues.restaurant
+  } catch (error) {
+    console.error('Error getting point values from Edge Config:', error)
+    // Fallback values
+    return kind === 'dispensary' ? 10 : 5
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -58,9 +61,9 @@ export async function POST(request: NextRequest) {
         })
 
         // Award points
-        const basePoints = classification.kind === 'dispensary' 
-          ? await getPointValue('DISPENSARY')
-          : await getPointValue('RESTAURANT')
+        const basePoints = classification.kind === 'dispensary'
+          ? await getPointValue('dispensary')
+          : await getPointValue('restaurant')
         
         await addPoints(receipt.userId, basePoints, 'receipt', receipt.id)
 

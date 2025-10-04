@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { enqueueJob, enqueueJobs } from "@/lib/jobs";
 import { db } from "@/lib/neon-db";
+import { receipts } from "@/lib/schema";
 import { eq, and, gte } from "drizzle-orm";
 
 export const runtime = "nodejs";
@@ -21,11 +22,11 @@ export async function GET() {
     yesterday.setDate(yesterday.getDate() - 1);
     
     const pendingReceipts = await db.select()
-      .from(db.receipts)
+      .from(receipts)
       .where(
         and(
-          eq(db.receipts.status, 'pending'),
-          gte(db.receipts.createdAt, yesterday)
+          eq(receipts.status, 'pending'),
+          gte(receipts.createdAt, yesterday)
         )
       )
       .limit(50); // Process in batches

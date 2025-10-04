@@ -6,19 +6,17 @@ import { useUser } from '@stackframe/stack'
 
 export default function AuthCallbackPage() {
   const router = useRouter()
-  const { isLoaded, isSignedIn } = useUser()
+  const user = useUser()
 
   useEffect(() => {
-    if (!isLoaded) return // Still loading
-
-    if (isSignedIn) {
+    if (user) {
       // User is authenticated, redirect to dashboard
       router.push('/me')
     } else {
       // User is not authenticated, redirect to sign in
       router.push('/auth/signin')
     }
-  }, [isLoaded, isSignedIn, router])
+  }, [user, router])
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center">

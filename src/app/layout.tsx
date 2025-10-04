@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google'
 import { StackProvider } from '@stackframe/stack'
+import { stackServerApp } from '@/lib/stack'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -17,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <StackProvider>
+        <StackProvider app={stackServerApp}>
           {children}
         </StackProvider>
       </body>

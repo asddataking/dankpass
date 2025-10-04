@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/neon-db'
 import { redis } from '@/lib/upstash-redis'
+import { getPointValues } from '@/lib/edge-config'
 import { users } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 
@@ -30,29 +31,40 @@ async function basicHealthCheck() {
   const checks = {
     timestamp: new Date().toISOString(),
     status: 'healthy',
+    stack: 'neon-upstash-vercel',
     services: {
       database: false,
       cache: false,
+      edgeConfig: false,
       auth: true // Assume auth is working if we can reach this endpoint
     }
   }
 
   try {
-    // Test database connection
+    // Test Neon database connection
     await db.select().from(users).limit(1)
     checks.services.database = true
   } catch (error) {
-    console.error('Database health check failed:', error)
+    console.error('Neon database health check failed:', error)
     checks.services.database = false
   }
 
   try {
-    // Test cache connection
+    // Test Upstash Redis connection
     await redis.ping()
     checks.services.cache = true
   } catch (error) {
-    console.error('Cache health check failed:', error)
+    console.error('Upstash Redis health check failed:', error)
     checks.services.cache = false
+  }
+
+  try {
+    // Test Vercel Edge Config connection
+    await getPointValues()
+    checks.services.edgeConfig = true
+  } catch (error) {
+    console.error('Vercel Edge Config health check failed:', error)
+    checks.services.edgeConfig = false
   }
 
   // Overall status

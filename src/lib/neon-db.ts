@@ -3,8 +3,13 @@ import { drizzle } from 'drizzle-orm/neon-http'
 import { eq, and, gte, desc, sql } from 'drizzle-orm'
 import * as schema from './schema'
 
-// Initialize Neon client
-const sqlClient = neon(process.env.NEON_DATABASE_URL!)
+// Initialize Neon client - prioritize DATABASE_URL for standard compatibility
+const databaseUrl = process.env.DATABASE_URL || process.env.NEON_DATABASE_URL
+if (!databaseUrl) {
+  throw new Error('No database connection string provided. Please set DATABASE_URL or NEON_DATABASE_URL environment variable.')
+}
+
+const sqlClient = neon(databaseUrl)
 export const db = drizzle(sqlClient, { schema })
 
 // Re-export schema types for convenience
@@ -336,20 +341,23 @@ export async function createAgentEvent(receiptId: string, eventType: string, det
 
 export async function getAgentEvents(receiptId?: string, limit: number = 50): Promise<schema.AgentEvent[]> {
   try {
-    let query = db.select().from(schema.agentEvents)
+    let result;
     
     if (receiptId) {
-      query = query.where(eq(schema.agentEvents.receiptId, receiptId))
+      result = await db.select().from(schema.agentEvents)
+        .where(eq(schema.agentEvents.receiptId, receiptId))
+        .orderBy(desc(schema.agentEvents.createdAt))
+        .limit(limit);
+    } else {
+      result = await db.select().from(schema.agentEvents)
+        .orderBy(desc(schema.agentEvents.createdAt))
+        .limit(limit);
     }
     
-    const result = await query
-      .orderBy(desc(schema.agentEvents.createdAt))
-      .limit(limit)
-    
-    return result
+    return result;
   } catch (error) {
-    console.error('Error fetching agent events:', error)
-    return []
+    console.error('Error fetching agent events:', error);
+    return [];
   }
 }
 

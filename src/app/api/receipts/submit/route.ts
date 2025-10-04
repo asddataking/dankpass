@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/neon-auth'
 import { checkRateLimit, incrementMetric } from '@/lib/upstash-redis'
 import { createReceipt, getUserReceipts, addPoints, updateReceipt, createAgentEvent } from '@/lib/neon-db'
-import { uploadBlob, validateFile, generateReceiptFilename } from '@/lib/blob'
 import { extractTextFromImage } from '@/lib/ocr'
 import { classifyReceipt } from '@/lib/classify'
 
@@ -29,31 +28,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Validate file
-    const validation = validateFile(file)
-    if (!validation.valid) {
-      return NextResponse.json({ error: validation.error }, { status: 400 })
+    // Basic file validation
+    if (!file.type.startsWith('image/')) {
+      return NextResponse.json({ error: 'Only image files are allowed' }, { status: 400 })
+    }
+    
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      return NextResponse.json({ error: 'File size must be less than 10MB' }, { status: 400 })
     }
 
-    // Generate filename and upload to blob storage
-    const filename = generateReceiptFilename(user.id, file.name)
+    // Convert file to buffer for processing
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     
-    const blob = await uploadBlob(filename, buffer)
-    
-    if (!blob) {
-      return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 })
-    }
+    // For now, we'll process the receipt directly without storing it
+    // In a real implementation, you'd upload to Supabase storage first
+    const blobUrl = `temp://${user.id}/${Date.now()}-${file.name}`
     
     // Create receipt record using adapter
-    const receipt = await createReceipt(user.id, blob.url)
+    const receipt = await createReceipt(user.id, blobUrl)
     if (!receipt) {
       return NextResponse.json({ error: 'Failed to create receipt record' }, { status: 500 })
     }
 
     // Process receipt asynchronously
-    processReceiptAsync(receipt.id, blob.url, buffer)
+    processReceiptAsync(receipt.id, blobUrl, buffer)
 
     // Increment metrics
     await incrementMetric('receipts_uploaded', 1)
@@ -77,14 +76,14 @@ async function processReceiptAsync(receiptId: string, blobUrl: string, imageBuff
     const extractedText = await extractTextFromImage(imageBuffer)
     
     // Classify receipt
-    const classification = await classifyReceipt(extractedText)
+    const classification = await classifyReceipt(extractedText.vendor)
     
     // Update receipt with classification results
     await updateReceipt(receiptId, {
       kind: classification.kind,
-      vendor: classification.vendor,
-      totalAmountCents: classification.totalAmountCents,
-      receiptDate: classification.receiptDate,
+      vendor: extractedText.vendor,
+      totalAmountCents: Math.round(extractedText.total * 100),
+      receiptDate: extractedText.date,
       status: 'approved' // Auto-approve for now
     })
 

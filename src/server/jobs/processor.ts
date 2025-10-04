@@ -1,6 +1,8 @@
 // DANKPASS: Job processor for background tasks
 import { generateChat, classifyReceiptWithAI } from "@/lib/ai";
 import { db } from "@/lib/neon-db";
+import { receipts, pointsLedger } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 import { addPoints, getUserPointsTotal, updateReceipt, createAgentEvent } from "@/lib/neon-db";
 import { updateLeaderboard } from "@/lib/upstash-redis";
 import { JobName, JobPayload } from "@/lib/jobs";
@@ -11,19 +13,19 @@ export async function processJob({ name, payload }: { name: JobName; payload: Jo
   try {
     switch (name) {
       case "receipt.validate":
-        return await validateReceipt(payload);
+        return await validateReceipt(payload as { receiptId: string; userId: string });
       
       case "points.award":
-        return await awardPoints(payload);
+        return await awardPoints(payload as { userId: string; amount: number; reason: string; receiptId?: string });
       
       case "leaderboard.rebuild":
         return await rebuildLeaderboard();
       
       case "receipt.process":
-        return await processReceipt(payload);
+        return await processReceipt(payload as { receiptId: string; imageBuffer?: Buffer });
       
       case "user.notify":
-        return await notifyUser(payload);
+        return await notifyUser(payload as { userId: string; message: string; type: 'email' | 'push' });
       
       default:
         throw new Error(`Unknown job: ${name}`);
@@ -36,7 +38,7 @@ export async function processJob({ name, payload }: { name: JobName; payload: Jo
 
 // DANKPASS: Validate receipt with AI
 async function validateReceipt({ receiptId, userId }: JobPayload['receipt.validate']) {
-  const receipt = await db.select().from(db.receipts).where(db.receipts.id.eq(receiptId)).limit(1);
+  const receipt = await db.select().from(receipts).where(eq(receipts.id, receiptId)).limit(1);
   
   if (!receipt.length) {
     throw new Error(`Receipt ${receiptId} not found`);
@@ -90,7 +92,7 @@ User ID: ${userId}`
 
 // DANKPASS: Award points to user
 async function awardPoints({ userId, amount, reason, receiptId }: JobPayload['points.award']) {
-  await addPoints(userId, amount, reason, receiptId);
+  await addPoints(userId, amount, reason as 'receipt' | 'combo' | 'bonus' | 'redeem' | 'admin', receiptId);
   
   // DANKPASS: Update leaderboard
   const totalPoints = await getUserPointsTotal(userId);
@@ -103,11 +105,11 @@ async function awardPoints({ userId, amount, reason, receiptId }: JobPayload['po
 async function rebuildLeaderboard() {
   // DANKPASS: Get all users with their point totals
   const users = await db.select({
-    userId: db.points.userId,
-    totalPoints: db.points.amount
-  }).from(db.points)
-    .groupBy(db.points.userId)
-    .orderBy(db.points.amount);
+    userId: pointsLedger.userId,
+    totalPoints: pointsLedger.delta
+  }).from(pointsLedger)
+    .groupBy(pointsLedger.userId)
+    .orderBy(pointsLedger.delta);
 
   // DANKPASS: Update leaderboard cache
   for (const user of users) {
@@ -119,7 +121,7 @@ async function rebuildLeaderboard() {
 
 // DANKPASS: Process receipt with AI (OCR + classification)
 async function processReceipt({ receiptId }: JobPayload['receipt.process']) {
-  const receipt = await db.select().from(db.receipts).where(db.receipts.id.eq(receiptId)).limit(1);
+  const receipt = await db.select().from(receipts).where(eq(receipts.id, receiptId)).limit(1);
   
   if (!receipt.length) {
     throw new Error(`Receipt ${receiptId} not found`);

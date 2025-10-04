@@ -11,23 +11,7 @@ export default function SignInPage() {
         </div>
         
         <div className="flex justify-center">
-          <SignIn 
-            appearance={{
-              elements: {
-                rootBox: "mx-auto",
-                card: "bg-gray-900 border border-gray-800",
-                headerTitle: "text-white",
-                headerSubtitle: "text-gray-400",
-                socialButtonsBlockButton: "bg-gray-800 border-gray-700 text-white hover:bg-gray-700",
-                formButtonPrimary: "bg-gradient-to-r from-green-500 to-purple-500 hover:opacity-90",
-                formFieldInput: "bg-gray-800 border-gray-700 text-white",
-                formFieldLabel: "text-gray-300",
-                footerActionLink: "text-green-500 hover:text-green-400",
-                identityPreviewText: "text-gray-300",
-                formResendCodeLink: "text-green-500 hover:text-green-400"
-              }
-            }}
-          />
+          <SignIn />
         </div>
       </div>
     </div>
