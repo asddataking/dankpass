@@ -205,7 +205,7 @@ export default function AdminDashboard({
           { id: 'redemptions', label: 'Redemptions', count: stats.pendingRedemptions },
           { id: 'partners', label: 'Partners', count: partners.length },
           { id: 'events', label: 'Agent Events', count: agentEvents.length }
-        ].map((tab) => (
+        ].map((tab: { id: string; label: string; count: number }) => (
           <button
             key={tab.id}
             onClick={() => setSelectedTab(tab.id as 'receipts' | 'redemptions' | 'partners' | 'events')}

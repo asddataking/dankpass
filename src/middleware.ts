@@ -33,7 +33,6 @@ export default async function middleware(request: NextRequest) {
 
       // Check admin routes
       if (isAdminRoute(pathname)) {
-        const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()) || []
         // TODO: Get email from Stack Auth when available
         // For now, allow access for development
         console.log('Admin route accessed - auth check disabled for development')

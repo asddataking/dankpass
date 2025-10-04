@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { db } from '@/lib/neon-db'
 import { redis } from '@/lib/upstash-redis'
 import { users } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const url = new URL(request.url)
     const checkType = url.searchParams.get('type') || 'basic'

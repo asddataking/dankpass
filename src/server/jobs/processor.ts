@@ -2,10 +2,10 @@
 import { generateChat, classifyReceiptWithAI } from "@/lib/ai";
 import { db } from "@/lib/neon-db";
 import { addPoints, getUserPointsTotal, updateReceipt, createAgentEvent } from "@/lib/neon-db";
-import { updateLeaderboard, getLeaderboard } from "@/lib/upstash-redis";
+import { updateLeaderboard } from "@/lib/upstash-redis";
 import { JobName, JobPayload } from "@/lib/jobs";
 
-export async function processJob({ name, payload }: { name: JobName; payload: any }) {
+export async function processJob({ name, payload }: { name: JobName; payload: JobPayload[JobName] }) {
   console.log(`DANKPASS: Processing job ${name}`, { payload });
   
   try {

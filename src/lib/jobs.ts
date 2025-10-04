@@ -17,7 +17,7 @@ export type JobName =
 export interface JobPayload {
   'receipt.validate': { receiptId: string; userId: string };
   'points.award': { userId: string; amount: number; reason: string; receiptId?: string };
-  'leaderboard.rebuild': {};
+  'leaderboard.rebuild': Record<string, never>;
   'receipt.process': { receiptId: string; imageBuffer?: Buffer };
   'user.notify': { userId: string; message: string; type: 'email' | 'push' };
 }

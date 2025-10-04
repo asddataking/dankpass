@@ -9,7 +9,7 @@ export const AI = {
 // DANKPASS: Simple chat completion helper
 export async function generateChat(
   messages: { role: "system" | "user" | "assistant"; content: string }[],
-  tools?: any[]
+  tools?: unknown[]
 ) {
   const res = await fetch(`${AI.baseURL}/chat/completions`, {
     method: "POST",
@@ -92,7 +92,7 @@ export async function classifyReceiptWithAI(receiptText: string, vendor: string)
 }
 
 // DANKPASS: OCR text extraction helper
-export async function extractTextFromImageWithAI(imageBuffer: Buffer) {
+export async function extractTextFromImageWithAI() {
   // For now, return a placeholder since we need to implement image analysis
   // This would typically use a vision model through the AI Gateway
   return {

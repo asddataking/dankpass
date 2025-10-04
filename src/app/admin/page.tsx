@@ -7,7 +7,7 @@ import AdminDashboard from '@/components/AdminDashboard'
 export default async function AdminPage() {
   try {
     await requireAdmin()
-  } catch (error) {
+  } catch {
     redirect('/')
   }
 

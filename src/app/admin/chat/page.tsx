@@ -1,6 +1,6 @@
 // DANKPASS: Admin chat UI using Vercel AI SDK
 "use client";
-import { useChat } from "ai/react";
+import { useChat } from "@ai-sdk/react";
 import { redirect } from "next/navigation";
 import { useUser } from "@stackframe/stack";
 import { useEffect } from "react";
@@ -115,7 +115,7 @@ export default function AdminChat() {
           {/* Quick Actions */}
           <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
             <button
-              onClick={() => handleInputChange({ target: { value: "Show me recent receipt processing stats" } } as any)}
+              onClick={() => handleInputChange({ target: { value: "Show me recent receipt processing stats" } } as React.ChangeEvent<HTMLInputElement>)}
               className="p-4 border border-gray-600 rounded-xl hover:border-green-500 transition-colors text-left"
             >
               <div className="text-sm font-semibold">📊 Analytics</div>
@@ -123,7 +123,7 @@ export default function AdminChat() {
             </button>
             
             <button
-              onClick={() => handleInputChange({ target: { value: "Help me troubleshoot a user issue" } } as any)}
+              onClick={() => handleInputChange({ target: { value: "Help me troubleshoot a user issue" } } as React.ChangeEvent<HTMLInputElement>)}
               className="p-4 border border-gray-600 rounded-xl hover:border-green-500 transition-colors text-left"
             >
               <div className="text-sm font-semibold">🔧 Support</div>
@@ -131,7 +131,7 @@ export default function AdminChat() {
             </button>
             
             <button
-              onClick={() => handleInputChange({ target: { value: "Show me pending receipts that need review" } } as any)}
+              onClick={() => handleInputChange({ target: { value: "Show me pending receipts that need review" } } as React.ChangeEvent<HTMLInputElement>)}
               className="p-4 border border-gray-600 rounded-xl hover:border-green-500 transition-colors text-left"
             >
               <div className="text-sm font-semibold">📋 Review</div>
@@ -139,7 +139,7 @@ export default function AdminChat() {
             </button>
             
             <button
-              onClick={() => handleInputChange({ target: { value: "What are the current system health metrics?" } } as any)}
+              onClick={() => handleInputChange({ target: { value: "What are the current system health metrics?" } } as React.ChangeEvent<HTMLInputElement>)}
               className="p-4 border border-gray-600 rounded-xl hover:border-green-500 transition-colors text-left"
             >
               <div className="text-sm font-semibold">💚 Health</div>
