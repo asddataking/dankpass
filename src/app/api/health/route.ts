@@ -1,36 +1,27 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server'
+import { supabase } from '@/lib/supabase'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Test database connection
-    await prisma.$connect();
-    
-    // Get basic stats
-    const strainCount = await prisma.strain.count();
-    const activityCount = await prisma.activity.count();
-    const lodgingCount = await prisma.lodging.count();
+    // Test Supabase connection
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .limit(1)
+
+    return NextResponse.json({
+      status: 'healthy',
+      supabase: error ? 'error' : 'connected',
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    console.error('Health check failed:', error)
     
     return NextResponse.json({
-      status: 'success',
-      message: 'Database connection successful',
-      stats: {
-        strains: strainCount,
-        activities: activityCount,
-        lodging: lodgingCount,
-      },
-    });
-  } catch (error) {
-    console.error('Database connection error:', error);
-    return NextResponse.json(
-      {
-        status: 'error',
-        message: 'Database connection failed',
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
-  } finally {
-    await prisma.$disconnect();
+      status: 'unhealthy',
+      supabase: 'disconnected',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    }, { status: 500 })
   }
 }

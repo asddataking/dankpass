@@ -1,31 +1,30 @@
-# DankPass - Cannabis Connoisseur Passport
+# DankPass - Weed + Food Loyalty Program
 
-A GTA Vice City inspired web app for cannabis connoisseurs to collect stamps, track strains, and unlock the culture.
+A Next.js loyalty program that rewards users for uploading receipts from dispensaries and restaurants. Users earn points that can be redeemed for rewards like social shoutouts, bonus clips, and sticker packs.
 
 ## Features
 
-- 🎯 **QR Code Scanning**: Scan QR codes at dispensaries, events, and lodging
-- 🌿 **Strain Logging**: Track cannabis experiences with detailed information
-- 🏨 **Activity & Lodging**: Log experiences at cannabis-friendly locations
-- 📱 **Mobile-First**: Responsive design with retro neon aesthetics
-- 🔐 **Magic Link Auth**: Secure email-based authentication
-- 🎨 **Retro Neon Theme**: Pink and cyan gradients on black background
-- 📊 **Admin Panel**: B2B tools for creating stamps and managing QR codes
-- 🖼️ **Shareable Images**: Generate OG images for social sharing
+- 🧾 **Receipt Upload**: Upload receipts from dispensaries and restaurants
+- 🤖 **AI Processing**: Automatic OCR and classification of receipts
+- 🎯 **Points System**: Earn points for dispensary (10) and restaurant (8) receipts
+- 🎁 **Rewards Store**: Redeem points for shoutouts, bonus clips, and sticker packs
+- 👑 **Tier System**: Supporter, Mentor, and Ambassador tiers based on points
+- 🔄 **Combo Bonus**: Extra 15 points for both types within 48 hours
+- 👨‍💼 **Admin Panel**: Approve/deny receipts and manage redemptions
+- 🔐 **Supabase Auth**: Magic link authentication
+- 📱 **Mobile-First**: Responsive design with modern UI
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS with custom neon theme
-- **Database**: Neon PostgreSQL
-- **ORM**: Prisma
-- **Authentication**: Neon Stack Auth with direct database integration
-- **Email**: Nodemailer
-- **QR Codes**: qrcode library
+- **Styling**: Tailwind CSS
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **Storage**: Supabase Storage
+- **OCR**: OpenAI Vision API or Tesseract.js
 - **Icons**: Lucide React
-- **Image Generation**: @vercel/og
-- **Validation**: Zod
+- **Deployment**: Vercel
 
 ## Setup Instructions
 
@@ -48,36 +47,32 @@ cp env.example .env.local
 Update `.env.local` with your actual values:
 
 ```env
-# Database - Pooled connection for applications (recommended for serverless)
-DATABASE_URL="postgresql://username:password@ep-your-project-pooler.region.aws.neon.tech/dbname?sslmode=require&channel_binding=require&connect_timeout=15&connection_limit=20&pool_timeout=15"
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
-# Database - Direct connection for Prisma Migrate and CLI operations
-DIRECT_URL="postgresql://username:password@ep-your-project.region.aws.neon.tech/dbname?sslmode=require&channel_binding=require"
+# Admin Configuration
+ADMIN_EMAILS=dan@dankndevour.com,other@example.com
 
-# Neon Stack Auth environment variables
-NEXT_PUBLIC_STACK_PROJECT_ID=YOUR_NEON_AUTH_PROJECT_ID
-NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=YOUR_NEON_AUTH_PUBLISHABLE_KEY
-STACK_SECRET_SERVER_KEY=YOUR_NEON_AUTH_SECRET_KEY
+# Optional Integrations
+STRIPE_SECRET_KEY=your-stripe-secret-key
+STRIPE_PRICE_ID_PLUS=price_plus_subscription_id
+OPENAI_API_KEY=your-openai-api-key
+OCR_PROVIDER=openai
+DISCORD_WEBHOOK_URL=your-discord-webhook-url
 
-# Other environment variables
+# App Configuration
 NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-here"
-EMAIL_SERVER_HOST="smtp.gmail.com"
-EMAIL_SERVER_PORT=587
-EMAIL_SERVER_USER="your-email@gmail.com"
-EMAIL_SERVER_PASSWORD="your-app-password"
-EMAIL_FROM="noreply@dankndevour.com"
-ASSET_BASE_URL="https://dankndevour.com"
+NEXTAUTH_SECRET="your-secret-key-here-change-this-in-production"
 ```
 
 ### 3. Database Setup
 
-Generate Prisma client and push schema to database:
-
-```bash
-npm run db:generate
-npm run db:push
-```
+1. Create a new Supabase project
+2. Run the SQL schema from `supabase-schema.sql` in your Supabase SQL editor
+3. Enable Row Level Security (RLS) policies
+4. Create the `receipts` storage bucket
 
 ### 4. Start Development Server
 
@@ -93,13 +88,6 @@ Visit [http://localhost:3000](http://localhost:3000) to see the app.
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
-- `npm run db:generate` - Generate Prisma client
-- `npm run db:push` - Push schema changes to database
-- `npm run db:migrate` - Create and run migrations
-- `npm run db:studio` - Open Prisma Studio
-- `npm run schema:apply` - Apply schema changes (Neon MCP)
-- `npm run schema:diff` - Show schema differences (Neon MCP)
-- `npm run sql` - Open database studio (Neon MCP)
 
 ## Project Structure
 
@@ -107,80 +95,94 @@ Visit [http://localhost:3000](http://localhost:3000) to see the app.
 src/
 ├── app/                    # Next.js App Router pages
 │   ├── api/               # API routes
-│   │   ├── auth/          # NextAuth configuration
-│   │   └── og/            # OG image generation
+│   │   ├── upload/        # Receipt upload endpoint
+│   │   ├── redeem/        # Reward redemption endpoint
+│   │   ├── me/            # User data endpoint
+│   │   ├── agent/         # AI agent processing
+│   │   └── admin/         # Admin management endpoints
 │   ├── auth/              # Authentication pages
-│   ├── admin/             # Admin panel
-│   ├── passport/          # User passport dashboard
-│   └── page.tsx           # Landing page
+│   ├── upload/            # Receipt upload page
+│   ├── me/                # User dashboard
+│   ├── rewards/           # Rewards store
+│   └── admin/             # Admin panel
 ├── components/            # Reusable components
-├── lib/                   # Utility functions and configurations
-│   ├── auth.ts           # NextAuth configuration
-│   ├── prisma.ts         # Prisma client
-│   ├── schemas.ts        # Zod validation schemas
-│   └── utils.ts          # Utility functions
-└── styles/               # Global styles
+│   ├── DankPassCard.tsx  # Digital loyalty card
+│   └── AdminDashboard.tsx # Admin interface
+└── lib/                   # Utility functions
+    ├── supabase.ts        # Supabase client
+    ├── auth.ts           # Authentication helpers
+    ├── points.ts        # Points system
+    ├── ocr.ts           # OCR processing
+    ├── classify.ts      # Receipt classification
+    ├── pHash.ts         # Duplicate detection
+    └── rbac.ts          # Admin access control
 ```
 
-## Neon MCP Configuration
+## Database Schema
 
-The project includes Neon MCP configuration for database management:
+The app uses Supabase with the following main tables:
 
-- **File**: `mcp/neon.json`
-- **Capabilities**: SQL execution, schema management
-- **Scripts**: Database operations via npm scripts
+- **profiles**: User profile information
+- **partners**: Dispensary and restaurant partners
+- **receipts**: Uploaded receipt records
+- **points_ledger**: Points transactions
+- **redemptions**: Reward redemption records
+- **agent_events**: AI processing logs
 
-## Optimized Database Connection
+## AI Agent
 
-This project uses Neon's optimized connection setup for better performance:
+The AI agent processes receipts automatically:
 
-- **Pooled Connection**: `DATABASE_URL` uses connection pooling (`-pooler` endpoint) for applications
-- **Direct Connection**: `DIRECT_URL` uses direct connection for Prisma Migrate and CLI operations
-- **Connection Parameters**: Optimized timeout and pool settings for serverless environments
-- **Benefits**: Better performance, reduced connection overhead, and improved scalability
+1. Downloads pending receipt images
+2. Extracts text using OCR (OpenAI Vision or Tesseract)
+3. Classifies receipts as dispensary/restaurant
+4. Matches against known partners
+5. Awards appropriate points
+6. Checks for combo bonuses
+7. Updates receipt status
 
-For more details, see the [Neon Prisma documentation](https://neon.com/docs/guides/prisma#use-connection-pooling-with-prisma).
+## Points System
 
-## Authentication Flow
+- **Dispensary Receipts**: 10 points
+- **Restaurant Receipts**: 8 points
+- **Combo Bonus**: 15 points (both types within 48 hours)
+- **Tiers**: Supporter (<500), Mentor (<2000), Ambassador (≥2000)
 
-1. User visits sign-in page (`/handler/sign-in`)
-2. Neon Stack Auth handles authentication
-3. User data syncs directly to Neon database
-4. Redirected to passport dashboard
+## Rewards
 
-## Admin Panel Features
+- **Shoutout**: 50 points - Social media feature
+- **Bonus Clip**: 75 points - Exclusive content access
+- **Sticker Pack**: 150 points - Physical stickers mailed
 
-- Create strain stamps with QR codes
-- Create activity and lodging stamps
-- Generate QR codes for existing stamps
-- View analytics and user management
-- Export data functionality
+## Admin Features
 
-## Styling Guidelines
-
-- **Colors**: Neon pink (#ff0080), cyan (#00ffff), purple (#8000ff)
-- **Background**: Dark theme (#0a0a0a)
-- **Fonts**: Orbitron (retro), Exo 2 (neon)
-- **Animations**: Glow effects, hover states, floating elements
-- **Components**: Rounded corners (rounded-2xl), gradient buttons
+- View and approve/deny pending receipts
+- Manage reward redemptions
+- View partner information
+- Monitor AI agent events
+- Access restricted to admin email list
 
 ## Deployment
 
-The app is designed to be deployed on Vercel with Neon PostgreSQL:
+The app is designed to be deployed on Vercel:
 
 1. Connect your GitHub repository to Vercel
 2. Set up environment variables in Vercel dashboard
 3. Deploy to production
-4. Configure custom domain (dankndevour.com/dankpass)
+4. Configure custom domain (dankpass.dankndevour.com)
+
+## Security
+
+- Row Level Security (RLS) enabled on all tables
+- Admin access controlled by email allowlist
+- File upload validation and size limits
+- Perceptual hash duplicate detection
+- Daily upload limits per user
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+This is a private project for DankNDevour. For questions or issues, contact the development team.
 
 ## License
 
-This project is part of the DankNDevour ecosystem.
+Private - All rights reserved.

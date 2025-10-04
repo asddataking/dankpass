@@ -1,58 +1,92 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --color-neon-pink: #ff0080;
-  --color-neon-cyan: #00ffff;
-  --color-neon-purple: #8000ff;
-  --color-neon-green: #00ff80;
-  --color-dark-bg: #0a0a0a;
-  --color-dark-surface: #1a1a1a;
-  --color-dark-border: #2a2a2a;
-  
-  --font-family-retro: var(--font-orbitron), monospace;
-  --font-family-neon: var(--font-exo2), sans-serif;
-  
-  --animate-glow: glow 2s ease-in-out infinite alternate;
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-bounce-slow: bounce 2s infinite;
-  --animate-float: float 3s ease-in-out infinite;
-  
-  --background-image-neon-gradient: linear-gradient(135deg, #ff0080 0%, #8000ff 50%, #00ffff 100%);
-  --background-image-neon-gradient-horizontal: linear-gradient(90deg, #ff0080 0%, #00ffff 100%);
-  --background-image-grid-pattern: linear-gradient(rgba(255, 0, 128, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 128, 0.1) 1px, transparent 1px);
-  --background-size-grid: 20px 20px;
-}
-
-@keyframes glow {
-  0% { 
-    text-shadow: 0 0 5px #ff0080, 0 0 10px #ff0080, 0 0 15px #ff0080;
-    box-shadow: 0 0 5px #ff0080, 0 0 10px #ff0080, 0 0 15px #ff0080;
-  }
-  100% { 
-    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
-    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
-  }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .bg-neon-gradient {
+    @apply bg-gradient-to-r from-green-500 to-purple-500;
+  }
+  
+  .bg-neon-gradient-horizontal {
+    @apply bg-gradient-to-r from-green-500 via-purple-500 to-pink-500;
+  }
+  
+  .text-neon-gradient {
+    @apply bg-gradient-to-r from-green-500 to-purple-500 bg-clip-text text-transparent;
+  }
+  
+  .border-neon {
+    @apply border-green-500;
+  }
+  
+  .bg-dark-bg {
+    @apply bg-black;
+  }
+  
+  .bg-dark-surface {
+    @apply bg-gray-900;
+  }
+  
+  .border-dark-border {
+    @apply border-gray-800;
+  }
+  
+  .text-neon-green {
+    @apply text-green-500;
+  }
+  
+  .text-neon-purple {
+    @apply text-purple-500;
+  }
+  
+  .text-neon-pink {
+    @apply text-pink-500;
+  }
+  
+  .text-neon-cyan {
+    @apply text-cyan-500;
+  }
+}
+
+@layer utilities {
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+    }
+    to {
+      text-shadow: 0 0 30px rgba(34, 197, 94, 0.8), 0 0 40px rgba(168, 85, 247, 0.5);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
 }
