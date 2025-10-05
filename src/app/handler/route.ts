@@ -1,14 +1,13 @@
-// DANKPASS: Stack Auth handler route - simplified for now
-import { NextResponse } from 'next/server'
+// DANKPASS: Stack Auth handler route
+import { NextRequest, NextResponse } from 'next/server'
+import { stackServerApp } from '@/lib/stack'
 
 export const runtime = 'nodejs'
 
-export async function GET() {
-  // DANKPASS: Placeholder handler - Stack Auth integration needs proper setup
-  return NextResponse.json({ message: 'Auth handler placeholder' })
+export async function GET(request: NextRequest) {
+  return stackServerApp.handlers.GET(request)
 }
 
-export async function POST() {
-  // DANKPASS: Placeholder handler - Stack Auth integration needs proper setup
-  return NextResponse.json({ message: 'Auth handler placeholder' })
+export async function POST(request: NextRequest) {
+  return stackServerApp.handlers.POST(request)
 }

@@ -32,9 +32,9 @@ export async function getOrCreateUser() {
       return null
     }
 
-    // TODO: Get email from Stack Auth when available
-    const email = 'user@example.com'
-    const displayName = 'User'
+    // Get user data from Stack Auth
+    const email = stackUser.primaryEmail || 'user@example.com'
+    const displayName = stackUser.displayName || 'User'
     
     const user = await getUserOrCreateByEmail(email, displayName)
     return user
@@ -66,10 +66,13 @@ export async function requireAdmin() {
     throw new Error('Authentication required')
   }
   
-  // TODO: Implement proper admin check when Stack Auth email is available
-  // For now, allow access for development
-  console.log('Admin access granted - check disabled for development')
-  return user
+  // Check if user email is in admin list
+  const email = user.primaryEmail
+  if (email && isAdminEmail(email)) {
+    return user
+  }
+  
+  throw new Error('Admin access required')
 }
 
 // Helper function to get user profile
@@ -80,13 +83,13 @@ export async function getUserProfile() {
     
     return {
       id: user.id,
-      email: 'user@example.com', // TODO: Get email from Stack Auth when available
-      name: 'User', // TODO: Get name from Stack Auth when available
-      firstName: null,
-      lastName: null,
-      avatar: null,
-      createdAt: null,
-      updatedAt: null,
+      email: user.primaryEmail || 'user@example.com',
+      name: user.displayName || 'User',
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatar: user.profileImageUrl,
+      createdAt: user.createdAtMillis ? new Date(user.createdAtMillis) : null,
+      updatedAt: user.updatedAtMillis ? new Date(user.updatedAtMillis) : null,
     }
   } catch (error) {
     console.error('Error getting user profile:', error)
