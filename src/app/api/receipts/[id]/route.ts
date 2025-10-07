@@ -3,10 +3,11 @@ import { getReceiptWithDetails, approveReceipt, rejectReceipt } from '@/lib/rece
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const receipt = await getReceiptWithDetails(params.id);
+    const { id } = await params;
+    const receipt = await getReceiptWithDetails(id);
     
     if (!receipt) {
       return NextResponse.json({ error: 'Receipt not found' }, { status: 404 });
@@ -24,9 +25,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { action, adminNotes } = await request.json();
     
     if (!action || !['approve', 'reject'].includes(action)) {
@@ -35,9 +37,9 @@ export async function PATCH(
 
     let result;
     if (action === 'approve') {
-      result = await approveReceipt(params.id, adminNotes);
+      result = await approveReceipt(id, adminNotes);
     } else {
-      result = await rejectReceipt(params.id, adminNotes);
+      result = await rejectReceipt(id, adminNotes);
     }
 
     if (!result) {

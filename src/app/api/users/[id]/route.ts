@@ -3,13 +3,14 @@ import { getUserProfile, updateUserProfile, getUserActivity } from '@/lib/user';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
     const includeActivity = searchParams.get('includeActivity') === 'true';
     
-    const profile = await getUserProfile(params.id);
+    const profile = await getUserProfile(id);
     
     if (!profile) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -17,7 +18,7 @@ export async function GET(
 
     let activity = undefined;
     if (includeActivity) {
-      activity = await getUserActivity(params.id);
+      activity = await getUserActivity(id);
     }
 
     return NextResponse.json({ 
@@ -35,12 +36,13 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const data = await request.json();
     
-    const updatedProfile = await updateUserProfile(params.id, {
+    const updatedProfile = await updateUserProfile(id, {
       firstName: data.firstName,
       lastName: data.lastName,
       city: data.city,

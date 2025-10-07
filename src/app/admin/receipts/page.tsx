@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, Receipt, User, Building2, CheckCircle, XCircle, Clock, Eye, DollarSign } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 interface Receipt {
@@ -178,9 +179,11 @@ export default function AdminReceiptsPage() {
                     {/* Receipt Image */}
                     <div className="w-24 h-24 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
                       {receipt.imageUrl ? (
-                        <img
+                        <Image
                           src={receipt.imageUrl}
                           alt="Receipt"
+                          width={96}
+                          height={96}
                           className="w-full h-full object-cover rounded-xl"
                         />
                       ) : (

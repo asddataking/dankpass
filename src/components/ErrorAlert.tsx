@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, X, CheckCircle, Info, AlertTriangle } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export type AlertType = 'error' | 'success' | 'warning' | 'info';
 
@@ -58,6 +58,13 @@ export function ErrorAlert({
   const config = alertConfig[type];
   const Icon = config.icon;
 
+  const handleDismiss = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onDismiss?.();
+    }, 300); // Wait for animation to complete
+  }, [onDismiss]);
+
   useEffect(() => {
     if (autoDismiss) {
       const timer = setTimeout(() => {
@@ -65,14 +72,7 @@ export function ErrorAlert({
       }, autoDismiss);
       return () => clearTimeout(timer);
     }
-  }, [autoDismiss]);
-
-  const handleDismiss = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      onDismiss?.();
-    }, 300); // Wait for animation to complete
-  };
+  }, [autoDismiss, handleDismiss]);
 
   return (
     <AnimatePresence>

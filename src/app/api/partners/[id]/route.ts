@@ -3,10 +3,11 @@ import { getPartnerWithDetails, approvePartner, rejectPartner } from '@/lib/part
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const partner = await getPartnerWithDetails(params.id);
+    const { id } = await params;
+    const partner = await getPartnerWithDetails(id);
     
     if (!partner) {
       return NextResponse.json({ error: 'Partner not found' }, { status: 404 });
@@ -24,9 +25,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { action } = await request.json();
     
     if (!action || !['approve', 'reject'].includes(action)) {
@@ -35,9 +37,9 @@ export async function PATCH(
 
     let result;
     if (action === 'approve') {
-      result = await approvePartner(params.id);
+      result = await approvePartner(id);
     } else {
-      result = await rejectPartner(params.id);
+      result = await rejectPartner(id);
     }
 
     if (!result) {
