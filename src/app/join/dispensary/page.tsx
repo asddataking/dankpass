@@ -9,7 +9,7 @@ import { ErrorAlert, useAlert } from '@/components/ErrorAlert';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export default function DispensarySignupPage() {
-  const { user } = useUser();
+  const user = useUser();
   const { alerts, addAlert, removeAlert } = useAlert();
   const [formData, setFormData] = useState({
     businessName: '',

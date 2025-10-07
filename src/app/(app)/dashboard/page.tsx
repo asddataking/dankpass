@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useUser } from '@stackframe/stack';
 
 export default function DashboardPage() {
-  const { user } = useUser();
+  const user = useUser();
   
   // Mock data - in real app, this would come from the database
   const userStats = {

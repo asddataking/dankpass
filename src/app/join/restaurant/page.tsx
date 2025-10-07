@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useUser } from '@stackframe/stack';
 
 export default function RestaurantSignupPage() {
-  const { user } = useUser();
+  const user = useUser();
   const [formData, setFormData] = useState({
     businessName: '',
     description: '',
