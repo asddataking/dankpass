@@ -192,7 +192,7 @@ export default function PremiumPage() {
 
           {/* Premium Perks List */}
           <div className="card mb-8">
-            <h3 className="text-lg font-semibold text-white mb-4 text-center">What's Included</h3>
+            <h3 className="text-lg font-semibold text-white mb-4 text-center">What&apos;s Included</h3>
             <div className="space-y-3">
               {premiumPerks.map((perk, index) => (
                 <motion.div
@@ -234,13 +234,13 @@ export default function PremiumPage() {
               <div className="card">
                 <h4 className="font-medium text-white mb-2">Can I cancel anytime?</h4>
                 <p className="text-sm text-white/70">
-                  Yes! You can cancel your Premium subscription at any time. You'll continue to have access to Premium features until the end of your billing period.
+                  Yes! You can cancel your Premium subscription at any time. You&apos;ll continue to have access to Premium features until the end of your billing period.
                 </p>
               </div>
               <div className="card">
                 <h4 className="font-medium text-white mb-2">Do points expire?</h4>
                 <p className="text-sm text-white/70">
-                  Points never expire for Premium members. Free users' points expire after 12 months of inactivity.
+                  Points never expire for Premium members. Free users&apos; points expire after 12 months of inactivity.
                 </p>
               </div>
               <div className="card">

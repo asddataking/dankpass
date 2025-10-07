@@ -102,7 +102,7 @@ export default function DashboardPage() {
 
           {/* Activity Ring */}
           <div className="card mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Today's Progress</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Today&apos;s Progress</h3>
             <div className="flex items-center justify-center">
               <div className="activity-ring">
                 <svg viewBox="0 0 100 100">

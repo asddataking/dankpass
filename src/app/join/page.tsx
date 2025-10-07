@@ -137,7 +137,7 @@ export default function JoinPage() {
               <div className="w-12 h-12 bg-dp-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Users className="w-6 h-6 text-dp-blue-300" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">I'm a Customer</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">I&apos;m a Customer</h3>
               <p className="text-white/70 mb-6">
                 Looking to earn points and get perks? Join as a customer and start earning rewards today.
               </p>
@@ -160,13 +160,13 @@ export default function JoinPage() {
               <div className="card">
                 <h4 className="font-medium text-white mb-2">How do customers redeem points?</h4>
                 <p className="text-sm text-white/70">
-                  Customers can redeem points for discounts and perks directly through the app. You'll receive notifications and can track all redemptions in your partner dashboard.
+                  Customers can redeem points for discounts and perks directly through the app. You&apos;ll receive notifications and can track all redemptions in your partner dashboard.
                 </p>
               </div>
               <div className="card">
                 <h4 className="font-medium text-white mb-2">How long does approval take?</h4>
                 <p className="text-sm text-white/70">
-                  Most applications are reviewed and approved within 2-3 business days. We'll notify you via email once your application is approved.
+                  Most applications are reviewed and approved within 2-3 business days. We&apos;ll notify you via email once your application is approved.
                 </p>
               </div>
             </div>
