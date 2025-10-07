@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadReceiptFromBuffer } from '@/lib/blob';
+import { createReceipt } from '@/lib/receipt';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
+    const userId = formData.get('userId') as string;
+    const total = formData.get('total') as string;
+    const subtotal = formData.get('subtotal') as string;
+    const partnerId = formData.get('partnerId') as string;
     
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+    }
+
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
     // Validate file type
@@ -33,7 +42,21 @@ export async function POST(request: NextRequest) {
       file.type
     );
 
-    return NextResponse.json({ url });
+    // Create receipt record in database
+    const receipt = await createReceipt({
+      userId,
+      imageUrl: url,
+      total: total ? parseFloat(total) : undefined,
+      subtotal: subtotal ? parseFloat(subtotal) : undefined,
+      partnerId: partnerId || undefined
+    });
+
+    return NextResponse.json({ 
+      url,
+      receiptId: receipt.id,
+      status: receipt.status,
+      message: 'Receipt uploaded successfully and is pending review'
+    });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(

@@ -3,13 +3,16 @@
 import { motion } from 'framer-motion';
 import { User, Crown, Settings, LogOut, MapPin, Phone, Mail, Calendar, TrendingUp, Gift } from 'lucide-react';
 import Link from 'next/link';
+import { useUser, UserButton } from '@stackframe/stack';
 
 export default function ProfilePage() {
+  const { user } = useUser();
+  
   // Mock user data - in real app, this would come from the database
-  const user = {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
+  const userStats = {
+    firstName: user?.displayName?.split(' ')[0] || 'User',
+    lastName: user?.displayName?.split(' ')[1] || '',
+    email: user?.primaryEmail || 'user@example.com',
     phone: '+1 (555) 123-4567',
     city: 'San Francisco',
     state: 'CA',
@@ -25,25 +28,25 @@ export default function ProfilePage() {
   const stats = [
     {
       label: 'Total Points',
-      value: user.totalPoints.toLocaleString(),
+      value: userStats.totalPoints.toLocaleString(),
       icon: TrendingUp,
       color: 'dp-blue'
     },
     {
       label: 'Money Saved',
-      value: `$${user.totalSaved}`,
+      value: `$${userStats.totalSaved}`,
       icon: Gift,
       color: 'dp-mint'
     },
     {
       label: 'Receipts',
-      value: user.receiptsUploaded,
+      value: userStats.receiptsUploaded,
       icon: Calendar,
       color: 'dp-lime'
     },
     {
       label: 'Perks Used',
-      value: user.perksRedeemed,
+      value: userStats.perksRedeemed,
       icon: Crown,
       color: 'dp-blue'
     }
@@ -82,23 +85,26 @@ export default function ProfilePage() {
         >
           {/* Profile Header */}
           <div className="text-center mb-8">
-            <div className="w-24 h-24 bg-gradient-to-br from-dp-blue-500 to-dp-blue-300 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <div className="w-24 h-24 bg-gradient-to-br from-dp-blue-500 to-dp-blue-300 rounded-full mx-auto mb-4 flex items-center justify-center relative">
               <User className="w-12 h-12 text-white" />
+              <div className="absolute bottom-0 right-0">
+                <UserButton />
+              </div>
             </div>
             <h1 className="text-2xl font-bold text-white mb-1">
-              {user.firstName} {user.lastName}
+              {userStats.firstName} {userStats.lastName}
             </h1>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="text-white/70">{user.tier} Member</span>
-              {user.isPremium && (
+              <span className="text-white/70">{userStats.tier} Member</span>
+              {userStats.isPremium && (
                 <Crown className="w-4 h-4 text-dp-blue-300" />
               )}
             </div>
-            <p className="text-white/60">Member since {user.memberSince}</p>
+            <p className="text-white/60">Member since {userStats.memberSince}</p>
           </div>
 
           {/* Premium CTA */}
-          {!user.isPremium && (
+          {!userStats.isPremium && (
             <motion.div
               className="mb-6"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -157,21 +163,21 @@ export default function ProfilePage() {
                 <Mail className="w-5 h-5 text-white/60" />
                 <div>
                   <div className="text-sm text-white/60">Email</div>
-                  <div className="text-white">{user.email}</div>
+                  <div className="text-white">{userStats.email}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-white/60" />
                 <div>
                   <div className="text-sm text-white/60">Phone</div>
-                  <div className="text-white">{user.phone}</div>
+                  <div className="text-white">{userStats.phone}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-white/60" />
                 <div>
                   <div className="text-sm text-white/60">Location</div>
-                  <div className="text-white">{user.city}, {user.state}</div>
+                  <div className="text-white">{userStats.city}, {userStats.state}</div>
                 </div>
               </div>
             </div>

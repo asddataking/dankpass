@@ -3,8 +3,11 @@
 import { motion } from 'framer-motion';
 import { Upload, Crown, TrendingUp, Receipt, Gift } from 'lucide-react';
 import Link from 'next/link';
+import { useUser } from '@stackframe/stack';
 
 export default function DashboardPage() {
+  const { user } = useUser();
+  
   // Mock data - in real app, this would come from the database
   const userStats = {
     points: 1250,
@@ -62,7 +65,9 @@ export default function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-white">Welcome back!</h1>
+              <h1 className="text-2xl font-bold text-white">
+                Welcome back{user?.displayName ? `, ${user.displayName}` : ''}!
+              </h1>
               <p className="text-white/70">Ready to earn some points?</p>
             </div>
             {!userStats.premium && (

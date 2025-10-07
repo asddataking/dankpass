@@ -1,14 +1,23 @@
-import { StackAuth } from "@stackframe/stack";
-
-export const stackAuth = new StackAuth({
+// Stack Auth configuration
+export const stackConfig = {
   projectId: process.env.STACK_PROJECT_ID!,
   projectUrl: process.env.STACK_PROJECT_URL!,
-  urls: {
-    signIn: "/auth/signin",
-    signUp: "/auth/signup",
-    afterSignIn: "/dashboard",
-    afterSignUp: "/dashboard",
-  },
-});
+};
 
-export const { signIn, signOut, useUser } = stackAuth;
+// Mock auth functions for now - replace with real Stack Auth when properly configured
+export const signIn = async (email: string, password: string) => {
+  // Mock implementation
+  console.log('Mock sign in:', email);
+  return { success: true };
+};
+
+export const signOut = async () => {
+  // Mock implementation
+  console.log('Mock sign out');
+  return { success: true };
+};
+
+export const useUser = () => {
+  // Mock implementation
+  return { user: null, loading: false };
+};

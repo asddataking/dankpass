@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { StackProvider, StackTheme } from "@stackframe/stack";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,9 +26,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={`${inter.className} h-full bg-dp-dark text-white overflow-hidden`}>
-        <div className="h-full flex flex-col">
-          {children}
-        </div>
+        <ErrorBoundary>
+          <StackProvider>
+            <StackTheme>
+              <div className="h-full flex flex-col">
+                {children}
+              </div>
+            </StackTheme>
+          </StackProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
