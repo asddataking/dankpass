@@ -11,6 +11,10 @@ interface Perk {
   pointsCost: number;
   isPremiumOnly: boolean;
   imageUrl: string | null;
+  category?: string;
+  partner?: string;
+  icon?: any;
+  color?: string;
 }
 
 export default function PerksPage() {
@@ -115,7 +119,7 @@ export default function PerksPage() {
   
   const filteredPerks = selectedCategory === 'All' 
     ? displayPerks 
-    : displayPerks.filter(perk => perk.category === selectedCategory);
+    : displayPerks.filter(perk => perk.category === selectedCategory || (selectedCategory === 'Premium' && perk.isPremiumOnly));
 
   const canAfford = (pointsCost: number) => userPoints >= pointsCost;
 
@@ -166,7 +170,7 @@ export default function PerksPage() {
               </div>
             ) : (
               filteredPerks.map((perk, index) => {
-              const Icon = perk.icon;
+              const Icon = perk.icon || Gift;
               const canRedeem = canAfford(perk.pointsCost) && (!perk.isPremiumOnly || isPremium);
               
               return (
@@ -192,8 +196,8 @@ export default function PerksPage() {
 
                   <div className="flex items-start gap-4">
                     {/* Icon */}
-                    <div className={`w-12 h-12 bg-${perk.color}-500/20 rounded-2xl flex items-center justify-center flex-shrink-0`}>
-                      <Icon className={`w-6 h-6 text-${perk.color}`} />
+                    <div className={`w-12 h-12 ${perk.color === 'dp-mint' ? 'bg-dp-mint/20' : perk.color === 'dp-lime' ? 'bg-dp-lime/20' : perk.color === 'dp-blue' ? 'bg-dp-blue/20' : 'bg-white/20'} rounded-2xl flex items-center justify-center flex-shrink-0`}>
+                      <Icon className={`w-6 h-6 ${perk.color === 'dp-mint' ? 'text-dp-mint' : perk.color === 'dp-lime' ? 'text-dp-lime' : perk.color === 'dp-blue' ? 'text-dp-blue' : 'text-white/70'}`} />
                     </div>
 
                     {/* Content */}
