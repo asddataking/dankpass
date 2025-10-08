@@ -9,11 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        brand: {
+          bg: '#EAF6FF',
+          primary: '#2E86FF',
+          ink: '#0E1726',
+          subtle: '#6B7A90',
+          card: '#FFFFFF',
+          success: '#2BC48A',
+          warn: '#FFC861',
+          error: '#FF5D5D'
+        },
+        // Keep legacy colors for gradual migration
         'dp-dark': '#08121E',
         'dp-blue': {
           100: '#E8F3FF',
           300: '#7FB6F1',
-          500: '#1F7AD4', // primary
+          500: '#1F7AD4',
           600: '#175A9C',
           800: '#0B1B2B'
         },
@@ -24,8 +35,12 @@ const config: Config = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
-        '2xl': '1rem',
+        'xl': '1rem',
+        '2xl': '1.25rem',
         '3xl': '1.5rem',
+      },
+      boxShadow: {
+        soft: '0 8px 30px rgba(14,23,38,0.08)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

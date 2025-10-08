@@ -120,18 +120,18 @@ export default function UploadPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'approved':
-        return <CheckCircle className="w-5 h-5 text-green-400" />;
+        return <CheckCircle className="w-5 h-5 text-brand-success" />;
       case 'pending':
-        return <Clock className="w-5 h-5 text-yellow-400" />;
+        return <Clock className="w-5 h-5 text-brand-warn" />;
       case 'rejected':
-        return <FileImage className="w-5 h-5 text-red-400" />;
+        return <FileImage className="w-5 h-5 text-brand-error" />;
       default:
-        return <FileImage className="w-5 h-5 text-white/40" />;
+        return <FileImage className="w-5 h-5 text-brand-subtle" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-primary">
+    <div className="min-h-screen">
       <div className="px-6 pt-16 pb-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -142,26 +142,26 @@ export default function UploadPage() {
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-2xl font-bold text-white mb-1">
+                <h1 className="text-2xl font-bold text-brand-ink mb-1">
                   Welcome, {user?.displayName || user?.primaryEmail?.split('@')[0] || 'User'}!
                 </h1>
-                <p className="text-white/70">Upload receipts to earn points</p>
+                <p className="muted">Upload receipts to earn points</p>
               </div>
             </div>
 
             {/* Points Display */}
-            <div className="card">
+            <div className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-dp-blue-500/20 rounded-xl flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-dp-blue-300" />
+                <div className="w-12 h-12 bg-brand-primary/10 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-brand-primary" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-2xl font-bold text-white">{userStats.points.toLocaleString()}</div>
-                  <div className="text-sm text-white/60">Current Points</div>
+                  <div className="text-2xl font-bold text-brand-ink">{userStats.points.toLocaleString()}</div>
+                  <div className="muted">Current Points</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-semibold text-dp-mint">{userStats.tier}</div>
-                  <div className="text-xs text-white/60">Tier</div>
+                  <div className="text-lg font-semibold text-brand-success">{userStats.tier}</div>
+                  <div className="muted">Tier</div>
                 </div>
               </div>
             </div>
@@ -172,8 +172,8 @@ export default function UploadPage() {
             <div
               className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-200 ${
                 dragActive 
-                  ? 'border-dp-blue-300 bg-dp-blue-500/10' 
-                  : 'border-white/30 bg-white/5'
+                  ? 'border-brand-primary bg-brand-primary/10' 
+                  : 'border-brand-ink/20 bg-brand-bg'
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -193,23 +193,23 @@ export default function UploadPage() {
                 animate={{ scale: dragActive ? 1.05 : 1 }}
                 transition={{ duration: 0.2 }}
               >
-                <Camera className="w-12 h-12 text-dp-blue-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <Camera className="w-12 h-12 text-brand-primary mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-brand-ink mb-2">
                   Drop your receipt here
                 </h3>
-                <p className="text-white/70 mb-4">
+                <p className="muted mb-4">
                   Or click to browse files
                 </p>
-                <p className="text-sm text-white/50">
+                <p className="text-sm text-brand-subtle">
                   Supports JPG, PNG, and PDF files
                 </p>
               </motion.div>
             </div>
 
             {/* Upload Tips */}
-            <div className="mt-4 p-4 bg-white/5 rounded-xl">
-              <h4 className="font-medium text-white mb-2">Tips for best results:</h4>
-              <ul className="text-sm text-white/70 space-y-1">
+            <div className="mt-4 p-4 bg-brand-bg rounded-xl">
+              <h4 className="font-medium text-brand-ink mb-2">Tips for best results:</h4>
+              <ul className="muted space-y-1">
                 <li>• Make sure the receipt is clearly visible</li>
                 <li>• Include the total amount and business name</li>
                 <li>• Avoid blurry or dark photos</li>
@@ -221,26 +221,26 @@ export default function UploadPage() {
           {/* Uploaded Files Preview */}
           {uploadedFiles.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-white mb-4">Ready to Upload</h3>
+              <h3 className="text-lg font-semibold text-brand-ink mb-4">Ready to Upload</h3>
               <div className="space-y-3">
                 {uploadedFiles.map((file, index) => (
                   <motion.div
                     key={index}
-                    className="card flex items-center gap-3"
+                    className="card flex items-center gap-3 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <div className="w-10 h-10 bg-dp-blue-500/20 rounded-xl flex items-center justify-center">
-                      <FileImage className="w-5 h-5 text-dp-blue-300" />
+                    <div className="w-10 h-10 bg-brand-primary/10 rounded-xl flex items-center justify-center">
+                      <FileImage className="w-5 h-5 text-brand-primary" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-white">{file.name}</p>
-                      <p className="text-sm text-white/70">
+                      <p className="font-medium text-brand-ink">{file.name}</p>
+                      <p className="muted">
                         {(file.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                     </div>
-                    <button className="text-white/60 hover:text-white">
+                    <button className="text-brand-subtle hover:text-brand-ink">
                       ×
                     </button>
                   </motion.div>
@@ -259,35 +259,35 @@ export default function UploadPage() {
 
           {/* Recent Receipts */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Recent Uploads</h3>
+            <h3 className="text-lg font-semibold text-brand-ink mb-4">Recent Uploads</h3>
             <div className="space-y-3">
               {recentReceipts.map((receipt) => (
                 <motion.div
                   key={receipt.id}
-                  className="card"
+                  className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                      <FileImage className="w-6 h-6 text-white/70" />
+                    <div className="w-12 h-12 bg-brand-bg rounded-xl flex items-center justify-center">
+                      <FileImage className="w-6 h-6 text-brand-subtle" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-white">{receipt.partner}</h4>
-                      <p className="text-sm text-white/70">
+                      <h4 className="font-medium text-brand-ink">{receipt.partner}</h4>
+                      <p className="muted">
                         ${receipt.amount} • {receipt.date}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       {getStatusIcon(receipt.status)}
                       <div className="text-right">
-                        <div className="text-sm font-medium text-dp-mint">
+                        <div className="text-sm font-medium text-brand-success">
                           {receipt.status === 'approved' ? `+${receipt.points} pts` : ''}
                         </div>
                         <div className={`text-xs capitalize ${
-                          receipt.status === 'approved' ? 'text-green-400' : 
-                          receipt.status === 'pending' ? 'text-yellow-400' : 'text-red-400'
+                          receipt.status === 'approved' ? 'text-brand-success' : 
+                          receipt.status === 'pending' ? 'text-brand-warn' : 'text-brand-error'
                         }`}>
                           {receipt.status}
                         </div>

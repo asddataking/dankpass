@@ -18,7 +18,7 @@ export default function BottomNavigation() {
 
   return (
     <motion.nav 
-      className="fixed bottom-0 left-0 right-0 z-50 bg-dp-dark/95 backdrop-blur-lg border-t border-white/10"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-t border-brand-ink/10 rounded-t-2xl"
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
@@ -39,7 +39,7 @@ export default function BottomNavigation() {
               >
                 {isActive && (
                   <motion.div
-                    className="absolute inset-0 bg-dp-blue-500/20 rounded-xl"
+                    className="absolute inset-0 bg-brand-primary/10 rounded-xl"
                     layoutId="activeTab"
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
@@ -47,12 +47,12 @@ export default function BottomNavigation() {
                 <div className="relative z-10 flex flex-col items-center">
                   <Icon 
                     className={`w-5 h-5 mb-1 transition-colors ${
-                      isActive ? 'text-dp-blue-300' : 'text-white/60'
+                      isActive ? 'text-brand-primary' : 'text-brand-subtle'
                     }`} 
                   />
                   <span 
                     className={`text-xs font-medium transition-colors ${
-                      isActive ? 'text-dp-blue-300' : 'text-white/60'
+                      isActive ? 'text-brand-primary' : 'text-brand-subtle'
                     }`}
                   >
                     {item.label}

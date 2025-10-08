@@ -10,6 +10,11 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "DankPass - Earn Points, Get Perks",
   description: "Upload receipts from dispensaries and restaurants to earn points and redeem amazing perks",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 };
 
 export const viewport = {
@@ -26,12 +31,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full bg-dp-dark text-white overflow-hidden`}>
+      <body className={`${inter.className} h-full overflow-hidden`}>
         <ErrorBoundary>
           <StackProvider app={stackServerApp}>
             <StackTheme>
               <div className="h-full flex flex-col">
-                {children}
+                <div className="mx-auto max-w-md md:max-w-5xl w-full h-full">
+                  {children}
+                </div>
               </div>
             </StackTheme>
           </StackProvider>

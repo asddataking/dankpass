@@ -3,6 +3,7 @@ const nextConfig = {
   transpilePackages: ['@stackframe/stack', '@stackframe/stack-shared', 'oauth4webapi'],
   images: {
     domains: ['images.unsplash.com', 'blob.vercel-storage.com'],
+    unoptimized: true, // For local logo files
   },
   webpack: (config) => {
     // Handle ES modules
