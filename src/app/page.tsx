@@ -24,7 +24,7 @@ export default function HomePage() {
           {/* Logo/Header */}
           <div className="text-center mb-12">
             <div className="flex justify-center mb-6">
-              <Logo size="xl" showText={false} href={null} />
+              <Logo size="xl" showText={false} />
             </div>
             <p className="text-lg text-brand-subtle max-w-sm mx-auto">
               Upload receipts, earn points, get perks. The rewards app for dispensaries & restaurants.
