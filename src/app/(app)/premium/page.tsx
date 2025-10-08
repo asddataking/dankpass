@@ -3,8 +3,10 @@
 import { motion } from 'framer-motion';
 import { Crown, Check, Star, Zap, Shield, Gift } from 'lucide-react';
 import { useState } from 'react';
+import { useUser } from '@stackframe/stack';
 
 export default function PremiumPage() {
+  const user = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const benefits = [
     {
@@ -44,21 +46,12 @@ export default function PremiumPage() {
 
   const pricingPlans = [
     {
-      name: 'Monthly',
+      name: 'Premium',
       price: 7,
       period: 'month',
-      description: 'Perfect for trying out premium features',
-      popular: false,
-      priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || 'price_monthly_placeholder'
-    },
-    {
-      name: 'Annual',
-      price: 70,
-      period: 'year',
-      description: 'Save 17% compared to monthly billing',
+      description: 'Unlock all premium features and earn 1.5x points',
       popular: true,
-      originalPrice: 84,
-      priceId: process.env.NEXT_PUBLIC_STRIPE_ANNUAL_PRICE_ID || 'price_annual_placeholder'
+      priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || 'price_monthly_placeholder'
     }
   ];
 
@@ -73,9 +66,10 @@ export default function PremiumPage() {
         },
         body: JSON.stringify({
           priceId,
-          customerEmail: 'user@example.com', // In real app, get from auth
+          customerEmail: user?.primaryEmail || undefined,
           metadata: {
-            userId: 'user_123', // In real app, get from auth
+            userId: user?.id || 'guest',
+            userEmail: user?.primaryEmail || 'unknown',
           },
         }),
       });
@@ -144,7 +138,7 @@ export default function PremiumPage() {
 
           {/* Pricing Plans */}
           <div className="mb-8">
-            <h3 className="text-xl font-semibold text-white mb-4 text-center">Choose Your Plan</h3>
+            <h3 className="text-xl font-semibold text-white mb-4 text-center">Simple Pricing</h3>
             <div className="grid grid-cols-1 gap-4">
               {pricingPlans.map((plan, index) => (
                 <motion.div
@@ -155,34 +149,19 @@ export default function PremiumPage() {
                   transition={{ delay: 0.3 + index * 0.1 }}
                   whileHover={{ scale: 1.02 }}
                 >
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <div className="bg-dp-blue-500 text-white text-xs font-medium px-3 py-1 rounded-full">
-                        Most Popular
-                      </div>
-                    </div>
-                  )}
-                  
                   <div className="text-center">
                     <h4 className="text-lg font-semibold text-white mb-2">{plan.name}</h4>
                     <div className="mb-2">
                       <span className="text-3xl font-bold text-white">${plan.price}</span>
                       <span className="text-white/70">/{plan.period}</span>
-                      {plan.originalPrice && (
-                        <div className="text-sm text-white/50 line-through">${plan.originalPrice}/year</div>
-                      )}
                     </div>
                     <p className="text-sm text-white/70 mb-4">{plan.description}</p>
                     <button 
                       onClick={() => handleSubscribe(plan.priceId)}
                       disabled={isLoading}
-                      className={`w-full py-3 px-6 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                        plan.popular 
-                          ? 'bg-dp-blue-500 hover:bg-dp-blue-600 text-white' 
-                          : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
-                      }`}
+                      className="w-full py-3 px-6 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-dp-blue-500 hover:bg-dp-blue-600 text-white"
                     >
-                      {isLoading ? 'Processing...' : (plan.popular ? 'Start Premium' : 'Choose Plan')}
+                      {isLoading ? 'Processing...' : 'Start Premium'}
                     </button>
                   </div>
                 </motion.div>

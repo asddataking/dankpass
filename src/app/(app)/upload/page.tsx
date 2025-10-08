@@ -2,14 +2,17 @@
 
 import { motion } from 'framer-motion';
 import { Camera, Upload as UploadIcon, FileImage, CheckCircle, Clock, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@stackframe/stack';
+import { UpgradePrompt } from '@/components/UpgradePrompt';
 
 export default function UploadPage() {
   const user = useUser();
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [hasShownPrompt, setHasShownPrompt] = useState(false);
 
   // Mock user stats - in production, fetch from database
   const userStats = {
@@ -107,6 +110,15 @@ export default function UploadPage() {
       
       // Clear uploaded files after successful upload
       setUploadedFiles([]);
+      
+      // Show upgrade prompt after first upload (only once per session)
+      if (recentReceipts.length === 0 && !hasShownPrompt) {
+        setTimeout(() => {
+          setShowUpgradePrompt(true);
+          setHasShownPrompt(true);
+        }, 1500); // Show after 1.5 seconds to let success message sink in
+      }
+      
       alert('Receipts uploaded successfully! They will be reviewed by our team.');
       
     } catch (error) {
@@ -300,6 +312,13 @@ export default function UploadPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Upgrade Prompt Modal */}
+      <UpgradePrompt 
+        show={showUpgradePrompt} 
+        onClose={() => setShowUpgradePrompt(false)}
+        pointsEarned={10}
+      />
     </div>
   );
 }
