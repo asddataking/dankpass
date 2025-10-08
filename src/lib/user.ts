@@ -1,6 +1,6 @@
 import { db } from './db';
 import { users, profiles, memberships, pointsLedger, receipts, redemptions } from './db/schema';
-import { eq, desc, sum } from 'drizzle-orm';
+import { eq, desc, sum, or } from 'drizzle-orm';
 import { getUserTotalPoints, getUserPointsHistory } from './points';
 import { getUserReceipts } from './receipt';
 import { getUserRedemptions } from './perks';
@@ -105,7 +105,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
   const user = userData[0];
 
   // Get user stats
-  const [totalPoints, receipts, redemptions] = await Promise.all([
+  const [totalPoints, receiptsData, redemptionsData] = await Promise.all([
     getUserTotalPoints(userId),
     db.select({ count: receipts.id }).from(receipts).where(eq(receipts.userId, userId)),
     db.select({ count: redemptions.id }).from(redemptions).where(eq(redemptions.userId, userId))
@@ -135,8 +135,8 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
     } : undefined,
     stats: {
       totalPoints,
-      totalReceipts: receipts.length,
-      totalRedemptions: redemptions.length,
+      totalReceipts: receiptsData.length,
+      totalRedemptions: redemptionsData.length,
       totalSaved
     }
   };
@@ -283,7 +283,7 @@ export async function getUserStats() {
   const [totalUsers, premiumUsers, totalPartners, totalReceipts] = await Promise.all([
     db.select({ count: users.id }).from(users),
     db.select({ count: memberships.id }).from(memberships).where(eq(memberships.tier, 'premium')),
-    db.select({ count: users.id }).from(users).where(eq(users.role, 'partner_dispensary').or(eq(users.role, 'partner_restaurant'))),
+    db.select({ count: users.id }).from(users).where(or(eq(users.role, 'partner_dispensary'), eq(users.role, 'partner_restaurant'))),
     db.select({ count: receipts.id }).from(receipts)
   ]);
 

@@ -99,7 +99,7 @@ export async function calculatePoints(
       )
     );
 
-  const dailyTotal = todayPoints[0]?.total || 0;
+  const dailyTotal = Number(todayPoints[0]?.total || 0);
   const dailyCapReached = dailyTotal >= config.dailyCap;
 
   return {
@@ -119,7 +119,7 @@ export async function calculatePoints(
 export async function awardPoints(
   userId: string,
   points: number,
-  type: 'earned' | 'bonus' | 'adjustment' = 'earned',
+  type: 'earned' | 'redeemed' | 'bonus' | 'adjustment' = 'earned',
   description: string,
   receiptId?: string
 ): Promise<void> {
@@ -141,7 +141,7 @@ export async function getUserTotalPoints(userId: string): Promise<number> {
     .from(pointsLedger)
     .where(eq(pointsLedger.userId, userId));
 
-  return result[0]?.total || 0;
+  return Number(result[0]?.total || 0);
 }
 
 /**
@@ -192,5 +192,5 @@ export async function getUserDailyPoints(userId: string): Promise<number> {
       )
     );
 
-  return result[0]?.total || 0;
+  return Number(result[0]?.total || 0);
 }

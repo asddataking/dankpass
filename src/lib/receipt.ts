@@ -46,7 +46,11 @@ export async function createReceipt(data: ReceiptData): Promise<ProcessedReceipt
     pointsAwarded: 0
   }).returning();
 
-  return await getReceiptWithDetails(receipt[0].id);
+  const receiptWithDetails = await getReceiptWithDetails(receipt[0].id);
+  if (!receiptWithDetails) {
+    throw new Error('Failed to retrieve created receipt');
+  }
+  return receiptWithDetails;
 }
 
 /**
@@ -83,22 +87,22 @@ export async function getReceiptWithDetails(receiptId: string): Promise<Processe
   return {
     id: r.id,
     userId: r.userId,
-    partnerId: r.partnerId,
+    partnerId: r.partnerId ?? undefined,
     imageUrl: r.imageUrl,
     total: r.total ? parseFloat(r.total) : undefined,
     subtotal: r.subtotal ? parseFloat(r.subtotal) : undefined,
     status: r.status,
-    pointsAwarded: r.pointsAwarded,
+    pointsAwarded: r.pointsAwarded ?? 0,
     createdAt: r.createdAt,
-    partner: r.businessName ? {
+    partner: (r.businessName && r.businessType) ? {
       businessName: r.businessName,
       businessType: r.businessType
     } : undefined,
-    user: {
-      firstName: r.firstName,
-      lastName: r.lastName,
+    user: r.email ? {
+      firstName: r.firstName ?? undefined,
+      lastName: r.lastName ?? undefined,
       email: r.email
-    }
+    } : undefined
   };
 }
 
@@ -129,14 +133,14 @@ export async function getUserReceipts(userId: string, limit: number = 50): Promi
   return receiptsList.map(r => ({
     id: r.id,
     userId: r.userId,
-    partnerId: r.partnerId,
+    partnerId: r.partnerId ?? undefined,
     imageUrl: r.imageUrl,
     total: r.total ? parseFloat(r.total) : undefined,
     subtotal: r.subtotal ? parseFloat(r.subtotal) : undefined,
     status: r.status,
-    pointsAwarded: r.pointsAwarded,
+    pointsAwarded: r.pointsAwarded ?? 0,
     createdAt: r.createdAt,
-    partner: r.businessName ? {
+    partner: (r.businessName && r.businessType) ? {
       businessName: r.businessName,
       businessType: r.businessType
     } : undefined
@@ -175,22 +179,22 @@ export async function getPendingReceipts(limit: number = 50): Promise<ProcessedR
   return receiptsList.map(r => ({
     id: r.id,
     userId: r.userId,
-    partnerId: r.partnerId,
+    partnerId: r.partnerId ?? undefined,
     imageUrl: r.imageUrl,
     total: r.total ? parseFloat(r.total) : undefined,
     subtotal: r.subtotal ? parseFloat(r.subtotal) : undefined,
     status: r.status,
-    pointsAwarded: r.pointsAwarded,
+    pointsAwarded: r.pointsAwarded ?? 0,
     createdAt: r.createdAt,
-    partner: r.businessName ? {
+    partner: (r.businessName && r.businessType) ? {
       businessName: r.businessName,
       businessType: r.businessType
     } : undefined,
-    user: {
-      firstName: r.firstName,
-      lastName: r.lastName,
+    user: r.email ? {
+      firstName: r.firstName ?? undefined,
+      lastName: r.lastName ?? undefined,
       email: r.email
-    }
+    } : undefined
   }));
 }
 

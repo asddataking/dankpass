@@ -4,15 +4,11 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com', 'blob.vercel-storage.com'],
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     // Handle ES modules
     config.resolve.extensionAlias = {
       '.js': ['.js', '.ts', '.tsx'],
     };
-    
-    if (isServer) {
-      config.externals = [...(config.externals || []), 'oauth4webapi'];
-    }
     
     return config;
   },
