@@ -10,14 +10,14 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          bg: '#EAF6FF',
-          primary: '#2E86FF',
-          ink: '#0E1726',
-          subtle: '#6B7A90',
-          card: '#FFFFFF',
-          success: '#2BC48A',
-          warn: '#FFC861',
-          error: '#FF5D5D'
+          bg: 'rgb(234 246 255)',
+          primary: 'rgb(46 134 255)',
+          ink: 'rgb(14 23 38)',
+          subtle: 'rgb(107 122 144)',
+          card: 'rgb(255 255 255)',
+          success: 'rgb(43 196 138)',
+          warn: 'rgb(255 200 97)',
+          error: 'rgb(255 93 93)'
         },
         // Keep legacy colors for gradual migration
         'dp-dark': '#08121E',

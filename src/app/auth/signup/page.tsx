@@ -23,7 +23,7 @@ export default function SignUpPage() {
             </Link>
             
             <div className="flex justify-center mb-6">
-              <Logo size="lg" showText={true} href={null} />
+              <Logo size="lg" showText={true} />
             </div>
             
             <h1 className="text-3xl font-bold text-brand-ink mb-2">Create account</h1>
