@@ -10,10 +10,16 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "DankPass - Earn Points, Get Perks",
   description: "Upload receipts from dispensaries and restaurants to earn points and redeem amazing perks",
+  manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
     apple: '/favicon.ico',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'DankPass',
   },
 };
 
@@ -30,16 +36,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full overflow-hidden`}>
+    <html lang="en">
+      <body className={`${inter.className}`}>
         <ErrorBoundary>
           <StackProvider app={stackServerApp}>
             <StackTheme>
-              <div className="h-full flex flex-col">
-                <div className="mx-auto max-w-md md:max-w-5xl w-full h-full">
-                  {children}
-                </div>
-              </div>
+              {children}
             </StackTheme>
           </StackProvider>
         </ErrorBoundary>

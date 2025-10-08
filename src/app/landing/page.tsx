@@ -86,10 +86,10 @@ export default function LandingPage() {
           >
             <Logo size="lg" showText={true} />
             <a
-              href="/auth/signin"
+              href="/auth/signup"
               className="text-brand-subtle hover:text-brand-ink transition-colors font-medium"
             >
-              Sign In
+              Sign Up
             </a>
           </motion.div>
 
