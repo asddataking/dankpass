@@ -94,7 +94,7 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Hero Content */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
             {/* Left Column - Text */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -106,17 +106,17 @@ export default function LandingPage() {
                 <span className="text-sm font-medium">Join the Waitlist</span>
               </div>
 
-              <h1 className="text-5xl lg:text-6xl font-bold text-brand-ink mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-brand-ink mb-6 leading-tight">
                 Turn Every Receipt Into{' '}
                 <span className="text-brand-primary">Rewards</span>
               </h1>
 
-              <p className="text-xl text-brand-subtle mb-8 leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl text-brand-subtle mb-8 leading-relaxed">
                 Upload receipts from your favorite dispensaries and restaurants, earn points automatically, and unlock exclusive perks. It's that simple.
               </p>
 
               {/* Stats */}
-              <div className="flex gap-8 mb-8">
+              <div className="flex flex-wrap gap-4 sm:gap-8 mb-8">
                 {stats.map((stat, index) => (
                   <motion.div
                     key={stat.label}
@@ -124,8 +124,8 @@ export default function LandingPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 + index * 0.1 }}
                   >
-                    <div className="text-3xl font-bold text-brand-primary">{stat.value}</div>
-                    <div className="text-sm text-brand-subtle">{stat.label}</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-brand-primary">{stat.value}</div>
+                    <div className="text-xs sm:text-sm text-brand-subtle">{stat.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -156,13 +156,14 @@ export default function LandingPage() {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
+              className="w-full"
             >
-              <div className="card max-w-md mx-auto lg:mx-0">
+              <div className="card max-w-md mx-auto lg:mx-0 w-full">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-brand-ink mb-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-brand-ink mb-2">
                     Get Early Access
                   </h2>
-                  <p className="muted">
+                  <p className="text-xs sm:text-sm text-brand-subtle">
                     Join the waitlist and be the first to start earning rewards
                   </p>
                 </div>

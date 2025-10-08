@@ -9,10 +9,10 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-full flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Main Content */}
       <motion.main 
-        className="flex-1 overflow-y-auto pb-20"
+        className="flex-1 pb-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
