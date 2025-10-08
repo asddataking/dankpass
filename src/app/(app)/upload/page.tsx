@@ -1,13 +1,21 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Camera, Upload as UploadIcon, FileImage, CheckCircle, Clock } from 'lucide-react';
+import { Camera, Upload as UploadIcon, FileImage, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
+import { useUser } from '@stackframe/stack';
 
 export default function UploadPage() {
+  const user = useUser();
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Mock user stats - in production, fetch from database
+  const userStats = {
+    points: 1250,
+    tier: 'Gold'
+  };
 
   // Mock recent receipts
   const recentReceipts = [
@@ -130,10 +138,33 @@ export default function UploadPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white mb-2">Upload Receipt</h1>
-            <p className="text-white/70">Snap a photo of your receipt to earn points</p>
+          {/* Header with Profile Info */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-2xl font-bold text-white mb-1">
+                  Welcome, {user?.displayName || user?.primaryEmail?.split('@')[0] || 'User'}!
+                </h1>
+                <p className="text-white/70">Upload receipts to earn points</p>
+              </div>
+            </div>
+
+            {/* Points Display */}
+            <div className="card">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-dp-blue-500/20 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-dp-blue-300" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-2xl font-bold text-white">{userStats.points.toLocaleString()}</div>
+                  <div className="text-sm text-white/60">Current Points</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg font-semibold text-dp-mint">{userStats.tier}</div>
+                  <div className="text-xs text-white/60">Tier</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Upload Area */}
