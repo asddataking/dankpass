@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { StackProvider, StackTheme } from "@stackframe/stack";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { stackServerApp } from "@/stack";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,7 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${inter.className} h-full bg-dp-dark text-white overflow-hidden`}>
         <ErrorBoundary>
-          <StackProvider>
+          <StackProvider app={stackServerApp}>
             <StackTheme>
               <div className="h-full flex flex-col">
                 {children}
