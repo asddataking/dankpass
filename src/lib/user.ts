@@ -117,7 +117,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
   return {
     id: user.id,
     email: user.email,
-    role: user.role,
+    role: user.role || 'user',
     createdAt: user.createdAt,
     profile: user.firstName ? {
       firstName: user.firstName,

@@ -5,6 +5,19 @@ import { Camera, Upload as UploadIcon, FileImage, CheckCircle, Clock, TrendingUp
 import { useState, useEffect } from 'react';
 import { useUser } from '@stackframe/stack';
 import { UpgradePrompt } from '@/components/UpgradePrompt';
+import { ReceiptParseModal } from '@/components/ReceiptParseModal';
+import { UploadLimitNudge } from '@/components/UploadLimitNudge';
+import { compressImage } from '@/lib/imageCompression';
+
+interface Receipt {
+  id: string;
+  partner: string | null;
+  amount: number | null;
+  points: number;
+  status: 'pending' | 'approved' | 'rejected';
+  date: string;
+  imageUrl: string;
+}
 
 export default function UploadPage() {
   const user = useUser();
@@ -13,43 +26,74 @@ export default function UploadPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const [hasShownPrompt, setHasShownPrompt] = useState(false);
+  const [recentReceipts, setRecentReceipts] = useState<Receipt[]>([]);
+  const [isLoadingReceipts, setIsLoadingReceipts] = useState(true);
+  const [userStats, setUserStats] = useState({
+    points: 0,
+    tier: 'Free',
+    isPremium: false,
+    receiptsThisMonth: 0
+  });
+  const [showParseModal, setShowParseModal] = useState(false);
+  const [parseResult, setParseResult] = useState<any>(null);
 
-  // Mock user stats - in production, fetch from database
-  const userStats = {
-    points: 1250,
-    tier: 'Gold'
-  };
+  const RECEIPTS_LIMIT_FREE = 15;
 
-  // Mock recent receipts
-  const recentReceipts = [
-    {
-      id: 1,
-      partner: 'Green Valley Dispensary',
-      amount: 45.00,
-      points: 90,
-      status: 'approved',
-      date: '2024-01-10',
-      imageUrl: '/placeholder-receipt.jpg'
-    },
-    {
-      id: 2,
-      partner: 'Pizza Palace',
-      amount: 28.50,
-      points: 57,
-      status: 'pending',
-      date: '2024-01-12',
-      imageUrl: '/placeholder-receipt.jpg'
-    },
-    {
-      id: 3,
-      partner: 'Cannabis Corner',
-      amount: 67.25,
-      points: 134,
-      status: 'rejected',
-      date: '2024-01-08',
-      imageUrl: '/placeholder-receipt.jpg'
+  // Load user receipts and stats
+  useEffect(() => {
+    async function loadUserData() {
+      if (!user) return;
+      
+      try {
+        // Fetch user receipts
+        const receiptsResponse = await fetch('/api/receipts/user');
+        let receiptsThisMonth = 0;
+        
+        if (receiptsResponse.ok) {
+          const data = await receiptsResponse.json();
+          const formattedReceipts = data.receipts.map((r: any) => ({
+            id: r.id,
+            partner: r.partner?.businessName || 'Unknown Business',
+            amount: r.total,
+            points: r.pointsAwarded || 0,
+            status: r.status,
+            date: new Date(r.createdAt).toLocaleDateString(),
+            imageUrl: r.imageUrl,
+            createdAt: r.createdAt
+          }));
+          setRecentReceipts(formattedReceipts);
+          
+          // Count receipts this month
+          const now = new Date();
+          const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+          receiptsThisMonth = data.receipts.filter((r: any) => {
+            const receiptDate = new Date(r.createdAt);
+            return receiptDate >= firstDayOfMonth;
+          }).length;
+        }
+
+        // Fetch user stats
+        const statsResponse = await fetch('/api/auth/me');
+        if (statsResponse.ok) {
+          const data = await statsResponse.json();
+          
+          // In a real implementation, you'd fetch points from a separate endpoint
+          setUserStats({
+            points: 0, // TODO: Fetch from points API
+            tier: data.isPremium ? 'Premium' : 'Free',
+            isPremium: data.isPremium || false,
+            receiptsThisMonth
+          });
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      } finally {
+        setIsLoadingReceipts(false);
+      }
     }
-  ];
+
+    loadUserData();
+  }, [user]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -85,15 +129,58 @@ export default function UploadPage() {
     setUploadedFiles(prev => [...prev, ...newFiles]);
   };
 
+  const loadReceipts = async () => {
+    try {
+      const receiptsResponse = await fetch('/api/receipts/user');
+      if (receiptsResponse.ok) {
+        const data = await receiptsResponse.json();
+        const formattedReceipts = data.receipts.map((r: any) => ({
+          id: r.id,
+          partner: r.partner?.businessName || 'Unknown Business',
+          amount: r.total,
+          points: r.pointsAwarded || 0,
+          status: r.status,
+          date: new Date(r.createdAt).toLocaleDateString(),
+          imageUrl: r.imageUrl
+        }));
+        setRecentReceipts(formattedReceipts);
+      }
+    } catch (error) {
+      console.error('Error loading receipts:', error);
+    }
+  };
+
   const handleUpload = async () => {
     if (uploadedFiles.length === 0) return;
+    
+    // Check upload limit for free tier
+    if (!userStats.isPremium && userStats.receiptsThisMonth >= RECEIPTS_LIMIT_FREE) {
+      alert(`You've reached your monthly limit of ${RECEIPTS_LIMIT_FREE} receipts. Upgrade to Premium for unlimited uploads!`);
+      return;
+    }
     
     setIsUploading(true);
     
     try {
       for (const file of uploadedFiles) {
+        // Compress image before upload
+        let fileToUpload = file;
+        if (file.type.startsWith('image/')) {
+          try {
+            fileToUpload = await compressImage(file, {
+              maxWidth: 1920,
+              maxHeight: 1920,
+              quality: 0.85,
+              maxSizeMB: 1
+            });
+            console.log(`Compressed ${file.name}: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(fileToUpload.size / 1024 / 1024).toFixed(2)}MB`);
+          } catch (compressionError) {
+            console.warn('Image compression failed, using original:', compressionError);
+          }
+        }
+        
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', fileToUpload);
         
         const response = await fetch('/api/upload', {
           method: 'POST',
@@ -101,29 +188,54 @@ export default function UploadPage() {
         });
         
         if (!response.ok) {
-          throw new Error('Upload failed');
+          const error = await response.json();
+          throw new Error(error.error || 'Upload failed');
         }
         
         const { url } = await response.json();
         console.log('File uploaded:', url);
+        
+        // Parse receipt with OpenAI (if OPENAI_API_KEY is configured)
+        try {
+          const parseResponse = await fetch('/api/parse-receipt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ blobUrl: url, userId: user?.id })
+          });
+          
+          if (parseResponse.ok) {
+            const parseData = await parseResponse.json();
+            setParseResult({
+              merchant: parseData.parsed?.merchant,
+              purchase_date: parseData.parsed?.purchase_date,
+              total: parseData.parsed?.total || 0,
+              pointsAwarded: parseData.pointsAwarded || 0
+            });
+            setShowParseModal(true);
+          }
+        } catch (parseError) {
+          console.log('Receipt parsing skipped or failed:', parseError);
+          // Continue even if parsing fails
+        }
       }
       
       // Clear uploaded files after successful upload
       setUploadedFiles([]);
       
+      // Reload receipts to show new uploads
+      await loadReceipts();
+      
       // Show upgrade prompt after first upload (only once per session)
-      if (recentReceipts.length === 0 && !hasShownPrompt) {
+      if (recentReceipts.length === 0 && !hasShownPrompt && !userStats.isPremium) {
         setTimeout(() => {
           setShowUpgradePrompt(true);
           setHasShownPrompt(true);
-        }, 1500); // Show after 1.5 seconds to let success message sink in
+        }, 1500);
       }
-      
-      alert('Receipts uploaded successfully! They will be reviewed by our team.');
       
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Failed to upload receipts. Please try again.');
+      alert(`Failed to upload receipts: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsUploading(false);
     }
@@ -178,6 +290,13 @@ export default function UploadPage() {
               </div>
             </div>
           </div>
+
+          {/* Upload Limit Nudge */}
+          <UploadLimitNudge 
+            receiptsUsed={userStats.receiptsThisMonth}
+            receiptsLimit={RECEIPTS_LIMIT_FREE}
+            isPremium={userStats.isPremium}
+          />
 
           {/* Upload Area */}
           <div className="mb-8">
@@ -272,8 +391,20 @@ export default function UploadPage() {
           {/* Recent Receipts */}
           <div>
             <h3 className="text-lg font-semibold text-brand-ink mb-4">Recent Uploads</h3>
-            <div className="space-y-3">
-              {recentReceipts.map((receipt) => (
+            {isLoadingReceipts ? (
+              <div className="text-center py-8">
+                <div className="animate-spin w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full mx-auto mb-2"></div>
+                <p className="muted">Loading receipts...</p>
+              </div>
+            ) : recentReceipts.length === 0 ? (
+              <div className="card text-center py-8">
+                <FileImage className="w-12 h-12 text-brand-subtle mx-auto mb-3" />
+                <p className="muted">No receipts uploaded yet</p>
+                <p className="text-sm text-brand-subtle mt-1">Upload your first receipt to start earning points!</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {recentReceipts.map((receipt) => (
                 <motion.div
                   key={receipt.id}
                   className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all"
@@ -288,7 +419,7 @@ export default function UploadPage() {
                     <div className="flex-1">
                       <h4 className="font-medium text-brand-ink">{receipt.partner}</h4>
                       <p className="muted">
-                        ${receipt.amount} • {receipt.date}
+                        {receipt.amount ? `$${receipt.amount.toFixed(2)} • ` : ''}{receipt.date}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -308,10 +439,18 @@ export default function UploadPage() {
                   </div>
                 </motion.div>
               ))}
-            </div>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
+
+      {/* Receipt Parse Success Modal */}
+      <ReceiptParseModal
+        show={showParseModal}
+        onClose={() => setShowParseModal(false)}
+        data={parseResult}
+      />
 
       {/* Upgrade Prompt Modal */}
       <UpgradePrompt 

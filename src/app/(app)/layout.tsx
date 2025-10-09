@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import BottomNavigation from '@/components/BottomNavigation';
+import { SessionCheck } from '@/components/SessionCheck';
 
 export default function AppLayout({
   children,
@@ -10,6 +11,9 @@ export default function AppLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Session timeout check */}
+      <SessionCheck />
+      
       {/* Main Content */}
       <motion.main 
         className="flex-1 pb-20"

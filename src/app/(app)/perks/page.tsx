@@ -133,9 +133,9 @@ export default function PerksPage() {
         >
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-white mb-2">Perks & Rewards</h1>
+            <h1 className="text-2xl font-bold text-white mb-2">🔥 Burn Rewards</h1>
             <div className="flex items-center gap-2">
-              <div className="text-lg font-semibold text-dp-blue-300">
+              <div className="text-lg font-semibold text-dp-mint">
                 {userPoints.toLocaleString()}
               </div>
               <div className="text-white/70">points available</div>

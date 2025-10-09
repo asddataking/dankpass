@@ -194,3 +194,12 @@ export async function getUserDailyPoints(userId: string): Promise<number> {
 
   return Number(result[0]?.total || 0);
 }
+
+/**
+ * Simple points calculator for receipt parsing
+ * Simple, cheap rule: 10 pts per $1 spent
+ */
+export function computePoints(total: number) {
+  if (!isFinite(total) || total < 0) return 0;
+  return Math.floor(total * 10);
+}

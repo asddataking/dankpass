@@ -9,9 +9,9 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://dankpass.vercel.app'),
-  title: "DankPass - Earn Free Weed & Restaurant Rewards | Upload Receipts, Get Perks",
-  description: "Turn every receipt into rewards! Upload receipts from dispensaries and restaurants to earn points. Redeem for free weed, discounts, exclusive perks, and VIP access. Join 10K+ users earning rewards daily.",
-  keywords: ["earn free weed", "cannabis rewards", "dispensary loyalty program", "restaurant rewards", "receipt upload", "earn points", "free perks", "loyalty app", "dispensary discounts"],
+  title: "DankPass - Earn Free Weed | Upload Receipts & Burn Rewards",
+  description: "Earn free weed with every receipt! Upload receipts from dispensaries and restaurants to earn points. Burn points for free weed, discounts, and exclusive perks. Join 10K+ users earning and burning rewards daily. Start earning free weed today!",
+  keywords: ["earn free weed", "free weed rewards", "dispensary rewards program", "cannabis loyalty points", "get free weed with receipts", "earn and burn", "burn points for weed", "free cannabis rewards", "receipt upload rewards", "dispensary discounts"],
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     title: 'DankPass',
   },
   openGraph: {
-    title: "DankPass - Earn Free Weed & Restaurant Rewards",
-    description: "Upload receipts from dispensaries and restaurants to earn points. Redeem for free weed, discounts, and exclusive perks!",
+    title: "DankPass - Earn Free Weed | Upload Receipts & Burn Rewards",
+    description: "Earn free weed with every receipt! Upload receipts from dispensaries and restaurants. Burn points for free weed, discounts, and exclusive perks. Earn & Burn rewards daily!",
     url: 'https://dankpass.vercel.app',
     siteName: 'DankPass',
     images: [
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
         url: '/logo.png',
         width: 1200,
         height: 630,
-        alt: 'DankPass - Earn Free Weed & Rewards',
+        alt: 'DankPass - Earn Free Weed & Burn Rewards',
       },
     ],
     locale: 'en_US',
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "DankPass - Earn Free Weed & Restaurant Rewards",
-    description: "Upload receipts from dispensaries and restaurants to earn points. Redeem for free weed, discounts, and exclusive perks!",
+    title: "DankPass - Earn Free Weed | Earn & Burn Rewards",
+    description: "Earn free weed with every receipt! Upload receipts to earn points. Burn points for free weed, discounts, and exclusive perks. Join 10K+ users!",
     images: ['/logo.png'],
   },
 };

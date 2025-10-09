@@ -6,9 +6,19 @@ import { z } from 'zod';
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: text('email').notNull().unique(),
-  role: text('role', { enum: ['user', 'partner_dispensary', 'partner_restaurant', 'admin'] }).notNull().default('user'),
+  name: text('name'),
+  display_name: text('display_name'),
+  avatar_url: text('avatar_url'),
+  tier: text('tier').default('bronze'),
+  points_cached: integer('points_cached').default(0),
+  streak: integer('streak').default(0),
+  ref_code: text('ref_code'),
+  preferred_role: text('preferred_role'),
+  role: text('role', { enum: ['user', 'partner_dispensary', 'partner_restaurant', 'admin'] }).default('user'),
+  is_premium: boolean('is_premium').notNull().default(false),
+  premium_since: timestamp('premium_since'),
+  premium_provider: text('premium_provider'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // Profiles table

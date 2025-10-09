@@ -4,11 +4,11 @@ import { Upload, Gift, MapPin, Star, TrendingUp, Sparkles, Crown, Users } from '
 import { Logo } from '@/components/Logo';
 
 export const metadata: Metadata = {
-  title: 'DankPass - Earn Free Weed & Restaurant Rewards | Upload Receipts, Get Perks',
-  description: '🌿 Turn every receipt into rewards! Upload receipts from dispensaries and restaurants to earn points. Redeem for free weed, discounts, exclusive perks, and VIP access. Join 10K+ users earning daily. Start free today!',
+  title: 'DankPass - Earn Free Weed | Upload Receipts & Burn Rewards',
+  description: '🔥 Earn free weed with every receipt! Upload receipts from dispensaries and restaurants to earn points. Burn points for free weed, discounts, and exclusive perks. Join 10K+ users earning & burning rewards daily!',
   openGraph: {
-    title: "DankPass - Earn Free Weed & Restaurant Rewards",
-    description: "Upload receipts, earn points, get free weed and exclusive perks at 500+ partner locations!",
+    title: "DankPass - Earn Free Weed | Earn & Burn Rewards",
+    description: "Earn free weed with every receipt! Upload receipts to earn points, burn points for free weed and exclusive perks at 500+ locations!",
     images: ['/logo.png'],
   },
 };
@@ -29,18 +29,19 @@ export default function HomePage() {
 
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-4 py-2 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-success/20 to-brand-warn/20 text-brand-success px-4 py-2 rounded-full mb-4 border border-brand-success/30">
             <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium">Start Earning Today</span>
+            <span className="text-sm font-medium">🔥 Earn & Burn Rewards</span>
           </div>
           
           <h1 className="text-4xl font-bold text-brand-ink mb-4 leading-tight">
-            Turn Receipts Into
-            <span className="text-brand-primary"> Rewards</span>
+            Earn Free Weed
+            <br />
+            <span className="text-brand-primary">With Every Receipt</span>
           </h1>
           
           <p className="text-brand-subtle text-lg mb-8">
-            Upload receipts from your favorite places and get exclusive perks, discounts, and rewards.
+            Upload receipts from dispensaries & restaurants. Earn points. Burn for free weed, discounts & exclusive perks.
           </p>
 
           {/* CTA Buttons */}
@@ -57,7 +58,7 @@ export default function HomePage() {
 
         {/* How It Works */}
         <div className="mb-12">
-          <h2 className="text-xl font-bold text-brand-ink mb-6 text-center">How It Works</h2>
+          <h2 className="text-xl font-bold text-brand-ink mb-6 text-center">How to Earn Free Weed in 3 Steps</h2>
           
           <div className="space-y-3">
             <div className="card">
@@ -66,7 +67,7 @@ export default function HomePage() {
                   1
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-brand-ink mb-1">Upload Receipt</h3>
+                  <h3 className="font-semibold text-brand-ink mb-1">📸 Upload Receipt</h3>
                   <p className="text-sm text-brand-subtle">Snap a photo of your receipt from dispensaries or restaurants</p>
                 </div>
               </div>
@@ -78,8 +79,8 @@ export default function HomePage() {
                   2
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-brand-ink mb-1">Earn Points</h3>
-                  <p className="text-sm text-brand-subtle">Get points automatically for every dollar you spend</p>
+                  <h3 className="font-semibold text-brand-ink mb-1">⚡ Earn Points</h3>
+                  <p className="text-sm text-brand-subtle">Get 10 points for every $1 you spend (15 pts for Premium)</p>
                 </div>
               </div>
             </div>
@@ -90,8 +91,8 @@ export default function HomePage() {
                   3
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-brand-ink mb-1">Get Rewards</h3>
-                  <p className="text-sm text-brand-subtle">Redeem points for exclusive perks and discounts</p>
+                  <h3 className="font-semibold text-brand-ink mb-1">🔥 Burn Rewards</h3>
+                  <p className="text-sm text-brand-subtle">Burn points for free weed, exclusive perks, and VIP discounts</p>
                 </div>
               </div>
             </div>

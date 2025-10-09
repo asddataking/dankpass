@@ -50,24 +50,35 @@ export async function getOrCreateDbUser(stackUserId: string, email: string) {
     return existingUser[0];
   }
 
-  // Create new user
+  // Create new user with existing schema
   const role = isAdminEmail(email) ? 'admin' : 'user';
+  const isPremium = isAdminEmail(email);
+  
   const newUser = await db
     .insert(users)
     .values({
       email,
       role,
+      is_premium: isPremium,
+      tier: isPremium ? 'premium' : 'bronze',
+      points_cached: 0,
+      streak: 0,
     })
     .returning();
 
-  // Create membership
-  const tier = isAdminEmail(email) ? 'premium' : 'free';
-  await db.insert(memberships).values({
-    userId: newUser[0].id,
-    tier,
-    // For admin, set premium to never expire
-    premiumExpiresAt: isAdminEmail(email) ? new Date('2099-12-31') : null,
-  });
+  // Also create membership record for compatibility
+  try {
+    const tier = isAdminEmail(email) ? 'premium' : 'free';
+    await db.insert(memberships).values({
+      userId: newUser[0].id,
+      tier,
+      // For admin, set premium to never expire
+      premiumExpiresAt: isAdminEmail(email) ? new Date('2099-12-31') : null,
+    });
+  } catch (error) {
+    // Membership creation is optional - user record is what matters
+    console.log('Membership creation skipped:', error);
+  }
 
   return newUser[0];
 }
@@ -81,7 +92,7 @@ export async function userHasPremiumAccess(email: string): Promise<boolean> {
     return true;
   }
 
-  // Check database membership
+  // Check database - use is_premium column directly
   const user = await db
     .select()
     .from(users)
@@ -90,18 +101,24 @@ export async function userHasPremiumAccess(email: string): Promise<boolean> {
 
   if (!user[0]) return false;
 
-  const membership = await db
-    .select()
-    .from(memberships)
-    .where(eq(memberships.userId, user[0].id))
-    .limit(1);
+  // Check is_premium column (exists in current schema)
+  if (user[0].is_premium) return true;
 
-  if (!membership[0]) return false;
+  // Fallback: check memberships table if is_premium is false
+  try {
+    const membership = await db
+      .select()
+      .from(memberships)
+      .where(eq(memberships.userId, user[0].id))
+      .limit(1);
 
-  // Check if premium and not expired
-  if (membership[0].tier === 'premium') {
-    if (!membership[0].premiumExpiresAt) return true;
-    return new Date(membership[0].premiumExpiresAt) > new Date();
+    if (membership[0] && membership[0].tier === 'premium') {
+      if (!membership[0].premiumExpiresAt) return true;
+      return new Date(membership[0].premiumExpiresAt) > new Date();
+    }
+  } catch (error) {
+    // Memberships table might not exist or have issues
+    console.log('Membership check skipped:', error);
   }
 
   return false;

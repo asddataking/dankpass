@@ -1,22 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadReceiptFromBuffer } from '@/lib/blob';
 import { createReceipt } from '@/lib/receipt';
+import { stackServerApp } from '@/stack';
+import { getOrCreateDbUser } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    // Get authenticated user from Stack Auth
+    const user = await stackServerApp.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get or create user in database
+    const dbUser = await getOrCreateDbUser(user.id, user.primaryEmail || '');
+    
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const userId = formData.get('userId') as string;
     const total = formData.get('total') as string;
     const subtotal = formData.get('subtotal') as string;
     const partnerId = formData.get('partnerId') as string;
     
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
-    }
-
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
     // Validate file type
@@ -44,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Create receipt record in database
     const receipt = await createReceipt({
-      userId,
+      userId: dbUser.id,
       imageUrl: url,
       total: total ? parseFloat(total) : undefined,
       subtotal: subtotal ? parseFloat(subtotal) : undefined,
