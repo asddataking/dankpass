@@ -4,8 +4,13 @@ import { Upload, Gift, MapPin, Star, TrendingUp, Sparkles, Crown, Users } from '
 import { Logo } from '@/components/Logo';
 
 export const metadata: Metadata = {
-  title: 'DankPass - Earn Points, Get Perks',
-  description: 'Upload receipts from dispensaries and restaurants to earn points and redeem amazing perks',
+  title: 'DankPass - Earn Free Weed & Restaurant Rewards | Upload Receipts, Get Perks',
+  description: '🌿 Turn every receipt into rewards! Upload receipts from dispensaries and restaurants to earn points. Redeem for free weed, discounts, exclusive perks, and VIP access. Join 10K+ users earning daily. Start free today!',
+  openGraph: {
+    title: "DankPass - Earn Free Weed & Restaurant Rewards",
+    description: "Upload receipts, earn points, get free weed and exclusive perks at 500+ partner locations!",
+    images: ['/logo.png'],
+  },
 };
 
 export default function HomePage() {
@@ -112,7 +117,7 @@ export default function HomePage() {
         </div>
 
         {/* Premium CTA */}
-        <div className="card bg-gradient-to-r from-brand-primary/10 to-brand-success/10 border-brand-primary/20 mb-12">
+        <Link href="/auth/signup?redirect=/premium" className="card bg-gradient-to-r from-brand-primary/10 to-brand-success/10 border-brand-primary/20 mb-12 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all block">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-brand-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
               <Crown className="w-6 h-6 text-brand-primary" />
@@ -122,14 +127,14 @@ export default function HomePage() {
               <p className="text-xs text-brand-subtle">Earn 1.5x points on every upload for just $7/month</p>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Partner Types */}
         <div>
           <h2 className="text-lg font-bold text-brand-ink mb-4">Are you a business?</h2>
           
           <div className="grid grid-cols-2 gap-3">
-            <Link href="/join/dispensary" className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
+            <Link href="/auth/signup?redirect=/join/dispensary" className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
               <div className="text-center py-2">
                 <MapPin className="w-6 h-6 text-brand-success mx-auto mb-2" />
                 <h3 className="font-medium text-brand-ink text-sm">Dispensary</h3>
@@ -137,7 +142,7 @@ export default function HomePage() {
               </div>
             </Link>
 
-            <Link href="/join/restaurant" className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
+            <Link href="/auth/signup?redirect=/join/restaurant" className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
               <div className="text-center py-2">
                 <Star className="w-6 h-6 text-brand-warn mx-auto mb-2" />
                 <h3 className="font-medium text-brand-ink text-sm">Restaurant</h3>

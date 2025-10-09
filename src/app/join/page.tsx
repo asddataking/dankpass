@@ -116,7 +116,7 @@ export default function JoinPage() {
                   </div>
 
                   <Link 
-                    href={`/join/${partner.type}`}
+                    href={`/auth/signup?redirect=/join/${partner.type}`}
                     className="btn-primary w-full text-center block"
                   >
                     Join as {partner.title}

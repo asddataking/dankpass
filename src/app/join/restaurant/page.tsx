@@ -65,8 +65,8 @@ export default function RestaurantSignupPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-primary">
-        <div className="px-6 pt-16 pb-6">
+      <div className="min-h-screen">
+        <div className="px-6 pt-16 pb-24">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -74,18 +74,18 @@ export default function RestaurantSignupPage() {
             className="max-w-md mx-auto text-center"
           >
             <div className="card">
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-green-400" />
+              <div className="w-16 h-16 bg-brand-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-8 h-8 text-brand-success" />
               </div>
-              <h1 className="text-2xl font-bold text-white mb-4">Application Submitted!</h1>
-              <p className="text-white/70 mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold text-brand-ink mb-4">Application Submitted!</h1>
+              <p className="muted mb-6">
                 Thank you for your interest in joining the DankPass network. We'll review your application and get back to you within 2-3 business days.
               </p>
               <div className="space-y-3">
                 <Link href="/dashboard" className="btn-primary w-full">
                   Go to Dashboard
                 </Link>
-                <Link href="/" className="btn-secondary w-full">
+                <Link href="/" className="btn-ghost w-full">
                   Back to Home
                 </Link>
               </div>
@@ -97,8 +97,8 @@ export default function RestaurantSignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-primary">
-      <div className="px-6 pt-16 pb-6">
+    <div className="min-h-screen">
+      <div className="px-6 pt-16 pb-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
