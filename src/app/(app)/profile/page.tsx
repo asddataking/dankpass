@@ -4,9 +4,11 @@ import { motion } from 'framer-motion';
 import { User, Crown, Settings, LogOut, MapPin, Phone, Mail, Calendar, TrendingUp, Gift } from 'lucide-react';
 import Link from 'next/link';
 import { useUser, UserButton } from '@stackframe/stack';
+import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
   const user = useUser();
+  const router = useRouter();
   
   // Mock user data - in real app, this would come from the database
   const userStats = {
@@ -51,6 +53,13 @@ export default function ProfilePage() {
       color: 'brand-primary'
     }
   ];
+
+  const handleSignOut = async () => {
+    if (confirm('Are you sure you want to sign out?')) {
+      await user?.signOut();
+      router.push('/');
+    }
+  };
 
   const menuItems = [
     {
@@ -226,6 +235,7 @@ export default function ProfilePage() {
 
           {/* Sign Out */}
           <motion.button
+            onClick={handleSignOut}
             className="w-full py-4 text-brand-error font-medium hover:bg-brand-error/10 rounded-2xl transition-colors"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

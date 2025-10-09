@@ -1,12 +1,19 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Upload, Crown, TrendingUp, Receipt, Gift } from 'lucide-react';
+import { Upload, Crown, TrendingUp, Receipt, Gift, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { useUser } from '@stackframe/stack';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const user = useUser();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await user?.signOut();
+    router.push('/');
+  };
   
   // Mock data - in real app, this would come from the database
   const userStats = {
@@ -70,12 +77,22 @@ export default function DashboardPage() {
               </h1>
               <p className="muted">Ready to earn some points?</p>
             </div>
-            {!userStats.premium && (
-              <Link href="/premium" className="btn-ghost flex items-center gap-2">
-                <Crown className="w-4 h-4" />
-                Go Premium
-              </Link>
-            )}
+            <div className="flex items-center gap-2">
+              {!userStats.premium && (
+                <Link href="/premium" className="btn-ghost flex items-center gap-2">
+                  <Crown className="w-4 h-4" />
+                  <span className="hidden sm:inline">Go Premium</span>
+                </Link>
+              )}
+              <button
+                onClick={handleSignOut}
+                className="btn-ghost flex items-center gap-2"
+                title="Sign Out"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </button>
+            </div>
           </div>
 
           {/* Stats Cards */}
