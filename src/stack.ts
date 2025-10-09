@@ -8,6 +8,8 @@ export const stackServerApp = new StackServerApp({
     afterSignIn: "/dashboard",
     afterSignUp: "/dashboard",
     afterSignOut: "/",
+    // Email verification is handled automatically by /handler/[...stack]
+    // Stack Auth will redirect to /handler/verify-email for email verification clicks
   },
   // Note: Session persistence is controlled by Stack Auth cookies
   // By default, sessions persist for 30 days
