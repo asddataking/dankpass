@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stackServerApp } from './stack';
 
+// Admin user email
+const ADMIN_EMAIL = 'daniel.richmond.ebert@gmail.com';
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -14,9 +17,13 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/auth/signin', request.url));
       }
 
-      // Check if user is admin (you might need to implement role checking)
-      // For now, we'll allow any authenticated user to access admin
-      // In production, you should check user roles from your database
+      // Check if user is admin
+      const isAdmin = user.primaryEmail === ADMIN_EMAIL;
+      
+      if (!isAdmin) {
+        // Redirect non-admin users to dashboard
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
       
       return NextResponse.next();
     } catch (error) {
@@ -25,8 +32,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Protect app routes (dashboard, profile, etc.)
-  if (pathname.startsWith('/(app)')) {
+  // Protect authenticated routes (dashboard, profile, upload, perks, premium)
+  const protectedRoutes = ['/dashboard', '/profile', '/upload', '/perks', '/premium'];
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
+  
+  if (isProtectedRoute) {
     try {
       const user = await stackServerApp.getUser();
       
@@ -47,6 +57,10 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
-    '/(app)/:path*',
+    '/dashboard/:path*',
+    '/profile/:path*',
+    '/upload/:path*',
+    '/perks/:path*',
+    '/premium/:path*',
   ],
 };

@@ -56,8 +56,15 @@ export default function ProfilePage() {
 
   const handleSignOut = async () => {
     if (confirm('Are you sure you want to sign out?')) {
-      await user?.signOut();
-      router.push('/');
+      try {
+        await user?.signOut();
+        // Redirect to home page after sign out
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Error signing out:', error);
+        // Still redirect even if there's an error
+        window.location.href = '/';
+      }
     }
   };
 

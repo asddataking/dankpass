@@ -65,8 +65,8 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-primary">
-      <div className="px-6 pt-16 pb-6">
+    <div className="min-h-screen bg-gradient-primary pb-24">
+      <div className="px-6 pt-8 pb-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

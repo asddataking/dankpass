@@ -2,19 +2,56 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Gift, Camera, MapPin, User } from 'lucide-react';
+import { Home, Gift, Camera, MapPin, User, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-const navItems = [
-  { href: '/dashboard', icon: Home, label: 'Home' },
-  { href: '/perks', icon: Gift, label: 'Perks' },
-  { href: '/upload', icon: Camera, label: 'Upload' },
-  { href: '/', icon: MapPin, label: 'Explore' },
-  { href: '/profile', icon: User, label: 'Profile' },
-];
+import { useUser } from '@stackframe/stack';
+import { useState, useEffect } from 'react';
 
 export default function BottomNavigation() {
   const pathname = usePathname();
+  const user = useUser();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    async function checkAdmin() {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          setIsAdmin(data.isAdmin || false);
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      }
+    }
+
+    checkAdmin();
+  }, [user]);
+
+  const baseNavItems = [
+    { href: '/dashboard', icon: Home, label: 'Home' },
+    { href: '/perks', icon: Gift, label: 'Perks' },
+    { href: '/upload', icon: Camera, label: 'Upload' },
+    { href: '/', icon: MapPin, label: 'Explore' },
+    { href: '/profile', icon: User, label: 'Profile' },
+  ];
+
+  // Add admin link for admin users
+  const navItems = isAdmin 
+    ? [
+        { href: '/dashboard', icon: Home, label: 'Home' },
+        { href: '/perks', icon: Gift, label: 'Perks' },
+        { href: '/upload', icon: Camera, label: 'Upload' },
+        { href: '/admin', icon: Shield, label: 'Admin' },
+        { href: '/profile', icon: User, label: 'Profile' },
+      ]
+    : baseNavItems;
 
   return (
     <motion.nav 
@@ -29,7 +66,8 @@ export default function BottomNavigation() {
             const Icon = item.icon;
             const isActive = pathname === item.href || 
               (item.href === '/' && pathname === '/') ||
-              (item.href === '/dashboard' && pathname.startsWith('/dashboard'));
+              (item.href === '/dashboard' && pathname.startsWith('/dashboard')) ||
+              (item.href === '/admin' && pathname.startsWith('/admin'));
             
             return (
               <Link

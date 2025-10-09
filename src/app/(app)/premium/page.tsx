@@ -90,8 +90,8 @@ export default function PremiumPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-primary">
-      <div className="px-6 pt-16 pb-6">
+    <div className="min-h-screen bg-gradient-primary pb-24">
+      <div className="px-6 pt-8 pb-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -170,7 +170,7 @@ export default function PremiumPage() {
           </div>
 
           {/* Premium Perks List */}
-          <div className="card mb-8">
+          <div className="card bg-white/10 border-white/20 mb-8">
             <h3 className="text-lg font-semibold text-white mb-4 text-center">What&apos;s Included</h3>
             <div className="space-y-3">
               {premiumPerks.map((perk, index) => (
@@ -184,7 +184,7 @@ export default function PremiumPage() {
                   <div className="w-6 h-6 bg-dp-mint/20 rounded-full flex items-center justify-center flex-shrink-0">
                     <Check className="w-4 h-4 text-dp-mint" />
                   </div>
-                  <span className="text-white/80">{perk}</span>
+                  <span className="text-white">{perk}</span>
                 </motion.div>
               ))}
             </div>
@@ -207,24 +207,24 @@ export default function PremiumPage() {
           </motion.div>
 
           {/* FAQ */}
-          <div className="mt-8">
+          <div className="mt-8 mb-6">
             <h3 className="text-lg font-semibold text-white mb-4">Frequently Asked Questions</h3>
             <div className="space-y-4">
-              <div className="card">
+              <div className="card bg-white/10 border-white/20">
                 <h4 className="font-medium text-white mb-2">Can I cancel anytime?</h4>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-white/80">
                   Yes! You can cancel your Premium subscription at any time. You&apos;ll continue to have access to Premium features until the end of your billing period.
                 </p>
               </div>
-              <div className="card">
+              <div className="card bg-white/10 border-white/20">
                 <h4 className="font-medium text-white mb-2">Do points expire?</h4>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-white/80">
                   Points never expire for Premium members. Free users&apos; points expire after 12 months of inactivity.
                 </p>
               </div>
-              <div className="card">
+              <div className="card bg-white/10 border-white/20">
                 <h4 className="font-medium text-white mb-2">How do I redeem premium perks?</h4>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-white/80">
                   Premium perks are automatically applied to your account. Simply show your Premium status in the app when visiting partner locations.
                 </p>
               </div>
