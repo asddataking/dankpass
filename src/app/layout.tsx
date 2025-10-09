@@ -1,11 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit, Manrope } from "next/font/google";
 import "./globals.css";
 import { StackProvider, StackTheme } from "@stackframe/stack";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { stackServerApp } from "@/stack";
 
-const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({ 
+  subsets: ["latin"],
+  variable: '--font-heading',
+  display: 'swap',
+});
+
+const manrope = Manrope({ 
+  subsets: ["latin"],
+  variable: '--font-body',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://dankpass.vercel.app'),
@@ -61,7 +71,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className}`}>
+      <body className={`${manrope.variable} ${outfit.variable} font-sans`}>
         <ErrorBoundary>
           <StackProvider app={stackServerApp}>
             <StackTheme>

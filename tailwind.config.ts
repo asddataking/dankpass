@@ -32,7 +32,8 @@ const config: Config = {
         'dp-lime': '#A3E635',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-body)', 'Manrope', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-heading)', 'Outfit', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         'xl': '1rem',
