@@ -16,7 +16,10 @@ export function SessionCheck() {
       return;
     }
 
-    // Check if session has expired due to inactivity
+    // Initialize activity tracking FIRST (sets timestamp on first load)
+    initActivityTracking();
+
+    // Then check if session has expired due to inactivity
     if (isSessionExpired()) {
       console.log('Session expired due to inactivity. Signing out...');
       clearSessionActivity();
@@ -25,9 +28,6 @@ export function SessionCheck() {
       });
       return;
     }
-
-    // Initialize activity tracking
-    initActivityTracking();
 
     // Check session expiry periodically (every 30 seconds)
     const interval = setInterval(() => {

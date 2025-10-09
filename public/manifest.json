@@ -1,7 +1,7 @@
 {
-  "name": "DankPass - Earn Points, Get Perks",
+  "name": "DankPass - Earn Free Weed & Burn Rewards",
   "short_name": "DankPass",
-  "description": "Upload receipts from dispensaries and restaurants to earn points and redeem amazing perks",
+  "description": "🔥 Earn free weed with every receipt! Upload receipts to earn points, burn for free weed & exclusive perks.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#EAF6FF",
@@ -12,13 +12,25 @@
       "src": "/logo.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": [
@@ -27,9 +39,9 @@
   ],
   "shortcuts": [
     {
-      "name": "Upload Receipt",
-      "short_name": "Upload",
-      "description": "Upload a receipt to earn points",
+      "name": "Earn Points",
+      "short_name": "Earn",
+      "description": "Upload receipt to earn points 🔥",
       "url": "/upload",
       "icons": [
         {
@@ -39,10 +51,22 @@
       ]
     },
     {
-      "name": "View Perks",
-      "short_name": "Perks",
-      "description": "Browse available perks",
+      "name": "Burn Rewards",
+      "short_name": "Burn",
+      "description": "Burn points for free weed & perks",
       "url": "/perks",
+      "icons": [
+        {
+          "src": "/logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Home",
+      "description": "View your points & stats",
+      "url": "/dashboard",
       "icons": [
         {
           "src": "/logo.png",

@@ -14,7 +14,8 @@ export function isSessionExpired(): boolean {
   
   const lastActivity = localStorage.getItem(LAST_ACTIVITY_KEY);
   
-  if (!lastActivity) return true;
+  // If no activity recorded yet, session is NOT expired (first visit)
+  if (!lastActivity) return false;
   
   const lastActivityTime = parseInt(lastActivity, 10);
   const now = Date.now();
