@@ -1,4 +1,4 @@
-import { read as dbRead, write as dbWrite } from './db/read-replica';
+import { db } from './db/read-replica';
 import { receipts, partners, pointsLedger, users, profiles } from './db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { calculatePoints, awardPoints } from './points';
