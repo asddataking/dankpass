@@ -154,9 +154,9 @@ export default function AdminPartnersPage() {
           <div className="space-y-4">
             {filteredPartners.length === 0 ? (
               <div className="card text-center py-12">
-                <Building2 className="w-12 h-12 text-white/40 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No partners found</h3>
-                <p className="text-white/70">
+                <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">No partners found</h3>
+                <p className="text-gray-600">
                   {selectedStatus === 'all' 
                     ? 'No partner applications have been submitted yet.'
                     : `No partners with status "${selectedStatus}" found.`
@@ -178,8 +178,8 @@ export default function AdminPartnersPage() {
                           <Building2 className="w-6 h-6 text-dp-mint" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-semibold text-white">{partner.businessName}</h3>
-                          <p className="text-white/70 capitalize">{partner.businessType}</p>
+                          <h3 className="text-xl font-semibold text-gray-800">{partner.businessName}</h3>
+                          <p className="text-gray-600 capitalize">{partner.businessType}</p>
                         </div>
                         <div className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${getStatusColor(partner.status)}`}>
                           {getStatusIcon(partner.status)}
@@ -188,19 +188,19 @@ export default function AdminPartnersPage() {
                       </div>
 
                       {partner.description && (
-                        <p className="text-white/80 mb-4">{partner.description}</p>
+                        <p className="text-gray-700 mb-4">{partner.description}</p>
                       )}
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div className="space-y-2">
                           {partner.phone && (
-                            <div className="flex items-center gap-2 text-white/70">
+                            <div className="flex items-center gap-2 text-gray-600">
                               <Phone className="w-4 h-4" />
                               <span className="text-sm">{partner.phone}</span>
                             </div>
                           )}
                           {partner.email && (
-                            <div className="flex items-center gap-2 text-white/70">
+                            <div className="flex items-center gap-2 text-gray-600">
                               <Mail className="w-4 h-4" />
                               <span className="text-sm">{partner.email}</span>
                             </div>
@@ -208,19 +208,19 @@ export default function AdminPartnersPage() {
                         </div>
                         <div className="space-y-2">
                           {partner.website && (
-                            <div className="flex items-center gap-2 text-white/70">
+                            <div className="flex items-center gap-2 text-gray-600">
                               <Globe className="w-4 h-4" />
                               <a 
                                 href={partner.website} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="text-sm text-dp-blue-300 hover:text-dp-blue-200"
+                                className="text-sm text-dp-blue-500 hover:text-dp-blue-600"
                               >
                                 {partner.website}
                               </a>
                             </div>
                           )}
-                          <div className="flex items-center gap-2 text-white/70">
+                          <div className="flex items-center gap-2 text-gray-600">
                             <MapPin className="w-4 h-4" />
                             <span className="text-sm">
                               {partner.user.profile?.firstName} {partner.user.profile?.lastName}
@@ -229,7 +229,7 @@ export default function AdminPartnersPage() {
                         </div>
                       </div>
 
-                      <div className="text-xs text-white/60">
+                      <div className="text-xs text-gray-500">
                         Applied on {new Date(partner.createdAt).toLocaleDateString()}
                       </div>
                     </div>

@@ -288,8 +288,8 @@ export async function getUserStats() {
   ]);
 
   return {
-    totalUsers: totalUsers.length,
-    premiumUsers: premiumUsers.length,
+    total: totalUsers.length,
+    premium: premiumUsers.length,
     totalPartners: totalPartners.length,
     totalReceipts: totalReceipts.length
   };

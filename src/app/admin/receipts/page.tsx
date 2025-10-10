@@ -109,7 +109,7 @@ export default function AdminReceiptsPage() {
       <div className="min-h-screen bg-gradient-primary flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin w-12 h-12 border-4 border-dp-blue-300 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-white/70">Loading receipts...</p>
+          <p className="text-gray-600">Loading receipts...</p>
         </div>
       </div>
     );
@@ -158,9 +158,9 @@ export default function AdminReceiptsPage() {
           <div className="space-y-4">
             {filteredReceipts.length === 0 ? (
               <div className="card text-center py-12">
-                <Receipt className="w-12 h-12 text-white/40 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No receipts found</h3>
-                <p className="text-white/70">
+                <Receipt className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">No receipts found</h3>
+                <p className="text-gray-600">
                   {selectedStatus === 'all' 
                     ? 'No receipts have been uploaded yet.'
                     : `No receipts with status "${selectedStatus}" found.`
@@ -195,10 +195,10 @@ export default function AdminReceiptsPage() {
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h3 className="text-lg font-semibold text-white">
+                          <h3 className="text-lg font-semibold text-gray-800">
                             Receipt #{receipt.id.slice(-8)}
                           </h3>
-                          <div className="flex items-center gap-2 text-white/70 text-sm">
+                          <div className="flex items-center gap-2 text-gray-600 text-sm">
                             <User className="w-4 h-4" />
                             <span>
                               {receipt.user.profile?.firstName} {receipt.user.profile?.lastName}
@@ -221,36 +221,36 @@ export default function AdminReceiptsPage() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                         {receipt.subtotal && (
                           <div className="flex items-center gap-2">
-                            <DollarSign className="w-4 h-4 text-white/60" />
+                            <DollarSign className="w-4 h-4 text-gray-500" />
                             <div>
-                              <div className="text-xs text-white/60">Subtotal</div>
-                              <div className="text-sm font-medium text-white">${receipt.subtotal}</div>
+                              <div className="text-xs text-gray-500">Subtotal</div>
+                              <div className="text-sm font-medium text-gray-800">${receipt.subtotal}</div>
                             </div>
                           </div>
                         )}
                         {receipt.total && (
                           <div className="flex items-center gap-2">
-                            <DollarSign className="w-4 h-4 text-white/60" />
+                            <DollarSign className="w-4 h-4 text-gray-500" />
                             <div>
-                              <div className="text-xs text-white/60">Total</div>
-                              <div className="text-sm font-medium text-white">${receipt.total}</div>
+                              <div className="text-xs text-gray-500">Total</div>
+                              <div className="text-sm font-medium text-gray-800">${receipt.total}</div>
                             </div>
                           </div>
                         )}
                         <div className="flex items-center gap-2">
                           <div className="w-4 h-4 bg-dp-blue-500/20 rounded flex items-center justify-center">
-                            <span className="text-xs text-dp-blue-300 font-bold">P</span>
+                            <span className="text-xs text-dp-blue-500 font-bold">P</span>
                           </div>
                           <div>
-                            <div className="text-xs text-white/60">Points</div>
-                            <div className="text-sm font-medium text-white">{receipt.pointsAwarded}</div>
+                            <div className="text-xs text-gray-500">Points</div>
+                            <div className="text-sm font-medium text-gray-800">{receipt.pointsAwarded}</div>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-white/60" />
+                          <Clock className="w-4 h-4 text-gray-500" />
                           <div>
-                            <div className="text-xs text-white/60">Uploaded</div>
-                            <div className="text-sm text-white/70">
+                            <div className="text-xs text-gray-500">Uploaded</div>
+                            <div className="text-sm text-gray-600">
                               {new Date(receipt.createdAt).toLocaleDateString()}
                             </div>
                           </div>
@@ -258,9 +258,9 @@ export default function AdminReceiptsPage() {
                       </div>
 
                       {receipt.adminNotes && (
-                        <div className="bg-white/5 rounded-lg p-3 mb-4">
-                          <div className="text-xs text-white/60 mb-1">Admin Notes:</div>
-                          <div className="text-sm text-white/80">{receipt.adminNotes}</div>
+                        <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                          <div className="text-xs text-gray-500 mb-1">Admin Notes:</div>
+                          <div className="text-sm text-gray-700">{receipt.adminNotes}</div>
                         </div>
                       )}
                     </div>

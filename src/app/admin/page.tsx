@@ -37,11 +37,18 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     async function fetchStats() {
+      console.log('Starting to fetch admin stats...');
       try {
         const response = await fetch('/api/admin/stats');
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
         if (response.ok) {
           const data = await response.json();
+          console.log('Admin stats loaded:', data); // Debug log
           setStats(data);
+        } else {
+          const errorText = await response.text();
+          console.error('Failed to load stats:', response.status, response.statusText, errorText);
         }
       } catch (error) {
         console.error('Error fetching admin stats:', error);
@@ -79,7 +86,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Stats Grid */}
-          {stats && (
+          {(stats || loading) && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               {/* Users Stats */}
               <div className="card">
@@ -88,12 +95,12 @@ export default function AdminDashboardPage() {
                     <Users className="w-5 h-5 text-dp-blue-300" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-white">{stats.users.total}</div>
-                    <div className="text-xs text-white/60">Total Users</div>
+                    <div className="text-2xl font-bold text-gray-800">{loading ? '...' : (stats?.users?.total || 0)}</div>
+                    <div className="text-xs text-gray-600">Total Users</div>
                   </div>
                 </div>
-                <div className="text-sm text-white/70">
-                  {stats.users.premium} premium • {stats.users.totalPartners} partners
+                <div className="text-sm text-gray-600">
+                  {stats?.users?.premium || 0} premium • {stats?.users?.totalPartners || 0} partners
                 </div>
               </div>
 
@@ -104,12 +111,12 @@ export default function AdminDashboardPage() {
                     <Building2 className="w-5 h-5 text-dp-mint" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-white">{stats.partners.total}</div>
-                    <div className="text-xs text-white/60">Total Partners</div>
+                    <div className="text-2xl font-bold text-gray-800">{loading ? '...' : (stats?.partners?.total || 0)}</div>
+                    <div className="text-xs text-gray-600">Total Partners</div>
                   </div>
                 </div>
-                <div className="text-sm text-white/70">
-                  {stats.partners.pending} pending • {stats.partners.approved} approved
+                <div className="text-sm text-gray-600">
+                  {stats?.partners?.pending || 0} pending • {stats?.partners?.approved || 0} approved
                 </div>
               </div>
 
@@ -120,12 +127,12 @@ export default function AdminDashboardPage() {
                     <Receipt className="w-5 h-5 text-dp-lime" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-white">{stats.receipts.total}</div>
-                    <div className="text-xs text-white/60">Total Receipts</div>
+                    <div className="text-2xl font-bold text-gray-800">{loading ? '...' : (stats?.receipts?.total || 0)}</div>
+                    <div className="text-xs text-gray-600">Total Receipts</div>
                   </div>
                 </div>
-                <div className="text-sm text-white/70">
-                  {stats.receipts.pending} pending • {stats.receipts.approved} approved
+                <div className="text-sm text-gray-600">
+                  {stats?.receipts?.pending || 0} pending • {stats?.receipts?.approved || 0} approved
                 </div>
               </div>
 
@@ -136,12 +143,12 @@ export default function AdminDashboardPage() {
                     <Gift className="w-5 h-5 text-purple-400" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-white">{stats.redemptions.total}</div>
-                    <div className="text-xs text-white/60">Total Redemptions</div>
+                    <div className="text-2xl font-bold text-gray-800">{loading ? '...' : (stats?.redemptions?.total || 0)}</div>
+                    <div className="text-xs text-gray-600">Total Redemptions</div>
                   </div>
                 </div>
-                <div className="text-sm text-white/70">
-                  {stats.redemptions.completed} completed • {stats.redemptions.pending} pending
+                <div className="text-sm text-gray-600">
+                  {stats?.redemptions?.completed || 0} completed • {stats?.redemptions?.pending || 0} pending
                 </div>
               </div>
             </div>
@@ -151,11 +158,11 @@ export default function AdminDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Pending Partners */}
             <div className="card">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-yellow-400" />
                 Pending Partners
               </h3>
-              <p className="text-white/70 text-sm mb-4">
+              <p className="text-gray-600 text-sm mb-4">
                 Review and approve new partner applications
               </p>
               <Link href="/admin/partners" className="btn-primary w-full">
@@ -165,11 +172,11 @@ export default function AdminDashboardPage() {
 
             {/* Pending Receipts */}
             <div className="card">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <Receipt className="w-5 h-5 text-blue-400" />
                 Pending Receipts
               </h3>
-              <p className="text-white/70 text-sm mb-4">
+              <p className="text-gray-600 text-sm mb-4">
                 Review uploaded receipts and award points
               </p>
               <Link href="/admin/receipts" className="btn-primary w-full">
@@ -179,11 +186,11 @@ export default function AdminDashboardPage() {
 
             {/* Platform Analytics */}
             <div className="card">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-green-400" />
                 Analytics
               </h3>
-              <p className="text-white/70 text-sm mb-4">
+              <p className="text-gray-600 text-sm mb-4">
                 View platform performance and user engagement
               </p>
               <button className="btn-primary w-full">
@@ -194,47 +201,47 @@ export default function AdminDashboardPage() {
 
           {/* Recent Activity */}
           <div className="card">
-            <h3 className="text-lg font-semibold text-white mb-6">Recent Activity</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-6">Recent Activity</h3>
             
             <div className="space-y-4">
               {/* Mock recent activity */}
-              <div className="flex items-center gap-4 p-3 bg-white/5 rounded-xl">
+              <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
                 <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-green-400" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-white font-medium">Green Valley Dispensary approved</p>
-                  <p className="text-white/60 text-sm">2 hours ago</p>
+                  <p className="text-gray-800 font-medium">Green Valley Dispensary approved</p>
+                  <p className="text-gray-600 text-sm">2 hours ago</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-3 bg-white/5 rounded-xl">
+              <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
                 <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
                   <Receipt className="w-5 h-5 text-blue-400" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-white font-medium">New receipt uploaded by John Doe</p>
-                  <p className="text-white/60 text-sm">4 hours ago</p>
+                  <p className="text-gray-800 font-medium">New receipt uploaded by John Doe</p>
+                  <p className="text-gray-600 text-sm">4 hours ago</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-3 bg-white/5 rounded-xl">
+              <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
                 <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
                   <Gift className="w-5 h-5 text-purple-400" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-white font-medium">Perk redeemed: Free Coffee</p>
-                  <p className="text-white/60 text-sm">6 hours ago</p>
+                  <p className="text-gray-800 font-medium">Perk redeemed: Free Coffee</p>
+                  <p className="text-gray-600 text-sm">6 hours ago</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-3 bg-white/5 rounded-xl">
+              <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
                 <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
                   <Clock className="w-5 h-5 text-yellow-400" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-white font-medium">Pizza Palace application pending</p>
-                  <p className="text-white/60 text-sm">1 day ago</p>
+                  <p className="text-gray-800 font-medium">Pizza Palace application pending</p>
+                  <p className="text-gray-600 text-sm">1 day ago</p>
                 </div>
               </div>
             </div>

@@ -165,8 +165,8 @@ export default function PerksPage() {
           <div className="grid grid-cols-1 gap-4">
             {loading ? (
               <div className="text-center py-8">
-                <div className="animate-spin w-8 h-8 border-2 border-dp-blue-300 border-t-transparent rounded-full mx-auto mb-4"></div>
-                <p className="text-white/70">Loading perks...</p>
+                <div className="animate-spin w-8 h-8 border-2 border-dp-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading perks...</p>
               </div>
             ) : (
               filteredPerks.map((perk, index) => {
@@ -203,19 +203,19 @@ export default function PerksPage() {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-semibold text-white">{perk.title}</h3>
+                        <h3 className="font-semibold text-gray-800">{perk.title}</h3>
                         <div className="text-right flex-shrink-0 ml-2">
-                          <div className="text-sm font-medium text-dp-blue-300">
+                          <div className="text-sm font-medium text-dp-blue-500">
                             {perk.pointsCost} pts
                           </div>
                           {!canAfford(perk.pointsCost) && (
-                            <div className="text-xs text-red-400">Need {perk.pointsCost - userPoints} more</div>
+                            <div className="text-xs text-red-500">Need {perk.pointsCost - userPoints} more</div>
                           )}
                         </div>
                       </div>
                       
-                      <p className="text-sm text-white/70 mb-2">{perk.description}</p>
-                      <p className="text-xs text-white/50">{perk.partner}</p>
+                      <p className="text-sm text-gray-600 mb-2">{perk.description}</p>
+                      <p className="text-xs text-gray-500">{perk.partner}</p>
                     </div>
                   </div>
 
@@ -251,11 +251,11 @@ export default function PerksPage() {
               transition={{ delay: 0.5 }}
             >
               <div className="text-center">
-                <Crown className="w-8 h-8 text-dp-blue-300 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <Crown className="w-8 h-8 text-dp-blue-500 mx-auto mb-3" />
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   Unlock Premium Perks
                 </h3>
-                <p className="text-sm text-white/70 mb-4">
+                <p className="text-sm text-gray-600 mb-4">
                   Get access to exclusive rewards and earn 1.5x points on all purchases
                 </p>
                 <button className="btn-primary">
