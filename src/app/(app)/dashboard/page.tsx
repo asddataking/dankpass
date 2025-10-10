@@ -5,14 +5,24 @@ import { Upload, Crown, TrendingUp, Receipt, Gift, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { useUser } from '@stackframe/stack';
 import { useRouter } from 'next/navigation';
+import { PullToRefresh } from '@/components/PullToRefresh';
+import { useState } from 'react';
 
 export default function DashboardPage() {
   const user = useUser();
   const router = useRouter();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleSignOut = async () => {
     await user?.signOut();
     router.push('/');
+  };
+
+  const handleRefresh = async () => {
+    // Simulate data refresh
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setRefreshKey(prev => prev + 1);
+    // In real app, this would refetch user stats, receipts, etc.
   };
   
   // Mock data - in real app, this would come from the database
@@ -62,7 +72,8 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <PullToRefresh onRefresh={handleRefresh}>
+    <div className="min-h-screen" key={refreshKey>
       {/* Header */}
       <div className="px-6 pt-16 pb-6">
         <motion.div
@@ -223,5 +234,6 @@ export default function DashboardPage() {
         </motion.div>
       </div>
     </div>
+    </PullToRefresh>
   );
 }
