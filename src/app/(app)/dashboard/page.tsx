@@ -73,7 +73,7 @@ export default function DashboardPage() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div className="min-h-screen" key={refreshKey>
+    <div className="min-h-screen" key={refreshKey}>
       {/* Header */}
       <div className="px-6 pt-16 pb-6">
         <motion.div
