@@ -22,10 +22,15 @@ export async function onRequestError(
   }
 ) {
   Sentry.captureException(err, {
-    mechanism: { handled: false },
-    extra: {
-      request,
-      context,
+    contexts: {
+      request: {
+        path: request.path,
+      },
+      nextjs: {
+        router_kind: context.routerKind,
+        route_path: context.routePath,
+        route_type: context.routeType,
+      },
     },
   });
 }
