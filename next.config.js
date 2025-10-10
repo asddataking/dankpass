@@ -30,8 +30,9 @@ module.exports = withSentryConfig(
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
 
-    org: "dan-richmond",
-    project: "javascript-nextjs",
+    org: process.env.SENTRY_ORG || "dan-richmond",
+    project: process.env.SENTRY_PROJECT || "javascript-nextjs",
+    authToken: process.env.SENTRY_AUTH_TOKEN,
 
     // Only print logs for uploading source maps in CI
     silent: !process.env.CI,
