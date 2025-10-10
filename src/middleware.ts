@@ -41,13 +41,17 @@ export async function middleware(request: NextRequest) {
       const user = await stackServerApp.getUser();
       
       if (!user) {
-        return NextResponse.redirect(new URL('/auth/signin', request.url));
+        // Store the intended destination
+        const signInUrl = new URL('/auth/signin', request.url);
+        signInUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(signInUrl);
       }
       
       return NextResponse.next();
     } catch (error) {
       console.error('Auth middleware error:', error);
-      return NextResponse.redirect(new URL('/auth/signin', request.url));
+      // Don't redirect on error - let the page handle it
+      return NextResponse.next();
     }
   }
 

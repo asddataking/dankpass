@@ -29,9 +29,15 @@ export default function HomePage() {
 
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-success/20 to-brand-warn/20 text-brand-success px-4 py-2 rounded-full mb-4 border border-brand-success/30">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium">🔥 Earn & Burn Rewards</span>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-success/20 to-brand-warn/20 text-brand-success px-4 py-2 rounded-full border border-brand-success/30">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">🔥 Earn & Burn Rewards</span>
+            </div>
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-primary/10 to-brand-primary/20 text-brand-primary px-4 py-2 rounded-full border border-brand-primary/30">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">✨ AI Powered</span>
+            </div>
           </div>
           
           <h1 className="text-4xl font-bold text-brand-ink mb-4 leading-tight">
