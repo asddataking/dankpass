@@ -4,8 +4,8 @@
   "description": "🔥 Earn free weed with every receipt! Upload receipts to earn points, burn for free weed & exclusive perks.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#EAF6FF",
-  "theme_color": "#2E86FF",
+  "background_color": "#08121E",
+  "theme_color": "#1F7AD4",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -31,6 +31,12 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "categories": [
