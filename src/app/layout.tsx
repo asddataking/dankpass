@@ -79,9 +79,10 @@ export default function RootLayout({
             </StackTheme>
           </StackProvider>
         </ErrorBoundary>
-        {/* Cloudflare Web Analytics */}
-        <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "82a08db3c9a241a782e7b8b75a9c58c4"}'></script>
-        {/* End Cloudflare Web Analytics */}
+        {/* Cloudflare Web Analytics - Only in production */}
+        {process.env.NODE_ENV === 'production' && (
+          <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "82a08db3c9a241a782e7b8b75a9c58c4"}'></script>
+        )}
       </body>
     </html>
   );
