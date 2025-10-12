@@ -77,7 +77,7 @@ export function InlineEditField({
               className="opacity-0 group-hover:opacity-100 transition-opacity text-brand-primary hover:text-brand-primary/80"
               title="Edit"
             >
-              <Edit2 className="w-4 h-4" />
+              <Edit2 className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -99,24 +99,24 @@ export function InlineEditField({
             onKeyDown={handleKeyDown}
             onBlur={handleSave}
             disabled={isSaving}
-            className="flex-1 px-3 py-2 rounded-lg border border-brand-ink/20 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3 rounded-lg border border-brand-primary/20 bg-brand-card text-brand-ink focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             placeholder={placeholder}
           />
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="p-2 rounded-lg bg-brand-success text-white hover:bg-brand-success/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-3 rounded-lg bg-brand-success text-black hover:bg-brand-success/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             title="Save"
           >
-            <Check className="w-4 h-4" />
+            <Check className="w-5 h-5" />
           </button>
           <button
             onClick={handleCancel}
             disabled={isSaving}
-            className="p-2 rounded-lg bg-brand-error/10 text-brand-error hover:bg-brand-error/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-3 rounded-lg bg-brand-error/10 text-brand-error hover:bg-brand-error/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             title="Cancel"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
       </div>

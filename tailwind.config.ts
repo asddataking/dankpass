@@ -10,14 +10,14 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          bg: 'rgb(0 0 0)',           // Pure black
-          primary: 'rgb(0 255 136)',   // Electric green
-          ink: 'rgb(255 255 255)',     // White text
-          subtle: 'rgb(156 163 175)',  // Gray-400
-          card: 'rgb(17 17 17)',       // Dark gray cards
+          bg: 'rgb(0 0 0)',           // Dark mode - Pure black
+          primary: 'rgb(0 255 136)',   // Dark mode - Electric green
+          ink: 'rgb(255 255 255)',     // Dark mode - White text
+          subtle: 'rgb(156 163 175)',  // Dark mode - Gray-400
+          card: 'rgb(17 17 17)',       // Dark mode - Dark gray cards
           success: 'rgb(0 255 136)',   // Electric green
-          warn: 'rgb(255 200 97)',     // Keep warn
-          error: 'rgb(255 93 93)'      // Keep error
+          warn: 'rgb(255 200 97)',
+          error: 'rgb(255 93 93)'
         },
         // Keep legacy colors for gradual migration
         'dp-dark': '#000000',
@@ -32,8 +32,8 @@ const config: Config = {
         'dp-lime': '#00ff88',
       },
       fontFamily: {
-        sans: ['var(--font-body)', 'Inter', 'system-ui', 'sans-serif'],
-        heading: ['var(--font-heading)', 'Space Grotesk', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-space-grotesk)', 'Space Grotesk', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         xs: ['0.875rem', { lineHeight: '1.5' }],    // 14px

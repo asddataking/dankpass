@@ -8,20 +8,22 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
-  variable: '--font-heading',
+  variable: '--font-space-grotesk',
   display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 const inter = Inter({ 
   subsets: ["latin"],
-  variable: '--font-body',
+  variable: '--font-inter',
   display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://dankpass.vercel.app'),
-  title: "DankPass - Earn Free Weed | Upload Receipts & Burn Rewards",
-  description: "Earn free weed with every receipt! Upload receipts from dispensaries and restaurants to earn points. Burn points for free weed, discounts, and exclusive perks. Join 10K+ users earning and burning rewards daily. Start earning free weed today!",
+  title: "DankPass - Earn Free Weed | Upload Receipts & Burn Rewards | Refer Friends & Earn",
+  description: "🔥 Earn free weed with every receipt! Upload receipts from dispensaries & restaurants to earn points. Burn points for free weed, discounts & exclusive perks. Refer friends and you both get 250 bonus points! Join 10K+ users earning & burning rewards daily!",
   keywords: ["earn free weed", "free weed rewards", "dispensary rewards program", "cannabis loyalty points", "get free weed with receipts", "earn and burn", "burn points for weed", "free cannabis rewards", "receipt upload rewards", "dispensary discounts"],
   manifest: '/manifest.json',
   icons: {
@@ -76,8 +78,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <body className="font-sans">
         <ErrorBoundary>
           <StackProvider app={stackServerApp}>
             <StackTheme>

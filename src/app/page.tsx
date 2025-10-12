@@ -1,17 +1,8 @@
-import { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
 import { Upload, Gift, MapPin, Star, TrendingUp, Sparkles, Crown, Users } from 'lucide-react';
-import { Logo } from '@/components/Logo';
-
-export const metadata: Metadata = {
-  title: 'DankPass - Earn Free Weed | Upload Receipts & Burn Rewards',
-  description: '🔥 Earn free weed with every receipt! Upload receipts from dispensaries and restaurants to earn points. Burn points for free weed, discounts, and exclusive perks. Join 10K+ users earning & burning rewards daily!',
-  openGraph: {
-    title: "DankPass - Earn Free Weed | Earn & Burn Rewards",
-    description: "Earn free weed with every receipt! Upload receipts to earn points, burn points for free weed and exclusive perks at 500+ locations!",
-    images: ['/logo.png'],
-  },
-};
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function HomePage() {
   return (
@@ -35,11 +26,12 @@ export default function HomePage() {
       </div>
       
       <div className="relative z-10 max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-6 pt-12 pb-24">
-        {/* Header with Logo */}
+        {/* Header */}
         <div className="flex justify-between items-center mb-12">
-          <Logo size="md" showText={true} />
-          <div className="flex gap-2">
-            <Link href="/auth/signin" className="text-brand-subtle hover:text-brand-ink transition-colors text-sm font-medium">
+          <h2 className="text-2xl font-bold text-brand-ink">DankPass</h2>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link href="/auth/signin" className="text-brand-subtle hover:text-brand-ink transition-colors text-base font-medium">
               Sign In
             </Link>
           </div>
@@ -153,18 +145,91 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Premium CTA */}
-        <Link href="/auth/signup?redirect=/premium" className="card bg-gradient-to-r from-brand-primary/10 to-brand-success/10 border-brand-primary/20 mb-12 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all block">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-brand-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Crown className="w-6 h-6 text-brand-primary" />
+        {/* Referral CTA - Large */}
+        <div className="card bg-gradient-to-br from-brand-primary/20 to-brand-success/20 border-brand-primary/30 mb-12 text-center">
+          <div className="py-8">
+            <div className="w-20 h-20 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-10 h-10 text-brand-primary" />
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-brand-ink mb-1">Go Premium</h3>
-              <p className="text-xs text-brand-subtle">Earn 1.5x points on every upload for just $7/month</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-brand-ink mb-4">
+              Invite Friends, Earn Together
+            </h2>
+            <p className="text-lg text-brand-subtle mb-6 max-w-2xl mx-auto">
+              Share DankPass with friends and you both get <span className="font-bold text-brand-primary">250 bonus points</span> instantly!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+              <Link href="/auth/signup" className="btn-primary flex items-center justify-center gap-2">
+                <Users className="w-5 h-5" />
+                Join & Get Your Referral Code
+              </Link>
+              <Link href="/auth/signin" className="btn-ghost flex items-center justify-center gap-2">
+                Share Your Code
+              </Link>
+            </div>
+            <div className="mt-6 flex items-center justify-center gap-8 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-brand-success/20 rounded-full flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-brand-success" />
+                </div>
+                <span className="text-brand-subtle">You get 250 pts</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-brand-success/20 rounded-full flex items-center justify-center">
+                  <Gift className="w-4 h-4 text-brand-success" />
+                </div>
+                <span className="text-brand-subtle">Friend gets 250 pts</span>
+              </div>
             </div>
           </div>
-        </Link>
+        </div>
+
+        {/* Premium CTA - Large */}
+        <div className="card bg-gradient-to-br from-brand-warn/20 to-brand-primary/20 border-brand-warn/30 mb-12 text-center hover:-translate-y-1 transition-all">
+          <div className="py-8">
+            <div className="w-20 h-20 bg-gradient-to-br from-brand-warn/30 to-brand-primary/30 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Crown className="w-10 h-10 text-brand-primary" />
+            </div>
+            <div className="inline-flex items-center gap-2 bg-brand-warn/20 text-brand-warn px-4 py-2 rounded-full border border-brand-warn/40 mb-4">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-semibold">PREMIUM MEMBERSHIP</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-brand-ink mb-4">
+              Unlock 1.5x Points & VIP Perks
+            </h2>
+            <p className="text-lg text-brand-subtle mb-6 max-w-2xl mx-auto">
+              Get <span className="font-bold text-brand-primary">50% more points</span> on every upload, unlimited receipts, and exclusive rewards for just <span className="font-bold text-brand-primary">$7/month</span>
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+              <Link href="/auth/signup?redirect=/premium" className="btn-primary flex items-center justify-center gap-2">
+                <Crown className="w-5 h-5" />
+                Start Premium Trial
+              </Link>
+              <Link href="/premium" className="btn-ghost flex items-center justify-center gap-2">
+                Learn More
+              </Link>
+            </div>
+            <div className="mt-6 flex items-center justify-center gap-8 text-sm flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-brand-primary/20 rounded-full flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-brand-primary" />
+                </div>
+                <span className="text-brand-subtle">1.5x points</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-brand-success/20 rounded-full flex items-center justify-center">
+                  <Upload className="w-4 h-4 text-brand-success" />
+                </div>
+                <span className="text-brand-subtle">Unlimited uploads</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-brand-warn/20 rounded-full flex items-center justify-center">
+                  <Gift className="w-4 h-4 text-brand-warn" />
+                </div>
+                <span className="text-brand-subtle">VIP rewards</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Partner Types */}
         <div>
