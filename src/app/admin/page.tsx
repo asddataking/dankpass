@@ -29,6 +29,26 @@ interface AdminStats {
     completed: number;
     pending: number;
   };
+  waitlist?: {
+    total: number;
+    recent: Array<{
+      id: string;
+      name: string;
+      email: string;
+      referrer: string;
+      created_at: string;
+    }>;
+  };
+  referrals?: {
+    total: number;
+    pointsAwarded: number;
+    topReferrers: Array<{
+      name: string;
+      email: string;
+      referralCount: number;
+      pointsEarned: number;
+    }>;
+  };
 }
 
 export default function AdminDashboardPage() {
@@ -199,52 +219,89 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          {/* Recent Activity */}
-          <div className="card">
-            <h3 className="text-lg font-semibold text-gray-800 mb-6">Recent Activity</h3>
-            
-            <div className="space-y-4">
-              {/* Mock recent activity */}
-              <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
-                <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-green-400" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-gray-800 font-medium">Green Valley Dispensary approved</p>
-                  <p className="text-gray-600 text-sm">2 hours ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
-                <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                  <Receipt className="w-5 h-5 text-blue-400" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-gray-800 font-medium">New receipt uploaded by John Doe</p>
-                  <p className="text-gray-600 text-sm">4 hours ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
-                <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
-                  <Gift className="w-5 h-5 text-purple-400" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-gray-800 font-medium">Perk redeemed: Free Coffee</p>
-                  <p className="text-gray-600 text-sm">6 hours ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
-                <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-yellow-400" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-gray-800 font-medium">Pizza Palace application pending</p>
-                  <p className="text-gray-600 text-sm">1 day ago</p>
-                </div>
-              </div>
+          {/* Waitlist Signups */}
+          <div className="card mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <Users className="w-5 h-5 text-brand-primary" />
+                Waitlist Signups ({stats?.waitlist?.total || 0})
+              </h3>
             </div>
+            
+            {stats?.waitlist && stats.waitlist.recent.length > 0 ? (
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {stats.waitlist.recent.map((entry) => (
+                  <div key={entry.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-800">{entry.name}</p>
+                      <p className="text-sm text-gray-600">{entry.email}</p>
+                      {entry.referrer && (
+                        <p className="text-xs text-gray-500 mt-1">Referrer: {entry.referrer}</p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">
+                        {new Date(entry.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600 text-center py-8">No waitlist signups yet</p>
+            )}
+          </div>
+
+          {/* Referral Stats */}
+          <div className="card mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <Gift className="w-5 h-5 text-brand-success" />
+                Referral Program Stats
+              </h3>
+            </div>
+            
+            {stats?.referrals ? (
+              <div>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="p-4 bg-brand-success/10 rounded-xl">
+                    <div className="text-3xl font-bold text-brand-success">{stats.referrals.total}</div>
+                    <div className="text-sm text-gray-600">Total Referrals</div>
+                  </div>
+                  <div className="p-4 bg-brand-primary/10 rounded-xl">
+                    <div className="text-3xl font-bold text-brand-primary">{stats.referrals.pointsAwarded.toLocaleString()}</div>
+                    <div className="text-sm text-gray-600">Points Awarded</div>
+                  </div>
+                </div>
+
+                {stats.referrals.topReferrers.length > 0 && (
+                  <div>
+                    <h4 className="font-medium text-gray-700 mb-3">Top Referrers</h4>
+                    <div className="space-y-2">
+                      {stats.referrals.topReferrers.map((referrer, index) => (
+                        <div key={referrer.email} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-brand-primary/20 rounded-full flex items-center justify-center">
+                              <span className="text-brand-primary font-bold text-sm">#{index + 1}</span>
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-800">{referrer.name}</p>
+                              <p className="text-xs text-gray-600">{referrer.email}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium text-brand-success">{referrer.referralCount} referrals</p>
+                            <p className="text-xs text-gray-600">{referrer.pointsEarned} pts earned</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-600 text-center py-8">No referral data yet</p>
+            )}
           </div>
         </motion.div>
       </div>

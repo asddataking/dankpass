@@ -119,6 +119,7 @@ export const receipts = pgTable('receipts', {
   status: text('status', { enum: ['pending', 'approved', 'rejected'] }).notNull().default('pending'),
   pointsAwarded: integer('points_awarded').default(0),
   adminNotes: text('admin_notes'),
+  source: text('source').default('web'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

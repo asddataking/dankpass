@@ -178,6 +178,15 @@ h1, h2, h3, h4, h5, h6 {
   @apply text-base text-brand-subtle;
 }
 
+/* Headline primary - theme-aware */
+[data-theme='dark'] .headline-primary {
+  color: #ffffff;
+}
+
+[data-theme='light'] .headline-primary {
+  color: #374151;
+}
+
 /* Legacy button styles - keep for backward compatibility */
 .btn-secondary {
   @apply bg-brand-card hover:bg-brand-card/80 text-brand-ink font-medium px-7 py-4 rounded-2xl transition-all duration-200 backdrop-blur-sm border border-brand-primary/20;

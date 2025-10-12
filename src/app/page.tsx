@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Upload, Gift, MapPin, Star, TrendingUp, Sparkles, Crown, Users } from 'lucide-react';
+import { Upload, Gift, MapPin, Star, TrendingUp, Sparkles, Crown, Users, Mail, Zap } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function HomePage() {
@@ -50,8 +50,8 @@ export default function HomePage() {
             </div>
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-brand-ink mb-4 leading-tight">
-            Earn Free Weed
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+            <span className="headline-primary">Earn Free Weed</span>
             <br />
             <span className="text-brand-primary">With Every Receipt</span>
           </h1>
@@ -226,6 +226,40 @@ export default function HomePage() {
                   <Gift className="w-4 h-4 text-brand-warn" />
                 </div>
                 <span className="text-brand-subtle">VIP rewards</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Coming Soon - Email Receipts */}
+        <div className="card bg-gradient-to-br from-brand-primary/5 to-brand-success/5 border-brand-primary/20 mb-12 relative overflow-hidden">
+          <div className="absolute top-4 right-4 bg-brand-warn text-black px-3 py-1 rounded-full text-xs font-bold">
+            COMING SOON
+          </div>
+          <div className="py-6">
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 bg-brand-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Mail className="w-8 h-8 text-brand-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-brand-ink mb-2">📧 Email Your Receipts</h3>
+                <p className="text-brand-subtle mb-4">
+                  Soon you'll be able to forward receipt photos directly from your email to <span className="font-mono text-brand-primary">receipts@dankpass.com</span> and earn points automatically - no app needed!
+                </p>
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <div className="flex items-center gap-2 bg-brand-card px-3 py-2 rounded-lg">
+                    <Zap className="w-4 h-4 text-brand-success" />
+                    <span className="text-brand-subtle">Auto-processing</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-brand-card px-3 py-2 rounded-lg">
+                    <TrendingUp className="w-4 h-4 text-brand-success" />
+                    <span className="text-brand-subtle">Instant points</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-brand-card px-3 py-2 rounded-lg">
+                    <Mail className="w-4 h-4 text-brand-success" />
+                    <span className="text-brand-subtle">Email confirmation</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
