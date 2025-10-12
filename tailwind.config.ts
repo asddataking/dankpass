@@ -10,30 +10,46 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          bg: 'rgb(234 246 255)',
-          primary: 'rgb(46 134 255)',
-          ink: 'rgb(14 23 38)',
-          subtle: 'rgb(107 122 144)',
-          card: 'rgb(255 255 255)',
-          success: 'rgb(43 196 138)',
-          warn: 'rgb(255 200 97)',
-          error: 'rgb(255 93 93)'
+          bg: 'rgb(0 0 0)',           // Pure black
+          primary: 'rgb(0 255 136)',   // Electric green
+          ink: 'rgb(255 255 255)',     // White text
+          subtle: 'rgb(156 163 175)',  // Gray-400
+          card: 'rgb(17 17 17)',       // Dark gray cards
+          success: 'rgb(0 255 136)',   // Electric green
+          warn: 'rgb(255 200 97)',     // Keep warn
+          error: 'rgb(255 93 93)'      // Keep error
         },
         // Keep legacy colors for gradual migration
-        'dp-dark': '#08121E',
+        'dp-dark': '#000000',
         'dp-blue': {
-          100: '#E8F3FF',
-          300: '#7FB6F1',
-          500: '#1F7AD4',
-          600: '#175A9C',
-          800: '#0B1B2B'
+          100: '#1a1a1a',
+          300: '#00ff88',
+          500: '#00ff88',
+          600: '#00cc6a',
+          800: '#009955'
         },
-        'dp-mint': '#6EE7B7',
-        'dp-lime': '#A3E635',
+        'dp-mint': '#00ff88',
+        'dp-lime': '#00ff88',
       },
       fontFamily: {
-        sans: ['var(--font-body)', 'Manrope', 'system-ui', 'sans-serif'],
-        heading: ['var(--font-heading)', 'Outfit', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-body)', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-heading)', 'Space Grotesk', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        xs: ['0.875rem', { lineHeight: '1.5' }],    // 14px
+        sm: ['1rem', { lineHeight: '1.6' }],        // 16px
+        base: ['1.125rem', { lineHeight: '1.75' }], // 18px (enlarged from 16px)
+        lg: ['1.25rem', { lineHeight: '1.75' }],    // 20px (enlarged from 18px)
+        xl: ['1.5rem', { lineHeight: '1.75' }],     // 24px (enlarged from 20px)
+        '2xl': ['1.875rem', { lineHeight: '1.6' }], // 30px (enlarged from 24px)
+        '3xl': ['2.25rem', { lineHeight: '1.5' }],  // 36px (enlarged from 30px)
+        '4xl': ['3rem', { lineHeight: '1.4' }],     // 48px (enlarged from 36px)
+        '5xl': ['3.75rem', { lineHeight: '1.3' }],  // 60px (enlarged from 48px)
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
       },
       borderRadius: {
         'xl': '1rem',

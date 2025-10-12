@@ -1,12 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, Crown, Settings, LogOut, MapPin, Phone, Mail, Calendar, TrendingUp, Gift } from 'lucide-react';
+import { User, Crown, Settings, LogOut, MapPin, Phone, Mail, Calendar, TrendingUp, Gift, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { useUser, UserButton } from '@stackframe/stack';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { InlineEditField } from '@/components/InlineEditField';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ProfileData {
   firstName: string | null;
@@ -20,6 +21,7 @@ interface ProfileData {
 export default function ProfilePage() {
   const user = useUser();
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   
@@ -291,6 +293,48 @@ export default function ProfilePage() {
                 />
               </div>
             )}
+          </div>
+
+          {/* Theme Preference */}
+          <div className="card mb-6 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
+            <h3 className="text-lg font-semibold text-brand-ink mb-4">Appearance</h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {theme === 'dark' ? (
+                  <Moon className="w-5 h-5 text-brand-primary" />
+                ) : (
+                  <Sun className="w-5 h-5 text-brand-primary" />
+                )}
+                <div>
+                  <div className="text-sm text-brand-subtle mb-1">Theme</div>
+                  <div className="text-brand-ink capitalize">{theme} Mode</div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setTheme('light')}
+                  className={`p-3 rounded-xl border transition-all ${
+                    theme === 'light'
+                      ? 'bg-brand-primary text-black border-brand-primary'
+                      : 'bg-brand-card border-brand-primary/20 text-brand-ink hover:border-brand-primary/40'
+                  }`}
+                  title="Light mode"
+                >
+                  <Sun className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setTheme('dark')}
+                  className={`p-3 rounded-xl border transition-all ${
+                    theme === 'dark'
+                      ? 'bg-brand-primary text-black border-brand-primary'
+                      : 'bg-brand-card border-brand-primary/20 text-brand-ink hover:border-brand-primary/40'
+                  }`}
+                  title="Dark mode"
+                >
+                  <Moon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Menu Items */}

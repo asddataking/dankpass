@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Outfit, Manrope } from "next/font/google";
+import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 import { StackProvider, StackTheme } from "@stackframe/stack";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { stackServerApp } from "@/stack";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
-const outfit = Outfit({ 
+const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
   variable: '--font-heading',
   display: 'swap',
 });
 
-const manrope = Manrope({ 
+const inter = Inter({ 
   subsets: ["latin"],
   variable: '--font-body',
   display: 'swap',
@@ -76,11 +77,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${manrope.variable} ${outfit.variable} font-sans`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}>
         <ErrorBoundary>
           <StackProvider app={stackServerApp}>
             <StackTheme>
-              {children}
+              <ThemeProvider>
+                {children}
+              </ThemeProvider>
             </StackTheme>
           </StackProvider>
         </ErrorBoundary>

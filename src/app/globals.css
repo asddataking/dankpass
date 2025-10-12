@@ -1,6 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* Light theme colors */
+[data-theme='light'] {
+  --bg-primary: rgb(255, 255, 255);
+  --bg-secondary: rgb(249, 250, 251);
+  --text-primary: rgb(17, 24, 39);
+  --text-secondary: rgb(107, 114, 128);
+  --accent-primary: rgb(0, 255, 136);
+  --accent-glow: rgba(0, 255, 136, 0.2);
+  --border-color: rgba(0, 255, 136, 0.2);
+  --card-bg: rgb(255, 255, 255);
+  --card-border: rgba(0, 0, 0, 0.1);
+  --scrollbar-bg: rgba(0, 255, 136, 0.2);
+}
+
+/* Dark theme colors (default) */
+[data-theme='dark'],
+:root {
+  --bg-primary: rgb(0, 0, 0);
+  --bg-secondary: rgb(17, 17, 17);
+  --text-primary: rgb(255, 255, 255);
+  --text-secondary: rgb(156, 163, 175);
+  --accent-primary: rgb(0, 255, 136);
+  --accent-glow: rgba(0, 255, 136, 0.2);
+  --border-color: rgba(0, 255, 136, 0.1);
+  --card-bg: rgb(17, 17, 17);
+  --card-border: rgba(0, 255, 136, 0.1);
+  --scrollbar-bg: rgba(0, 255, 136, 0.3);
+}
 
 html, body {
   overflow-x: hidden;
@@ -8,51 +44,63 @@ html, body {
 
 body {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #E9F5FF, #DCEBFF);
-  color: #0E1726;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1.125rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Apply heading font to all headings */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading), 'Outfit', system-ui, sans-serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(31, 122, 212, 0.3);
-  border-radius: 2px;
+  background: var(--scrollbar-bg);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(31, 122, 212, 0.5);
+  background: rgba(0, 255, 136, 0.5);
 }
 
 /* Glass effect */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(17, 17, 17, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 255, 136, 0.1);
 }
 
 /* Gradient backgrounds */
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #0B1B2B 0%, #1F7AD4 100%);
+[data-theme='dark'] .bg-gradient-primary {
+  background: linear-gradient(135deg, #000000 0%, #001a0d 50%, #003319 100%);
 }
 
-.bg-gradient-blue {
-  background: linear-gradient(135deg, #175A9C 0%, #1F7AD4 50%, #7FB6F1 100%);
+[data-theme='light'] .bg-gradient-primary {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+}
+
+[data-theme='dark'] .bg-gradient-blue {
+  background: linear-gradient(135deg, #000000 0%, #001a0d 50%, #00ff88 100%);
+}
+
+[data-theme='light'] .bg-gradient-blue {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #00ff88 100%);
 }
 
 /* Animation utilities */
@@ -69,42 +117,42 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Button styles */
+/* Button styles - Enlarged */
 .btn {
-  @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium;
+  @apply inline-flex items-center justify-center rounded-xl px-6 py-3.5 font-medium text-lg;
 }
 
 .btn-primary {
-  @apply btn bg-brand-primary text-white hover:opacity-90 active:opacity-80 shadow-lg;
+  @apply btn bg-brand-primary text-black hover:opacity-90 active:opacity-80 shadow-lg shadow-brand-primary/20;
 }
 
 .btn-ghost {
-  @apply btn bg-white border hover:bg-brand-bg;
+  @apply btn bg-brand-card border border-brand-primary/20 text-brand-ink hover:bg-brand-card/80 hover:border-brand-primary/40;
 }
 
-/* Card styles */
+/* Card styles - Enlarged */
 .card {
-  @apply bg-brand-card rounded-2xl shadow-soft border border-gray-200 p-6;
+  @apply bg-brand-card rounded-2xl shadow-lg shadow-black/50 border border-brand-primary/10 p-7;
 }
 
-/* Input styles */
+/* Input styles - Enlarged and Dark */
 .input {
-  @apply w-full rounded-xl border bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400;
+  @apply w-full rounded-xl border border-brand-primary/20 bg-brand-card text-brand-ink px-4 py-3.5 outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-lg;
 }
 
 /* Muted text */
 .muted {
-  @apply text-sm text-brand-subtle;
+  @apply text-base text-brand-subtle;
 }
 
 /* Legacy button styles - keep for backward compatibility */
 .btn-secondary {
-  @apply bg-gray-100 hover:bg-gray-200 text-brand-ink font-medium px-6 py-3 rounded-2xl transition-all duration-200 backdrop-blur-sm border border-gray-200;
+  @apply bg-brand-card hover:bg-brand-card/80 text-brand-ink font-medium px-7 py-4 rounded-2xl transition-all duration-200 backdrop-blur-sm border border-brand-primary/20;
 }
 
-/* Activity ring styles */
+/* Activity ring styles - Enlarged */
 .activity-ring {
-  @apply relative w-32 h-32;
+  @apply relative w-40 h-40;
 }
 
 .activity-ring svg {
@@ -113,8 +161,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .activity-ring .progress {
-  @apply stroke-dp-blue-500;
-  stroke-width: 8;
+  @apply stroke-brand-primary;
+  stroke-width: 10;
   fill: transparent;
   stroke-linecap: round;
   stroke-dasharray: 283;
@@ -122,7 +170,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .activity-ring .background {
-  @apply stroke-gray-300;
-  stroke-width: 8;
+  @apply stroke-gray-800;
+  stroke-width: 10;
   fill: transparent;
 }

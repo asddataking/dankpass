@@ -11,6 +11,7 @@ import { UpgradePrompt } from '@/components/UpgradePrompt';
 import { ReceiptParseModal } from '@/components/ReceiptParseModal';
 import { UploadLimitNudge } from '@/components/UploadLimitNudge';
 import { compressImage } from '@/lib/imageCompression';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function DashboardPage() {
   const user = useUser();
@@ -263,6 +264,7 @@ export default function DashboardPage() {
               <p className="muted">Ready to earn some points?</p>
             </div>
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               {!userStats.premium && (
                 <Link href="/premium" className="btn-ghost flex items-center gap-2">
                   <Crown className="w-4 h-4" />

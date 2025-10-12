@@ -52,12 +52,31 @@ export async function PUT(request: NextRequest) {
     
     for (const [key, value] of Object.entries(updates)) {
       if (allowedFields.includes(key)) {
-        sanitizedUpdates[key] = value;
+        // Handle notification preferences specially to merge with existing
+        if (key === 'notificationPreferences') {
+          sanitizedUpdates[key] = value;
+        } else {
+          sanitizedUpdates[key] = value;
+        }
       }
     }
 
     // Add updatedAt
     sanitizedUpdates.updatedAt = new Date();
+
+    // Get existing profile to merge notification preferences
+    if (updates.notificationPreferences) {
+      const existingProfile = await db.query.profiles.findFirst({
+        where: eq(profiles.userId, user.id as any),
+      });
+      
+      if (existingProfile?.notificationPreferences) {
+        sanitizedUpdates.notificationPreferences = {
+          ...existingProfile.notificationPreferences as any,
+          ...updates.notificationPreferences,
+        };
+      }
+    }
 
     // Check if profile exists
     const existingProfile = await db.query.profiles.findFirst({
