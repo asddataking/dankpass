@@ -5,19 +5,27 @@ import { User, Crown, Settings, LogOut, MapPin, Phone, Mail, Calendar, TrendingU
 import Link from 'next/link';
 import { useUser, UserButton } from '@stackframe/stack';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { InlineEditField } from '@/components/InlineEditField';
+
+interface ProfileData {
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  city: string | null;
+  state: string | null;
+  dateOfBirth: string | null;
+}
 
 export default function ProfilePage() {
   const user = useUser();
   const router = useRouter();
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   
   // Mock user data - in real app, this would come from the database
   const userStats = {
-    firstName: user?.displayName?.split(' ')[0] || 'User',
-    lastName: user?.displayName?.split(' ')[1] || '',
     email: user?.primaryEmail || 'user@example.com',
-    phone: '+1 (555) 123-4567',
-    city: 'San Francisco',
-    state: 'CA',
     memberSince: 'January 2024',
     tier: 'Gold',
     isPremium: false,
@@ -25,6 +33,56 @@ export default function ProfilePage() {
     totalSaved: 89.50,
     receiptsUploaded: 12,
     perksRedeemed: 3
+  };
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const response = await fetch('/api/profile');
+        if (response.ok) {
+          const data = await response.json();
+          setProfileData({
+            firstName: data.profile.firstName || '',
+            lastName: data.profile.lastName || '',
+            phone: data.profile.phone || '',
+            city: data.profile.city || '',
+            state: data.profile.state || '',
+            dateOfBirth: data.profile.dateOfBirth ? new Date(data.profile.dateOfBirth).toISOString().split('T')[0] : '',
+          });
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    }
+
+    if (user) {
+      loadProfile();
+    }
+  }, [user]);
+
+  const handleUpdateField = async (field: keyof ProfileData, value: string) => {
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [field]: value || null }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfileData((prev) => ({
+          ...prev!,
+          [field]: value,
+        }));
+      } else {
+        throw new Error('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      throw error;
+    }
   };
 
   const stats = [
@@ -108,7 +166,7 @@ export default function ProfilePage() {
               </div>
             </div>
             <h1 className="text-2xl font-bold text-brand-ink mb-1">
-              {userStats.firstName} {userStats.lastName}
+              {profileData?.firstName || user?.displayName || 'User'} {profileData?.lastName || ''}
             </h1>
             <div className="flex items-center justify-center gap-2 mb-2">
               <span className="muted">{userStats.tier} Member</span>
@@ -174,29 +232,65 @@ export default function ProfilePage() {
           {/* Profile Information */}
           <div className="card mb-6 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
             <h3 className="text-lg font-semibold text-brand-ink mb-4">Profile Information</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-brand-subtle" />
-                <div>
-                  <div className="muted">Email</div>
-                  <div className="text-brand-ink">{userStats.email}</div>
-                </div>
+            {isLoadingProfile ? (
+              <div className="text-center py-4">
+                <div className="animate-spin w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full mx-auto"></div>
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-brand-subtle" />
-                <div>
-                  <div className="muted">Phone</div>
-                  <div className="text-brand-ink">{userStats.phone}</div>
+            ) : (
+              <div className="space-y-4">
+                <InlineEditField
+                  value={profileData?.firstName || ''}
+                  onSave={(value) => handleUpdateField('firstName', value)}
+                  label="First Name"
+                  placeholder="Click to add first name"
+                  icon={<User className="w-5 h-5" />}
+                />
+                <InlineEditField
+                  value={profileData?.lastName || ''}
+                  onSave={(value) => handleUpdateField('lastName', value)}
+                  label="Last Name"
+                  placeholder="Click to add last name"
+                  icon={<User className="w-5 h-5" />}
+                />
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-brand-subtle" />
+                  <div>
+                    <div className="text-sm text-brand-subtle mb-1">Email</div>
+                    <div className="text-brand-ink">{userStats.email}</div>
+                  </div>
                 </div>
+                <InlineEditField
+                  value={profileData?.phone || ''}
+                  onSave={(value) => handleUpdateField('phone', value)}
+                  label="Phone"
+                  type="tel"
+                  placeholder="Click to add phone number"
+                  icon={<Phone className="w-5 h-5" />}
+                />
+                <InlineEditField
+                  value={profileData?.city || ''}
+                  onSave={(value) => handleUpdateField('city', value)}
+                  label="City"
+                  placeholder="Click to add city"
+                  icon={<MapPin className="w-5 h-5" />}
+                />
+                <InlineEditField
+                  value={profileData?.state || ''}
+                  onSave={(value) => handleUpdateField('state', value)}
+                  label="State"
+                  placeholder="Click to add state"
+                  icon={<MapPin className="w-5 h-5" />}
+                />
+                <InlineEditField
+                  value={profileData?.dateOfBirth || ''}
+                  onSave={(value) => handleUpdateField('dateOfBirth', value)}
+                  label="Date of Birth"
+                  type="date"
+                  placeholder="Click to add date of birth"
+                  icon={<Calendar className="w-5 h-5" />}
+                />
               </div>
-              <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-brand-subtle" />
-                <div>
-                  <div className="muted">Location</div>
-                  <div className="text-brand-ink">{userStats.city}, {userStats.state}</div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Menu Items */}

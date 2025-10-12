@@ -1,5 +1,6 @@
 import { pgTable, text, timestamp, uuid, boolean, integer, decimal, json } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { relations } from 'drizzle-orm';
 import { z } from 'zod';
 
 // Users table
@@ -13,6 +14,9 @@ export const users = pgTable('users', {
   points_cached: integer('points_cached').default(0),
   streak: integer('streak').default(0),
   ref_code: text('ref_code'),
+  referred_by_code: text('referred_by_code'),
+  total_referrals: integer('total_referrals').default(0),
+  referral_points_earned: integer('referral_points_earned').default(0),
   preferred_role: text('preferred_role'),
   role: text('role', { enum: ['user', 'partner_dispensary', 'partner_restaurant', 'admin'] }).default('user'),
   is_premium: boolean('is_premium').notNull().default(false),
@@ -31,6 +35,13 @@ export const profiles = pgTable('profiles', {
   city: text('city'),
   state: text('state'),
   phone: text('phone'),
+  dateOfBirth: timestamp('date_of_birth'),
+  notificationPreferences: json('notification_preferences').$type<{
+    email: boolean;
+    sms: boolean;
+    push: boolean;
+    marketing: boolean;
+  }>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -147,6 +158,20 @@ export const redemptions = pgTable('redemptions', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// Referrals table
+export const referrals = pgTable('referrals', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  referrerId: uuid('referrer_id').references(() => users.id).notNull(),
+  referredUserId: uuid('referred_user_id').references(() => users.id).notNull(),
+  referralCode: text('referral_code').notNull(),
+  status: text('status', { enum: ['completed', 'cancelled'] }).notNull().default('completed'),
+  rewardPoints: integer('reward_points').default(250),
+  bonusPoints: integer('bonus_points').default(250),
+  rewardedAt: timestamp('rewarded_at').defaultNow().notNull(),
+  source: text('source'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 // Webhooks table
 export const webhooks = pgTable('webhooks', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -196,6 +221,9 @@ export const selectPerkSchema = createSelectSchema(perks);
 export const insertRedemptionSchema = createInsertSchema(redemptions);
 export const selectRedemptionSchema = createSelectSchema(redemptions);
 
+export const insertReferralSchema = createInsertSchema(referrals);
+export const selectReferralSchema = createSelectSchema(referrals);
+
 export const insertWebhookSchema = createInsertSchema(webhooks);
 export const selectWebhookSchema = createSelectSchema(webhooks);
 
@@ -223,7 +251,23 @@ export type Perk = typeof perks.$inferSelect;
 export type NewPerk = typeof perks.$inferInsert;
 export type Redemption = typeof redemptions.$inferSelect;
 export type NewRedemption = typeof redemptions.$inferInsert;
+export type Referral = typeof referrals.$inferSelect;
+export type NewReferral = typeof referrals.$inferInsert;
 export type Webhook = typeof webhooks.$inferSelect;
 export type NewWebhook = typeof webhooks.$inferInsert;
 export type AppConfig = typeof appConfig.$inferSelect;
 export type NewAppConfig = typeof appConfig.$inferInsert;
+
+// Relations
+export const referralsRelations = relations(referrals, ({ one }) => ({
+  referrer: one(users, {
+    fields: [referrals.referrerId],
+    references: [users.id],
+    relationName: 'referrer',
+  }),
+  referredUser: one(users, {
+    fields: [referrals.referredUserId],
+    references: [users.id],
+    relationName: 'referredUser',
+  }),
+}));

@@ -37,7 +37,7 @@ export default function BottomNavigation() {
   const baseNavItems = [
     { href: '/dashboard', icon: Home, label: 'Home' },
     { href: '/perks', icon: Gift, label: 'Burn' },
-    { href: '/upload', icon: Camera, label: 'Earn' },
+    { href: '/dashboard', icon: Camera, label: 'Earn' },
     { href: '/', icon: MapPin, label: 'Explore' },
     { href: '/profile', icon: User, label: 'Profile' },
   ];
@@ -47,7 +47,7 @@ export default function BottomNavigation() {
     ? [
         { href: '/dashboard', icon: Home, label: 'Home' },
         { href: '/perks', icon: Gift, label: 'Burn' },
-        { href: '/upload', icon: Camera, label: 'Earn' },
+        { href: '/dashboard', icon: Camera, label: 'Earn' },
         { href: '/admin', icon: Shield, label: 'Admin' },
         { href: '/profile', icon: User, label: 'Profile' },
       ]
