@@ -108,8 +108,8 @@ export default function PremiumPage() {
               <Crown className="w-8 h-8 text-white" />
             </motion.div>
             
-            <h1 className="text-3xl font-bold text-black mb-4">Upgrade to Premium</h1>
-            <p className="text-black/70 max-w-md mx-auto">
+            <h1 className="text-3xl font-bold text-brand-ink mb-4">Upgrade to Premium</h1>
+            <p className="muted max-w-md mx-auto">
               Unlock exclusive perks and earn more points with DankPass Premium
             </p>
           </div>
@@ -129,8 +129,8 @@ export default function PremiumPage() {
                   <div className={`w-12 h-12 bg-${benefit.color}-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3`}>
                     <Icon className={`w-6 h-6 text-${benefit.color}`} />
                   </div>
-                  <h3 className="font-semibold text-black mb-1">{benefit.title}</h3>
-                  <p className="text-sm text-black/70">{benefit.description}</p>
+                  <h3 className="font-semibold text-brand-ink mb-1">{benefit.title}</h3>
+                  <p className="text-sm muted">{benefit.description}</p>
                 </motion.div>
               );
             })}
@@ -138,7 +138,7 @@ export default function PremiumPage() {
 
           {/* Pricing Plans */}
           <div className="mb-8">
-            <h3 className="text-xl font-semibold text-black mb-4 text-center">Simple Pricing</h3>
+            <h3 className="text-xl font-semibold text-brand-ink mb-4 text-center">Simple Pricing</h3>
             <div className="grid grid-cols-1 gap-4">
               {pricingPlans.map((plan, index) => (
                 <motion.div
@@ -150,12 +150,12 @@ export default function PremiumPage() {
                   whileHover={{ scale: 1.02 }}
                 >
                   <div className="text-center">
-                    <h4 className="text-lg font-semibold text-black mb-2">{plan.name}</h4>
+                    <h4 className="text-lg font-semibold text-brand-ink mb-2">{plan.name}</h4>
                     <div className="mb-2">
-                      <span className="text-3xl font-bold text-black">${plan.price}</span>
-                      <span className="text-black/70">/{plan.period}</span>
+                      <span className="text-3xl font-bold text-brand-ink">${plan.price}</span>
+                      <span className="muted">/{plan.period}</span>
                     </div>
-                    <p className="text-sm text-black/70 mb-4">{plan.description}</p>
+                    <p className="text-sm muted mb-4">{plan.description}</p>
                     <button 
                       onClick={() => handleSubscribe(plan.priceId)}
                       disabled={isLoading}
@@ -170,8 +170,8 @@ export default function PremiumPage() {
           </div>
 
           {/* Premium Perks List */}
-          <div className="card bg-white/10 border-white/20 mb-8">
-            <h3 className="text-lg font-semibold text-black mb-4 text-center">What&apos;s Included</h3>
+          <div className="card mb-8">
+            <h3 className="text-lg font-semibold text-brand-ink mb-4 text-center">What&apos;s Included</h3>
             <div className="space-y-3">
               {premiumPerks.map((perk, index) => (
                 <motion.div
@@ -184,7 +184,7 @@ export default function PremiumPage() {
                   <div className="w-6 h-6 bg-dp-mint/20 rounded-full flex items-center justify-center flex-shrink-0">
                     <Check className="w-4 h-4 text-dp-mint" />
                   </div>
-                  <span className="text-black">{perk}</span>
+                  <span className="text-brand-ink">{perk}</span>
                 </motion.div>
               ))}
             </div>
@@ -200,31 +200,31 @@ export default function PremiumPage() {
             <div className="w-12 h-12 bg-dp-mint/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
               <Shield className="w-6 h-6 text-dp-mint" />
             </div>
-            <h3 className="font-semibold text-black mb-2">30-Day Money Back Guarantee</h3>
-            <p className="text-sm text-black/70">
+            <h3 className="font-semibold text-brand-ink mb-2">30-Day Money Back Guarantee</h3>
+            <p className="text-sm muted">
               Not satisfied? Cancel anytime within 30 days for a full refund. No questions asked.
             </p>
           </motion.div>
 
           {/* FAQ */}
           <div className="mt-8 mb-6">
-            <h3 className="text-lg font-semibold text-black mb-4">Frequently Asked Questions</h3>
+            <h3 className="text-lg font-semibold text-brand-ink mb-4">Frequently Asked Questions</h3>
             <div className="space-y-4">
-              <div className="card bg-white/10 border-white/20">
-                <h4 className="font-medium text-black mb-2">Can I cancel anytime?</h4>
-                <p className="text-sm text-black/80">
+              <div className="card">
+                <h4 className="font-medium text-brand-ink mb-2">Can I cancel anytime?</h4>
+                <p className="text-sm muted">
                   Yes! You can cancel your Premium subscription at any time. You&apos;ll continue to have access to Premium features until the end of your billing period.
                 </p>
               </div>
-              <div className="card bg-white/10 border-white/20">
-                <h4 className="font-medium text-black mb-2">Do points expire?</h4>
-                <p className="text-sm text-black/80">
+              <div className="card">
+                <h4 className="font-medium text-brand-ink mb-2">Do points expire?</h4>
+                <p className="text-sm muted">
                   Points never expire for Premium members. Free users&apos; points expire after 12 months of inactivity.
                 </p>
               </div>
-              <div className="card bg-white/10 border-white/20">
-                <h4 className="font-medium text-black mb-2">How do I redeem premium perks?</h4>
-                <p className="text-sm text-black/80">
+              <div className="card">
+                <h4 className="font-medium text-brand-ink mb-2">How do I redeem premium perks?</h4>
+                <p className="text-sm muted">
                   Premium perks are automatically applied to your account. Simply show your Premium status in the app when visiting partner locations.
                 </p>
               </div>
