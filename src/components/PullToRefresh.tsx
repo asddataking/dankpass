@@ -26,7 +26,7 @@ export function PullToRefresh({ onRefresh, children }: PullToRefreshProps) {
               height: Math.max(pullDistance, isRefreshing ? 60 : 0) 
             }}
             exit={{ opacity: 0, height: 0 }}
-            className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center bg-gradient-to-b from-dark to-transparent"
+            className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center bg-gradient-to-b from-brand-primary/20 to-transparent"
             style={{
               height: `${Math.max(pullDistance, isRefreshing ? 60 : 0)}px`,
             }}

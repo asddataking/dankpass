@@ -12,6 +12,7 @@ import { ReceiptParseModal } from '@/components/ReceiptParseModal';
 import { UploadLimitNudge } from '@/components/UploadLimitNudge';
 import { compressImage } from '@/lib/imageCompression';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import CountUp from '@/components/CountUp';
 
 export default function DashboardPage() {
   const user = useUser();
@@ -25,6 +26,7 @@ export default function DashboardPage() {
   const [showParseModal, setShowParseModal] = useState(false);
   const [parseResult, setParseResult] = useState<any>(null);
   const [isLoadingReceipts, setIsLoadingReceipts] = useState(true);
+  const [changesChip, setChangesChip] = useState<string | null>(null);
 
   const RECEIPTS_LIMIT_FREE = 15;
 
@@ -39,6 +41,31 @@ export default function DashboardPage() {
     setRefreshKey(prev => prev + 1);
     // In real app, this would refetch user stats, receipts, etc.
   };
+
+  useEffect(() => {
+    // Compute simple "what changed" message using last visit snapshot
+    try {
+      const key = 'dp:lastDashboardSnapshot';
+      const last = JSON.parse(localStorage.getItem(key) || 'null');
+      const current = {
+        points: userStats.points,
+        receipts: recentReceipts.length,
+        perks: recentOffers.length,
+      };
+      if (last) {
+        const deltas: string[] = [];
+        const dPoints = current.points - (last.points || 0);
+        if (dPoints > 0) deltas.push(`+${dPoints} pts`);
+        const dReceipts = current.receipts - (last.receipts || 0);
+        if (dReceipts > 0) deltas.push(`+${dReceipts} receipt${dReceipts > 1 ? 's' : ''}`);
+        const dPerks = current.perks - (last.perks || 0);
+        if (dPerks > 0) deltas.push(`${dPerks} new perk${dPerks > 1 ? 's' : ''}`);
+        setChangesChip(deltas.length ? deltas.join(' • ') : null);
+      }
+      localStorage.setItem(key, JSON.stringify(current));
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   
   // Mock data - in real app, this would come from the database
   const userStats = {
@@ -262,6 +289,12 @@ export default function DashboardPage() {
                 Welcome back{user?.displayName ? `, ${user.displayName}` : ''}!
               </h1>
               <p className="muted">Ready to earn some points?</p>
+              {changesChip && (
+                <div className="inline-flex items-center gap-2 mt-2 px-3 py-1 rounded-full text-xs bg-brand-primary/10 text-brand-primary border border-brand-primary/20">
+                  <span>Since last visit:</span>
+                  <span className="font-medium">{changesChip}</span>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />
@@ -290,7 +323,9 @@ export default function DashboardPage() {
                   <TrendingUp className="w-5 h-5 text-brand-primary" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-brand-ink">{userStats.points.toLocaleString()}</div>
+                  <div className="text-2xl font-bold text-brand-ink">
+                    <CountUp value={userStats.points} />
+                  </div>
                   <div className="muted">Points</div>
                 </div>
               </div>
