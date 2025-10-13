@@ -3,8 +3,20 @@
 import Link from 'next/link';
 import { Upload, Gift, MapPin, Star, TrendingUp, Sparkles, Crown, Users, Mail, Zap } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@stackframe/stack';
 
 export default function HomePage() {
+  const user = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.replace('/dashboard');
+    }
+  }, [user, router]);
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Vintage Wallpaper Palm Tree Pattern */}
