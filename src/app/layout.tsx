@@ -80,6 +80,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="font-sans">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+  try {
+    const saved = localStorage.getItem('theme');
+    const theme = saved === 'light' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch {}
+})();`,
+          }}
+        />
         <ErrorBoundary>
           <StackProvider app={stackServerApp}>
             <StackTheme>

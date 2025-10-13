@@ -73,6 +73,7 @@ export default function BottomNavigation() {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch
                 className="flex flex-col items-center py-2 px-3 rounded-xl transition-all duration-200 relative"
               >
                 {isActive && (

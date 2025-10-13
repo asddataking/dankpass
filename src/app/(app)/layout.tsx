@@ -12,6 +12,12 @@ export default function AppLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <OfflineIndicator />
+      {/* Prefetch high-traffic routes on shell mount for faster tab switches */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `try { window.__dank_prefetch = true; } catch {}`,
+        }}
+      />
       {/* Main Content */}
       <motion.main 
         className="flex-1 pb-20"

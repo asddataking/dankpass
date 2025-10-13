@@ -82,10 +82,7 @@ function ThemeProviderInner({ children }: { children: React.ReactNode }) {
     setTheme(newTheme);
   };
 
-  // Prevent flash of wrong theme
-  if (!mounted) {
-    return null;
-  }
+  // Render always; initial theme is enforced pre-hydration via layout script.
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
