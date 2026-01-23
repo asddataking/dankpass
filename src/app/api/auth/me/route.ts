@@ -1,39 +1,13 @@
 import { NextResponse } from 'next/server';
-import { stackServerApp } from '@/stack';
-import { isAdminEmail, getOrCreateDbUser, userHasPremiumAccess } from '@/lib/auth';
+import { APP_ROUTES } from '@/lib/app-config';
 
 export async function GET() {
-  try {
-    const user = await stackServerApp.getUser();
-
-    if (!user) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
-    }
-
-    // Get or create user in database
-    const dbUser = await getOrCreateDbUser(user.id, user.primaryEmail || '');
-    
-    // Check if user is admin
-    const isAdmin = isAdminEmail(user.primaryEmail);
-    
-    // Check if user has premium access
-    const hasPremium = await userHasPremiumAccess(user.primaryEmail || '');
-
-    return NextResponse.json({
-      authenticated: true,
-      id: user.id,
-      email: user.primaryEmail,
-      displayName: user.displayName,
-      role: dbUser.role,
-      isAdmin,
-      isPremium: hasPremium,
-    });
-  } catch (error) {
-    console.error('Error in /api/auth/me:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { 
+      error: 'This endpoint has been moved to the DankPass app',
+      redirect: APP_ROUTES.SIGNIN,
+      message: 'Please use the DankPass app to access your account'
+    },
+    { status: 410 }
+  );
 }
-

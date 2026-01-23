@@ -73,73 +73,6 @@ export default function HomePage() {
           </div>
         </div>
 
-  return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Vintage Wallpaper Palm Tree Pattern */}
-      <div className="absolute inset-0 pointer-events-none opacity-10">
-        <div className="w-full h-full" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='160' viewBox='0 0 120 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20 L45 140 Q60 150 75 140 L60 20' stroke='%23d1d5db' stroke-width='1.5' fill='none'/%3E%3Cpath d='M60 20 Q35 30 30 50 Q40 40 60 30' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q85 30 90 50 Q80 40 60 30' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q25 40 20 70 Q35 60 60 45' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q95 40 100 70 Q85 60 60 45' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q20 60 15 90 Q30 80 60 65' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q100 60 105 90 Q90 80 60 65' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '120px 160px',
-          backgroundPosition: '0 0'
-        }}></div>
-        
-        {/* Offset pattern layer for depth */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='160' viewBox='0 0 120 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20 L45 140 Q60 150 75 140 L60 20' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q35 30 30 50 Q40 40 60 30' stroke='%23d1d5db' stroke-width='0.8' fill='none'/%3E%3Cpath d='M60 20 Q85 30 90 50 Q80 40 60 30' stroke='%23d1d5db' stroke-width='0.8' fill='none'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '120px 160px',
-          backgroundPosition: '60px 80px'
-        }}></div>
-      </div>
-      
-      <div className="relative z-10 max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-6 pt-12 pb-24">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-12">
-          <h2 className="text-2xl font-bold text-brand-ink">DankPass</h2>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <Link href="/auth/signin" className="text-brand-subtle hover:text-brand-ink transition-colors text-base font-medium">
-              Sign In
-            </Link>
-          </div>
-        </div>
-
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-success/20 to-brand-warn/20 text-brand-success px-4 py-2 rounded-full border border-brand-success/30">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">🔥 Earn & Burn Rewards</span>
-            </div>
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-primary/10 to-brand-primary/20 text-brand-primary px-4 py-2 rounded-full border border-brand-primary/30">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">✨ AI Powered</span>
-            </div>
-          </div>
-          
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-            <span className="headline-primary">Earn Free Weed</span>
-            <br />
-            <span className="text-brand-primary">With Every Receipt</span>
-          </h1>
-          
-          <p className="text-brand-subtle text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-            Upload receipts from dispensaries & restaurants. Earn points. Burn for free weed, discounts & exclusive perks.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="space-y-3 md:space-y-4 max-w-md mx-auto">
-            <Link href="/auth/signup" className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4">
-              Get Started Free
-              <TrendingUp className="w-5 h-5" />
-            </Link>
-            <p className="text-xs text-brand-subtle">
-              Already have an account? <Link href="/auth/signin" className="text-brand-primary font-medium">Sign in</Link>
-            </p>
-          </div>
-        </div>
-
         {/* How It Works */}
         <div className="mb-12">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-brand-ink mb-6 text-center">How to Earn Free Weed in 3 Steps</h2>
@@ -312,7 +245,7 @@ export default function HomePage() {
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-brand-ink mb-2">📧 Email Your Receipts</h3>
                 <p className="text-brand-subtle mb-4">
-                  Soon you'll be able to forward receipt photos directly from your email to <span className="font-mono text-brand-primary">receipts@dankpass.com</span> and earn points automatically - no app needed!
+                  Soon you&apos;ll be able to forward receipt photos directly from your email to <span className="font-mono text-brand-primary">receipts@dankpass.com</span> and earn points automatically - no app needed!
                 </p>
                 <div className="flex flex-wrap gap-3 text-sm">
                   <div className="flex items-center gap-2 bg-brand-card px-3 py-2 rounded-lg">
