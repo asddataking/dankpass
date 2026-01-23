@@ -1,7 +1,7 @@
 const { withSentryConfig } = require('@sentry/nextjs');
 
 /** @type {import('next').NextConfig} */
-const withPWA = require('next-pwa')({
+const withPWA = require('@ducanh2912/next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
