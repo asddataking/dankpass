@@ -2,56 +2,20 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Gift, Camera, MapPin, User, Shield } from 'lucide-react';
+import { Home, Gift, Camera, MapPin, User } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useUser } from '@stackframe/stack';
-import { useState, useEffect } from 'react';
+import { APP_ROUTES } from '@/lib/app-config';
 
 export default function BottomNavigation() {
   const pathname = usePathname();
-  const user = useUser();
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    async function checkAdmin() {
-      if (!user) {
-        setIsAdmin(false);
-        return;
-      }
-
-      try {
-        const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const data = await response.json();
-          setIsAdmin(data.isAdmin || false);
-        }
-      } catch (error) {
-        console.error('Error checking admin status:', error);
-        setIsAdmin(false);
-      }
-    }
-
-    checkAdmin();
-  }, [user]);
-
-  const baseNavItems = [
-    { href: '/dashboard', icon: Home, label: 'Home' },
-    { href: '/perks', icon: Gift, label: 'Burn' },
-    { href: '/dashboard', icon: Camera, label: 'Earn' },
+  const navItems = [
+    { href: APP_ROUTES.DASHBOARD, icon: Home, label: 'Home' },
+    { href: APP_ROUTES.PERKS, icon: Gift, label: 'Burn' },
+    { href: APP_ROUTES.UPLOAD, icon: Camera, label: 'Earn' },
     { href: '/', icon: MapPin, label: 'Explore' },
-    { href: '/profile', icon: User, label: 'Profile' },
+    { href: APP_ROUTES.PROFILE, icon: User, label: 'Profile' },
   ];
-
-  // Add admin link for admin users
-  const navItems = isAdmin 
-    ? [
-        { href: '/dashboard', icon: Home, label: 'Home' },
-        { href: '/perks', icon: Gift, label: 'Burn' },
-        { href: '/dashboard', icon: Camera, label: 'Earn' },
-        { href: '/admin', icon: Shield, label: 'Admin' },
-        { href: '/profile', icon: User, label: 'Profile' },
-      ]
-    : baseNavItems;
 
   return (
     <motion.nav 
@@ -64,16 +28,14 @@ export default function BottomNavigation() {
         <div className="flex justify-around items-center">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || 
-              (item.href === '/' && pathname === '/') ||
-              (item.href === '/dashboard' && pathname.startsWith('/dashboard')) ||
-              (item.href === '/admin' && pathname.startsWith('/admin'));
+            // Only show active state for internal routes (like '/')
+            const isActive = item.href === '/' && pathname === '/';
             
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                prefetch
+                prefetch={item.href.startsWith('/')}
                 className="flex flex-col items-center py-2 px-3 rounded-xl transition-all duration-200 relative"
               >
                 {isActive && (

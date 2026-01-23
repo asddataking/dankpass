@@ -4,15 +4,13 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, Star, Upload, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
-import { useUser } from '@stackframe/stack';
 
 export default function RestaurantSignupPage() {
-  const user = useUser();
   const [formData, setFormData] = useState({
     businessName: '',
     description: '',
     phone: '',
-    email: user?.primaryEmail || '',
+    email: '',
     website: '',
     address: '',
     city: '',
@@ -33,7 +31,6 @@ export default function RestaurantSignupPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user?.id,
           businessName: formData.businessName,
           businessType: 'restaurant',
           description: formData.description,

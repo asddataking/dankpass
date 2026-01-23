@@ -4,18 +4,16 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Upload, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
-import { useUser } from '@stackframe/stack';
 import { ErrorAlert, useAlert } from '@/components/ErrorAlert';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export default function DispensarySignupPage() {
-  const user = useUser();
   const { alerts, addAlert, removeAlert } = useAlert();
   const [formData, setFormData] = useState({
     businessName: '',
     description: '',
     phone: '',
-    email: user?.primaryEmail || '',
+    email: '',
     website: '',
     address: '',
     city: '',
@@ -36,7 +34,6 @@ export default function DispensarySignupPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user?.id,
           businessName: formData.businessName,
           businessType: 'dispensary',
           description: formData.description,
