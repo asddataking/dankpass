@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
-import { StackProvider, StackTheme } from "@stackframe/stack";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { stackServerApp } from "@/stack";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
@@ -92,13 +92,13 @@ export default function RootLayout({
           }}
         />
         <ErrorBoundary>
-          <StackProvider app={stackServerApp}>
-            <StackTheme>
-              <ThemeProvider>
-                {children}
-              </ThemeProvider>
-            </StackTheme>
-          </StackProvider>
+          <ThemeProvider>
+            <SiteHeader />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <SiteFooter />
+          </ThemeProvider>
         </ErrorBoundary>
         {/* Cloudflare Web Analytics - Only in production */}
         {process.env.NODE_ENV === 'production' && (

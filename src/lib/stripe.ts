@@ -1,74 +1,75 @@
-import Stripe from 'stripe';
+// Stripe integration removed - functionality moved to external DankNetwork app
+// import Stripe from 'stripe';
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
+// const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 
-// Initialize Stripe only if key is available (gracefully handle build time)
-export const stripe = STRIPE_SECRET_KEY 
-  ? new Stripe(STRIPE_SECRET_KEY, {
-      apiVersion: '2024-06-20',
-    })
-  : null as any as Stripe; // Type assertion for build compatibility
+// // Initialize Stripe only if key is available (gracefully handle build time)
+// export const stripe = STRIPE_SECRET_KEY 
+//   ? new Stripe(STRIPE_SECRET_KEY, {
+//       apiVersion: '2024-06-20',
+//     })
+//   : null as any as Stripe; // Type assertion for build compatibility
 
-export const createCheckoutSession = async (
-  priceId: string,
-  customerEmail?: string,
-  metadata?: Record<string, string>
-) => {
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/premium?canceled=true`,
-      customer_email: customerEmail,
-      metadata: metadata || {},
-      subscription_data: {
-        metadata: metadata || {},
-      },
-    });
+// export const createCheckoutSession = async (
+//   priceId: string,
+//   customerEmail?: string,
+//   metadata?: Record<string, string>
+// ) => {
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ['card'],
+//       line_items: [
+//         {
+//           price: priceId,
+//           quantity: 1,
+//         },
+//       ],
+//       mode: 'subscription',
+//       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
+//       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/premium?canceled=true`,
+//       customer_email: customerEmail,
+//       metadata: metadata || {},
+//       subscription_data: {
+//         metadata: metadata || {},
+//       },
+//     });
 
-    return session;
-  } catch (error) {
-    console.error('Error creating checkout session:', error);
-    throw new Error('Failed to create checkout session');
-  }
-};
+//     return session;
+//   } catch (error) {
+//     console.error('Error creating checkout session:', error);
+//     throw new Error('Failed to create checkout session');
+//   }
+// };
 
-export const createCustomer = async (email: string, name?: string) => {
-  try {
-    const customer = await stripe.customers.create({
-      email,
-      name,
-    });
-    return customer;
-  } catch (error) {
-    console.error('Error creating customer:', error);
-    throw new Error('Failed to create customer');
-  }
-};
+// export const createCustomer = async (email: string, name?: string) => {
+//   try {
+//     const customer = await stripe.customers.create({
+//       email,
+//       name,
+//     });
+//     return customer;
+//   } catch (error) {
+//     console.error('Error creating customer:', error);
+//     throw new Error('Failed to create customer');
+//   }
+// };
 
-export const getSubscription = async (subscriptionId: string) => {
-  try {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    return subscription;
-  } catch (error) {
-    console.error('Error retrieving subscription:', error);
-    throw new Error('Failed to retrieve subscription');
-  }
-};
+// export const getSubscription = async (subscriptionId: string) => {
+//   try {
+//     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+//     return subscription;
+//   } catch (error) {
+//     console.error('Error retrieving subscription:', error);
+//     throw new Error('Failed to retrieve subscription');
+//   }
+// };
 
-export const cancelSubscription = async (subscriptionId: string) => {
-  try {
-    const subscription = await stripe.subscriptions.cancel(subscriptionId);
-    return subscription;
-  } catch (error) {
-    console.error('Error canceling subscription:', error);
-    throw new Error('Failed to cancel subscription');
-  }
-};
+// export const cancelSubscription = async (subscriptionId: string) => {
+//   try {
+//     const subscription = await stripe.subscriptions.cancel(subscriptionId);
+//     return subscription;
+//   } catch (error) {
+//     console.error('Error canceling subscription:', error);
+//     throw new Error('Failed to cancel subscription');
+//   }
+// };

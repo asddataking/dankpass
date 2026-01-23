@@ -2,9 +2,9 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { SignIn } from '@stackframe/stack';
+import { ArrowLeft, LogIn } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import { APP_ROUTES } from '@/lib/app-config';
 
 export default function SignInPage() {
   return (
@@ -30,9 +30,18 @@ export default function SignInPage() {
             <p className="muted">Sign in to your DankPass account</p>
           </div>
 
-          {/* Stack Auth Sign In Component */}
+          {/* CTA Button */}
           <div className="max-w-md mx-auto">
-            <SignIn />
+            <Link 
+              href={APP_ROUTES.SIGNIN}
+              className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4"
+            >
+              <LogIn className="w-5 h-5" />
+              Sign In / Create Account
+            </Link>
+            <p className="text-center text-sm text-brand-subtle mt-4">
+              You&apos;ll be redirected to the DankPass app to sign in
+            </p>
           </div>
 
           {/* Footer */}

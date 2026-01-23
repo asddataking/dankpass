@@ -1,6 +1,6 @@
-import { StackHandler } from "@stackframe/stack";
-import { stackServerApp } from "@/stack";
+import { redirect } from 'next/navigation';
+import { APP_ROUTES } from '@/lib/app-config';
 
-export default function StackAuthPage(props: any) {
-  return <StackHandler app={stackServerApp} routeProps={props} fullPage />;
+export default function StackAuthPage() {
+  redirect(APP_ROUTES.SIGNIN);
 }

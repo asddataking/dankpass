@@ -1,70 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stackServerApp } from './stack';
 
-// Admin user email
-const ADMIN_EMAIL = 'daniel.richmond.ebert@gmail.com';
+// Middleware simplified - all app routes now redirect at page level
+// No auth checks needed since functionality moved to external app
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Protect admin routes
-  if (pathname.startsWith('/admin')) {
-    try {
-      const user = await stackServerApp.getUser();
-      
-      if (!user) {
-        // Redirect to sign in if not authenticated
-        return NextResponse.redirect(new URL('/auth/signin', request.url));
-      }
-
-      // Check if user is admin
-      const isAdmin = user.primaryEmail === ADMIN_EMAIL;
-      
-      if (!isAdmin) {
-        // Redirect non-admin users to dashboard
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-      
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Auth middleware error:', error);
-      return NextResponse.redirect(new URL('/auth/signin', request.url));
-    }
-  }
-
-  // Protect authenticated routes (dashboard, profile, upload, perks, premium)
-  const protectedRoutes = ['/dashboard', '/profile', '/upload', '/perks', '/premium'];
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  
-  if (isProtectedRoute) {
-    try {
-      const user = await stackServerApp.getUser();
-      
-      if (!user) {
-        // Store the intended destination
-        const signInUrl = new URL('/auth/signin', request.url);
-        signInUrl.searchParams.set('redirect', pathname);
-        return NextResponse.redirect(signInUrl);
-      }
-      
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Auth middleware error:', error);
-      // Don't redirect on error - let the page handle it
-      return NextResponse.next();
-    }
-  }
-
+  // All protected routes are handled by page-level redirects
+  // Admin routes can remain if needed, or redirect them as well
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/dashboard/:path*',
-    '/profile/:path*',
-    '/upload/:path*',
-    '/perks/:path*',
-    '/premium/:path*',
+    // Keep matcher empty or minimal - pages handle their own redirects
   ],
 };

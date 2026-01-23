@@ -1,0 +1,22 @@
+# Allow all marketing pages
+User-agent: *
+Allow: /
+Allow: /how-it-works
+Allow: /pricing
+Allow: /faq
+
+# Disallow app routes (they redirect anyway)
+Disallow: /dashboard
+Disallow: /upload
+Disallow: /premium
+Disallow: /perks
+Disallow: /profile
+Disallow: /scan
+Disallow: /refer
+Disallow: /auth
+Disallow: /handler
+Disallow: /admin
+Disallow: /api
+
+# Sitemap
+Sitemap: https://dankpass.vercel.app/sitemap.xml
