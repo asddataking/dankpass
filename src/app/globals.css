@@ -129,6 +129,15 @@ h1, h2, h3, h4, h5, h6 {
 /* Button styles - Enlarged */
 .btn {
   @apply inline-flex items-center justify-center rounded-xl px-6 py-3.5 font-medium text-lg;
+  min-height: 44px; /* Ensure minimum touch target size for mobile */
+}
+
+/* Mobile-specific button improvements */
+@media (max-width: 640px) {
+  .btn {
+    @apply px-4 py-3 text-base;
+    min-height: 48px; /* Larger touch target on mobile */
+  }
 }
 
 .btn-primary {
@@ -154,6 +163,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Card styles - Enlarged */
 .card {
   @apply bg-brand-card rounded-2xl shadow-lg border border-brand-primary/10 p-7;
+}
+
+/* Mobile card padding */
+@media (max-width: 640px) {
+  .card {
+    @apply p-4;
+  }
 }
 
 [data-theme='dark'] .card {

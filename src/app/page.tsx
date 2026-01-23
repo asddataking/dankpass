@@ -26,7 +26,7 @@ export default function HomePage() {
         }}></div>
       </div>
       
-      <div className="relative z-10 max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-6 pt-12 pb-24">
+      <div className="relative z-10 max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-24">
         {/* Header - Hidden since SiteHeader is now in layout */}
         <div className="flex justify-between items-center mb-12 hidden">
           <h2 className="text-2xl font-bold text-brand-ink">DankPass</h2>

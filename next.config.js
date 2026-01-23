@@ -1,13 +1,6 @@
 const { withSentryConfig } = require('@sentry/nextjs');
 
 /** @type {import('next').NextConfig} */
-const withPWA = require('@ducanh2912/next-pwa')({
-  dest: 'public',
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
-});
-
 const nextConfig = {
   transpilePackages: ['@stackframe/stack', '@stackframe/stack-shared', 'oauth4webapi'],
   images: {
@@ -25,7 +18,7 @@ const nextConfig = {
 }
 
 module.exports = withSentryConfig(
-  withPWA(nextConfig),
+  nextConfig,
   {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options

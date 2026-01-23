@@ -6,7 +6,7 @@ import { ECOSYSTEM_LINKS } from '@/lib/app-config';
 export function SiteFooter() {
   return (
     <footer className="border-t border-brand-primary/10 bg-brand-card/50 mt-24">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">

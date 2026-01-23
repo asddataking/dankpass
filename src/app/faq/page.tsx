@@ -43,7 +43,7 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen pb-24">
-      <div className="px-6 pt-8 pb-6">
+      <div className="px-4 sm:px-6 pt-8 pb-6 max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
