@@ -21,10 +21,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://dankpass.vercel.app'),
-  title: "DankPass - Earn Free Weed | Upload Receipts & Burn Rewards | Refer Friends & Earn",
-  description: "🔥 Earn free weed with every receipt! Upload receipts from dispensaries & restaurants to earn points. Burn points for free weed, discounts & exclusive perks. Refer friends and you both get 250 bonus points! Join 10K+ users earning & burning rewards daily!",
-  keywords: ["earn free weed", "free weed rewards", "dispensary rewards program", "cannabis loyalty points", "get free weed with receipts", "earn and burn", "burn points for weed", "free cannabis rewards", "receipt upload rewards", "dispensary discounts"],
+  metadataBase: new URL('https://dankpass.com'),
+  title: "DankPass — Loyalty-as-a-Service for Dispensaries | Earn & Burn",
+  description: "Modern loyalty for dispensaries. White-labeled rewards powered by SMS, email, and real customer data. Use DankPass as your dispensary loyalty program, and optionally pair it with deal discovery through Daily Dispo Deals. Starts at $299/month.",
+  keywords: ["dispensary loyalty", "cannabis loyalty program", "earn and burn", "loyalty as a service", "dispensary rewards", "customer retention", "SMS rewards", "white label loyalty"],
   manifest: '/manifest.json',
   icons: {
     icon: [
@@ -42,16 +42,16 @@ export const metadata: Metadata = {
     title: 'DankPass',
   },
   openGraph: {
-    title: "DankPass - Earn Free Weed | Upload Receipts & Burn Rewards",
-    description: "Earn free weed with every receipt! Upload receipts from dispensaries and restaurants. Burn points for free weed, discounts, and exclusive perks. Earn & Burn rewards daily!",
-    url: 'https://dankpass.vercel.app',
+    title: "DankPass — Loyalty-as-a-Service for Dispensaries | Earn & Burn",
+    description: "Modern loyalty for dispensaries. White-labeled rewards, SMS & email, QR signup. Own your customer list. Starts at $299/month.",
+    url: 'https://dankpass.com',
     siteName: 'DankPass',
     images: [
       {
         url: '/logo.png',
         width: 1200,
         height: 630,
-        alt: 'DankPass - Earn Free Weed & Burn Rewards',
+        alt: 'DankPass - Loyalty-as-a-Service for Dispensaries',
       },
     ],
     locale: 'en_US',
@@ -59,8 +59,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "DankPass - Earn Free Weed | Earn & Burn Rewards",
-    description: "Earn free weed with every receipt! Upload receipts to earn points. Burn points for free weed, discounts, and exclusive perks. Join 10K+ users!",
+    title: "DankPass — Loyalty-as-a-Service for Dispensaries",
+    description: "Modern loyalty for dispensaries. Earn & Burn rewards, SMS & email, own your customer data. Starts at $299/month.",
     images: ['/logo.png'],
   },
 };

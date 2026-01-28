@@ -1,301 +1,277 @@
 'use client';
 
 import Link from 'next/link';
-import { Upload, Gift, MapPin, Star, TrendingUp, Sparkles, Crown, Users, Mail, Zap } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { APP_ROUTES } from '@/lib/app-config';
+import {
+  Sparkles,
+  CheckCircle2,
+  Mail,
+  QrCode,
+  Database,
+  Users,
+  Store,
+  ArrowRight,
+  Zap,
+  Gift,
+} from 'lucide-react';
+import { ECOSYSTEM_LINKS, CONTACT_ANCHOR } from '@/lib/app-config';
+import { ROICalculator } from '@/components/ROICalculator';
+import { LeadForm } from '@/components/LeadForm';
+
+const PALM_BG = {
+  main: `url("data:image/svg+xml,%3Csvg width='120' height='160' viewBox='0 0 120 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20 L45 140 Q60 150 75 140 L60 20' stroke='%23d1d5db' stroke-width='1.5' fill='none'/%3E%3Cpath d='M60 20 Q35 30 30 50 Q40 40 60 30' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q85 30 90 50 Q80 40 60 30' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q25 40 20 70 Q35 60 60 45' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q95 40 100 70 Q85 60 60 45' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q20 60 15 90 Q30 80 60 65' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q100 60 105 90 Q90 80 60 65' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
+  offset: `url("data:image/svg+xml,%3Csvg width='120' height='160' viewBox='0 0 120 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20 L45 140 Q60 150 75 140 L60 20' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q35 30 30 50 Q40 40 60 30' stroke='%23d1d5db' stroke-width='0.8' fill='none'/%3E%3Cpath d='M60 20 Q85 30 90 50 Q80 40 60 30' stroke='%23d1d5db' stroke-width='0.8' fill='none'/%3E%3C/svg%3E")`,
+};
+
+const PRODUCT_BENEFITS = [
+  { icon: Store, text: 'White-labeled per dispensary' },
+  { icon: Mail, text: 'Automated SMS & email campaigns' },
+  { icon: QrCode, text: 'QR code signup at checkout' },
+  { icon: Database, text: 'Own your customer data' },
+  { icon: Users, text: 'No staff training required' },
+  { icon: Zap, text: 'Built for dispensaries (not generic retail)' },
+];
 
 export default function HomePage() {
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Vintage Wallpaper Palm Tree Pattern */}
-      <div className="absolute inset-0 pointer-events-none opacity-10">
-        <div className="w-full h-full" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='160' viewBox='0 0 120 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20 L45 140 Q60 150 75 140 L60 20' stroke='%23d1d5db' stroke-width='1.5' fill='none'/%3E%3Cpath d='M60 20 Q35 30 30 50 Q40 40 60 30' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q85 30 90 50 Q80 40 60 30' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q25 40 20 70 Q35 60 60 45' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q95 40 100 70 Q85 60 60 45' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q20 60 15 90 Q30 80 60 65' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q100 60 105 90 Q90 80 60 65' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '120px 160px',
-          backgroundPosition: '0 0'
-        }}></div>
-        
-        {/* Offset pattern layer for depth */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='160' viewBox='0 0 120 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20 L45 140 Q60 150 75 140 L60 20' stroke='%23d1d5db' stroke-width='1' fill='none'/%3E%3Cpath d='M60 20 Q35 30 30 50 Q40 40 60 30' stroke='%23d1d5db' stroke-width='0.8' fill='none'/%3E%3Cpath d='M60 20 Q85 30 90 50 Q80 40 60 30' stroke='%23d1d5db' stroke-width='0.8' fill='none'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '120px 160px',
-          backgroundPosition: '60px 80px'
-        }}></div>
+      <div className="absolute inset-0 pointer-events-none opacity-10" aria-hidden>
+        <div
+          className="w-full h-full"
+          style={{
+            backgroundImage: PALM_BG.main,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '120px 160px',
+            backgroundPosition: '0 0',
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: PALM_BG.offset,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '120px 160px',
+            backgroundPosition: '60px 80px',
+          }}
+        />
       </div>
-      
-      <div className="relative z-10 max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-24">
-        {/* Header - Hidden since SiteHeader is now in layout */}
-        <div className="flex justify-between items-center mb-12 hidden">
-          <h2 className="text-2xl font-bold text-brand-ink">DankPass</h2>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <Link href={APP_ROUTES.SIGNIN} className="text-brand-subtle hover:text-brand-ink transition-colors text-base font-medium">
-              Sign In
-            </Link>
-          </div>
-        </div>
 
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-success/20 to-brand-warn/20 text-brand-success px-4 py-2 rounded-full border border-brand-success/30">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">🔥 Earn & Burn Rewards</span>
-            </div>
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-primary/10 to-brand-primary/20 text-brand-primary px-4 py-2 rounded-full border border-brand-primary/30">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">✨ AI Powered</span>
-            </div>
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-24">
+        {/* Hero */}
+        <section className="text-center mb-20 sm:mb-28">
+          <div className="inline-flex items-center gap-2 bg-brand-success/20 text-brand-success px-4 py-2 rounded-full border border-brand-success/30 mb-6">
+            <Sparkles className="w-4 h-4" aria-hidden />
+            <span className="text-sm font-medium">Earn & Burn</span>
           </div>
-          
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-            <span className="headline-primary">Earn Free Weed</span>
+            <span className="headline-primary">Earn & Burn</span>
             <br />
-            <span className="text-brand-primary">With Every Receipt</span>
+            <span className="text-brand-primary">Modern Loyalty for Dispensaries</span>
           </h1>
-          
           <p className="text-brand-subtle text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-            Upload receipts from dispensaries & restaurants. Earn points. Burn for free weed, discounts & exclusive perks.
+            Replace punch cards with automated rewards powered by SMS, email, and real customer data.
           </p>
+          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-8 text-brand-ink font-medium">
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-brand-success shrink-0" aria-hidden />
+              No punch cards
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-brand-success shrink-0" aria-hidden />
+              No app downloads
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-brand-success shrink-0" aria-hidden />
+              Own your customer list
+            </li>
+          </ul>
+          <Link
+            href={CONTACT_ANCHOR}
+            className="btn-primary inline-flex items-center justify-center gap-2 text-lg py-4 px-8"
+          >
+            Book a Demo
+          </Link>
+          <p className="text-sm text-brand-subtle mt-4">
+            Starts at $299/month · One-time setup fee: $799
+          </p>
+        </section>
 
-          {/* CTA Buttons */}
-          <div className="space-y-3 md:space-y-4 max-w-md mx-auto">
-            <Link href={APP_ROUTES.SIGNIN} className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4">
-              Launch DankPass App
-              <TrendingUp className="w-5 h-5" />
-            </Link>
-            <p className="text-xs text-brand-subtle">
-              Already have an account? <Link href={APP_ROUTES.SIGNIN} className="text-brand-primary font-medium">Sign in</Link>
-            </p>
+        {/* Product Value */}
+        <section id="product" className="scroll-mt-24 mb-20 sm:mb-28">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-brand-ink mb-4 text-center">
+            Your Brand. Your Rewards. One System.
+          </h2>
+          <p className="text-brand-subtle text-lg text-center max-w-2xl mx-auto mb-10">
+            DankPass is a white-labeled loyalty engine designed specifically for dispensaries.
+            It helps you increase repeat visits, grow customer lifetime value, and automate retention.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {PRODUCT_BENEFITS.map(({ icon: Icon, text }) => (
+              <div key={text} className="card">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-brand-primary/20 rounded-xl flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-brand-primary" aria-hidden />
+                  </div>
+                  <p className="font-medium text-brand-ink">{text}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        </section>
 
         {/* How It Works */}
-        <div className="mb-12">
-          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-brand-ink mb-6 text-center">How to Earn Free Weed in 3 Steps</h2>
-          
-          <div className="space-y-3 md:grid md:grid-cols-3 md:gap-6 md:space-y-0">
-            <div className="card">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold">
-                  1
+        <section id="how-it-works" className="scroll-mt-24 mb-20 sm:mb-28">
+          <h2 className="text-2xl md:text-3xl font-bold text-brand-ink mb-8 text-center">
+            How It Works
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { n: 1, title: 'Customer shops', desc: 'They visit and make a purchase.' },
+              { n: 2, title: 'Points are earned automatically', desc: 'No punch cards, no extra steps.' },
+              { n: 3, title: 'SMS rewards bring them back', desc: 'Automated messages drive repeat visits.' },
+            ].map(({ n, title, desc }) => (
+              <div key={n} className="card text-center">
+                <div className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
+                  {n}
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-brand-ink mb-1">📸 Upload Receipt</h3>
-                  <p className="text-sm text-brand-subtle">Snap a photo of your receipt from dispensaries or restaurants</p>
-                </div>
+                <h3 className="font-semibold text-brand-ink mb-2">{title}</h3>
+                <p className="text-sm text-brand-subtle">{desc}</p>
               </div>
-            </div>
-
-            <div className="card">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-brand-success rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold">
-                  2
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-brand-ink mb-1">⚡ Earn Points</h3>
-                  <p className="text-sm text-brand-subtle">Get 10 points for every $1 you spend (15 pts for Premium)</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-brand-warn rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold">
-                  3
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-brand-ink mb-1">🔥 Burn Rewards</h3>
-                  <p className="text-sm text-brand-subtle">Burn points for free weed, exclusive perks, and VIP discounts</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
+        </section>
 
-        {/* Stats */}
-        <div className="card mb-12">
-          <div className="grid grid-cols-3 md:grid-cols-6 divide-x divide-gray-200">
-            <div className="text-center px-4">
-              <div className="text-2xl font-bold text-brand-primary">500+</div>
-              <div className="text-xs text-brand-subtle mt-1">Partners</div>
-            </div>
-            <div className="text-center px-4">
-              <div className="text-2xl font-bold text-brand-primary">10K+</div>
-              <div className="text-xs text-brand-subtle mt-1">Users</div>
-            </div>
-            <div className="text-center px-4">
-              <div className="text-2xl font-bold text-brand-primary">$50K</div>
-              <div className="text-xs text-brand-subtle mt-1">Saved</div>
-            </div>
-            <div className="text-center px-4 hidden md:block">
-              <div className="text-2xl font-bold text-brand-primary">4.9★</div>
-              <div className="text-xs text-brand-subtle mt-1">Rating</div>
-            </div>
-            <div className="text-center px-4 hidden md:block">
-              <div className="text-2xl font-bold text-brand-primary">24/7</div>
-              <div className="text-xs text-brand-subtle mt-1">Support</div>
-            </div>
-            <div className="text-center px-4 hidden md:block">
-              <div className="text-2xl font-bold text-brand-primary">AI</div>
-              <div className="text-xs text-brand-subtle mt-1">Powered</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Referral CTA - Large */}
-        <div className="card bg-gradient-to-br from-brand-primary/20 to-brand-success/20 border-brand-primary/30 mb-12 text-center">
-          <div className="py-8">
-            <div className="w-20 h-20 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Users className="w-10 h-10 text-brand-primary" />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-brand-ink mb-4">
-              Invite Friends, Earn Together
+        {/* Ecosystem - Daily Dispo Deals */}
+        <section id="ecosystem" className="scroll-mt-24 mb-20 sm:mb-28">
+          <div className="card bg-gradient-to-br from-brand-primary/5 to-brand-success/5 border-brand-primary/20 relative">
+            <span className="absolute top-4 right-4 bg-brand-warn/20 text-brand-warn px-3 py-1 rounded-full text-xs font-semibold">
+              Optional Add-On
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold text-brand-ink mb-4 text-center pr-24">
+              Loyalty That Connects to Real Deal Demand
             </h2>
-            <p className="text-lg text-brand-subtle mb-6 max-w-2xl mx-auto">
-              Share DankPass with friends and you both get <span className="font-bold text-brand-primary">250 bonus points</span> instantly!
+            <p className="text-brand-subtle text-center max-w-2xl mx-auto mb-8">
+              DankPass helps you retain customers you already have. Daily Dispo Deals helps new customers discover your offers.
+              Together, they create a simple loop: Discover → Visit → Earn & Burn → Repeat.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-              <Link href={APP_ROUTES.SIGNIN} className="btn-primary flex items-center justify-center gap-2">
-                <Users className="w-5 h-5" />
-                Join & Get Your Referral Code
-              </Link>
-              <Link href={APP_ROUTES.DASHBOARD} className="btn-ghost flex items-center justify-center gap-2">
-                Share Your Code
-              </Link>
-            </div>
-            <div className="mt-6 flex items-center justify-center gap-8 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-brand-success/20 rounded-full flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-brand-success" />
-                </div>
-                <span className="text-brand-subtle">You get 250 pts</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-brand-success/20 rounded-full flex items-center justify-center">
-                  <Gift className="w-4 h-4 text-brand-success" />
-                </div>
-                <span className="text-brand-subtle">Friend gets 250 pts</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Premium CTA - Large */}
-        <div className="card bg-gradient-to-br from-brand-warn/20 to-brand-primary/20 border-brand-warn/30 mb-12 text-center hover:-translate-y-1 transition-all">
-          <div className="py-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-brand-warn/30 to-brand-primary/30 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Crown className="w-10 h-10 text-brand-primary" />
-            </div>
-            <div className="inline-flex items-center gap-2 bg-brand-warn/20 text-brand-warn px-4 py-2 rounded-full border border-brand-warn/40 mb-4">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-semibold">PREMIUM MEMBERSHIP</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-brand-ink mb-4">
-              Unlock 1.5x Points & VIP Perks
-            </h2>
-            <p className="text-lg text-brand-subtle mb-6 max-w-2xl mx-auto">
-              Get <span className="font-bold text-brand-primary">50% more points</span> on every upload, unlimited receipts, and exclusive rewards for just <span className="font-bold text-brand-primary">$7/month</span>
+            <p className="text-brand-subtle text-center text-sm mb-6 max-w-2xl mx-auto">
+              Use DankPass as your dispensary loyalty program, and optionally pair it with deal discovery through Daily Dispo Deals.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-              <Link href={APP_ROUTES.PREMIUM} className="btn-primary flex items-center justify-center gap-2">
-                <Crown className="w-5 h-5" />
-                Start Premium Trial
-              </Link>
-              <Link href="/pricing" className="btn-ghost flex items-center justify-center gap-2">
-                Learn More
-              </Link>
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {[
+                { title: 'Discover', desc: 'Get found through DailyDispoDeals.com (optional)', icon: Zap },
+                { title: 'Convert', desc: 'Turn deal shoppers into loyalty members with QR signup', icon: QrCode },
+                { title: 'Retain', desc: 'Automated Earn & Burn rewards bring them back', icon: Gift },
+              ].map(({ title, desc, icon: Icon }) => (
+                <div key={title} className="bg-brand-card/50 rounded-xl p-4 border border-brand-primary/10">
+                  <Icon className="w-8 h-8 text-brand-primary mb-2" aria-hidden />
+                  <h3 className="font-semibold text-brand-ink mb-2">{title}</h3>
+                  <p className="text-sm text-brand-subtle">{desc}</p>
+                </div>
+              ))}
             </div>
-            <div className="mt-6 flex items-center justify-center gap-8 text-sm flex-wrap">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-brand-primary/20 rounded-full flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-brand-primary" />
-                </div>
-                <span className="text-brand-subtle">1.5x points</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-brand-success/20 rounded-full flex items-center justify-center">
-                  <Upload className="w-4 h-4 text-brand-success" />
-                </div>
-                <span className="text-brand-subtle">Unlimited uploads</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-brand-warn/20 rounded-full flex items-center justify-center">
-                  <Gift className="w-4 h-4 text-brand-warn" />
-                </div>
-                <span className="text-brand-subtle">VIP rewards</span>
-              </div>
+            <div className="flex flex-col items-center gap-4">
+              <a
+                href={ECOSYSTEM_LINKS.DAILY_DISPODEALS}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ghost inline-flex items-center gap-2"
+              >
+                See Daily Dispo Deals
+                <ArrowRight className="w-4 h-4" aria-hidden />
+              </a>
+              <p className="text-xs text-brand-subtle text-center">
+                Daily Dispo Deals is a separate product. DankPass works standalone.
+              </p>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Coming Soon - Email Receipts */}
-        <div className="card bg-gradient-to-br from-brand-primary/5 to-brand-success/5 border-brand-primary/20 mb-12 relative overflow-hidden">
-          <div className="absolute top-4 right-4 bg-brand-warn text-black px-3 py-1 rounded-full text-xs font-bold">
-            COMING SOON
-          </div>
-          <div className="py-6">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 bg-brand-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Mail className="w-8 h-8 text-brand-primary" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-brand-ink mb-2">📧 Email Your Receipts</h3>
-                <p className="text-brand-subtle mb-4">
-                  Soon you&apos;ll be able to forward receipt photos directly from your email to <span className="font-mono text-brand-primary">receipts@dankpass.com</span> and earn points automatically - no app needed!
+        {/* Pricing */}
+        <section id="pricing" className="scroll-mt-24 mb-20 sm:mb-28">
+          <h2 className="text-2xl md:text-3xl font-bold text-brand-ink mb-8 text-center">
+            Simple, Transparent Pricing
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {[
+              {
+                name: 'Starter',
+                price: 299,
+                popular: false,
+                features: [
+                  'Earn & Burn™ loyalty system',
+                  'SMS + email rewards',
+                  'QR code signup',
+                  'Customer profiles & points tracking',
+                  'Basic analytics',
+                ],
+              },
+              {
+                name: 'Growth',
+                price: 499,
+                popular: true,
+                features: [
+                  'Everything in Starter',
+                  'Advanced automations',
+                  'Re-engagement & win-back campaigns',
+                  'Birthday & milestone rewards',
+                  'White-label branding',
+                ],
+              },
+              {
+                name: 'Network',
+                price: 799,
+                popular: false,
+                features: [
+                  'Everything in Growth',
+                  'Multi-location support',
+                  'Priority support',
+                  'Advanced analytics',
+                  'Optional DankPass Network exposure',
+                ],
+              },
+            ].map((tier) => (
+              <div
+                key={tier.name}
+                className={`card ${tier.popular ? 'ring-2 ring-brand-primary' : ''}`}
+              >
+                {tier.popular && (
+                  <p className="text-xs font-semibold text-brand-primary mb-2">Most Popular</p>
+                )}
+                <h3 className="text-xl font-bold text-brand-ink mb-1">{tier.name}</h3>
+                <p className="text-2xl font-bold text-brand-primary mb-4">
+                  ${tier.price}
+                  <span className="text-base font-normal text-brand-subtle"> / month</span>
                 </p>
-                <div className="flex flex-wrap gap-3 text-sm">
-                  <div className="flex items-center gap-2 bg-brand-card px-3 py-2 rounded-lg">
-                    <Zap className="w-4 h-4 text-brand-success" />
-                    <span className="text-brand-subtle">Auto-processing</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-brand-card px-3 py-2 rounded-lg">
-                    <TrendingUp className="w-4 h-4 text-brand-success" />
-                    <span className="text-brand-subtle">Instant points</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-brand-card px-3 py-2 rounded-lg">
-                    <Mail className="w-4 h-4 text-brand-success" />
-                    <span className="text-brand-subtle">Email confirmation</span>
-                  </div>
-                </div>
+                <ul className="space-y-2 text-sm text-brand-subtle">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-brand-success shrink-0 mt-0.5" aria-hidden />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            ))}
           </div>
-        </div>
-
-        {/* Partner Types */}
-        <div>
-          <h2 className="text-lg md:text-xl font-bold text-brand-ink mb-4 text-center md:text-left">Are you a business?</h2>
-          
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-8 max-w-lg mx-auto md:max-w-none">
-            <Link href="/join/dispensary" className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
-              <div className="text-center py-4">
-                <MapPin className="w-8 h-8 text-brand-success mx-auto mb-3" />
-                <h3 className="font-semibold text-brand-ink text-base mb-1">Dispensary</h3>
-                <p className="text-sm text-brand-subtle">Join our network of cannabis retailers</p>
-              </div>
-            </Link>
-
-            <Link href="/join/restaurant" className="card hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(14,23,38,0.12)] transition-all">
-              <div className="text-center py-4">
-                <Star className="w-8 h-8 text-brand-warn mx-auto mb-3" />
-                <h3 className="font-semibold text-brand-ink text-base mb-1">Restaurant</h3>
-                <p className="text-sm text-brand-subtle">Join our network of food establishments</p>
-              </div>
-            </Link>
-          </div>
-        </div>
-
-        {/* Footer - Hidden since SiteFooter is now in layout */}
-        <div className="mt-12 text-center hidden">
-          <p className="text-xs text-brand-subtle">
-            © 2024 DankPass. All rights reserved.
+          <p className="text-brand-subtle text-center mb-2">
+            One-time setup fee: $799
           </p>
-        </div>
+          <p className="text-xs text-brand-subtle text-center">
+            Built for licensed dispensaries only.
+          </p>
+        </section>
+
+        {/* ROI Calculator */}
+        <section id="roi" className="scroll-mt-24 mb-20 sm:mb-28">
+          <ROICalculator />
+        </section>
+
+        {/* Lead Form */}
+        <section id="contact" className="scroll-mt-24">
+          <LeadForm />
+        </section>
       </div>
     </div>
   );
 }
+

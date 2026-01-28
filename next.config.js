@@ -2,10 +2,16 @@ const { withSentryConfig } = require('@sentry/nextjs');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@stackframe/stack', '@stackframe/stack-shared', 'oauth4webapi'],
   images: {
-    domains: ['images.unsplash.com', 'blob.vercel-storage.com'],
-    unoptimized: true, // For local logo files
+    domains: ['images.unsplash.com'],
+    unoptimized: true,
+  },
+  async redirects() {
+    return [
+      { source: '/how-it-works', destination: '/#how-it-works', permanent: false },
+      { source: '/pricing', destination: '/#pricing', permanent: false },
+      { source: '/faq', destination: '/#contact', permanent: false },
+    ];
   },
   webpack: (config) => {
     // Handle ES modules
